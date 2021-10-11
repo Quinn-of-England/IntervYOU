@@ -14,7 +14,7 @@ RUN npm install --silent
 #Copy current directory contents into the container
 COPY . .
 
-#Make port 80 available to the world outside this container
+#Make port 5000 available to the world outside this container
 EXPOSE 5000
 
 #Run the app when comtainer launches
