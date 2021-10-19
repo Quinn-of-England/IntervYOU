@@ -4,7 +4,21 @@
     }
 
     .Login form{
-        margin: 0 auto;
+        margin: 100px auto;
         max-width: 320px;
+        border: 1px solid #ccc;
+        padding:80px;
+        border-radius: 10px;
     }
+
+    button {
+        background-color: #006cbd;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius:10px;
+        cursor: pointer;
+        width: 100%;
+      }
 }
