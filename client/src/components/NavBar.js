@@ -26,6 +26,11 @@ const NavBar = () => {
       item: "Settings",
       path: "/settings",
     },
+    {
+      id: "nav-4",
+      item: "Login",
+      path: "/login",
+    }
   ];
 
   const { pathname } = useLocation();

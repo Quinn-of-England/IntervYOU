@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./pages/Home";
 
 import "./App.css";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
@@ -19,6 +20,9 @@ const App = () => {
       </Route>
       <Route path="/settings">
         <Home />
+      </Route>
+      <Route path="/login">
+        <Login />
       </Route>
     </Router>
   );
