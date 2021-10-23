@@ -2,9 +2,12 @@ import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import cookieParser from 'cookie-parser'
 
 import userRouter from './routes/users.js'
 import postRouter from './routes/posts.js'
+
+import { verifyAuth, verifyRefresh } from "./auth.js";
 
 //Load Environment Variables
 dotenv.config()
@@ -22,11 +25,7 @@ app.use(
   })
 )
 app.use(express.json())
-// app.use(cookieParser());
-
-//Define Endpoints/Routes for Requests
-app.use('/', userRouter)
-app.use('/posts/', postRouter)
+app.use(cookieParser());
 
 //Connect to MongoDB
 if (process.env.NODE_ENV == 'production') {
@@ -36,6 +35,7 @@ if (process.env.NODE_ENV == 'production') {
     .connect(dbUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     })
     .then(() => {
       console.log('Connected to MongoDB Database on Atlas!')
@@ -54,7 +54,6 @@ if (process.env.NODE_ENV == 'production') {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
-      useFindAndModify: false,
       user: 'root',
       pass: 'root',
     })
@@ -66,3 +65,17 @@ if (process.env.NODE_ENV == 'production') {
     })
     .catch((err) => console.error(`Message: ${err.message}`))
 }
+
+//Define Endpoints/Routes for Requests
+app.use('/api/users/', userRouter)
+app.use('/api/posts/', verifyAuth, postRouter)
+
+//Main route of server
+app.get('/', (_, res) => {
+  res.send("You have reached the server of IntervYOU!")
+})
+
+//Api route
+app.get('/api/', (_, res) => {
+  res.send("You have reached the api of this server")
+})
