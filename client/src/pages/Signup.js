@@ -7,6 +7,7 @@ import "./Signup.css"
 export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
 
     function validateForm() {
         return email.length > 0 && password.length > 0;
@@ -42,6 +43,14 @@ export default function SignUp() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                      />
+                    </Form.Group>
+                    <Form.Group size="lg" controlId="username">
+                     <Form.Label>Username</Form.Label>
+                     <Form.Control
+                        type="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                     />    
                     </Form.Group>
                     <Form.Group size="lg" controlId="password">
                      <Form.Label>Password</Form.Label>
