@@ -50,6 +50,7 @@ services:
         - ./client:/app
       networks:
         - intervyou-network
+      stdin_open: true
 
     nginx:
       image: intervyou-nginx
