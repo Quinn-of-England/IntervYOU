@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 
 import "./App.css";
 import Login from "./pages/Login";
+import SignUp from "./pages/Signup";
 
 const App = () => {
   return (
@@ -23,6 +24,9 @@ const App = () => {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/signup">
+        <SignUp />
       </Route>
     </Router>
   );

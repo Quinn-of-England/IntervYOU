@@ -1,6 +1,7 @@
 import React, { useState} from "react";
 import NavBar from "../components/NavBar";
 import Form from "react-bootstrap/Form";
+import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
 
@@ -41,6 +42,7 @@ export default function Login() {
                 <Button block size="lg" type="submit" disabled={!validateForm()}>
                     Login
                 </Button>
+                <Link to="/signup" className="btn btn-link">Sign up</Link>
             </Form>
         </div>
         </>

@@ -1,14 +1,21 @@
 @media all and (min-width: 480px) {
-    .Login {
+    .Signup {
         padding: 60px 0;
     }
 
-    .Login form{
+    .Signup form{
         margin: 20px auto;
         max-width: 340px;
         border: 1px solid #ccc;
         padding:80px;
         border-radius: 10px;
+    }
+
+    .Signup h3{
+        text-align: center;
+        margin: 0;
+        line-height: 1;
+        padding-bottom: 20px;
     }
 
     button {
