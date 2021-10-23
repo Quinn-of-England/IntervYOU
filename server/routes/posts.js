@@ -4,7 +4,7 @@ import {
   getAllPosts,
   getPostsByName,
   deletePost,
-} from "../controllers/Posts.js";
+} from "../controllers/posts.js";
 import Post from "../models/Post.js";
 
 const PostRouter = Router();
