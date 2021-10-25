@@ -44,3 +44,27 @@ export const deletePost = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const upVote = async(req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const post = await Post.findById(id);
+    const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes + 1}, { new: true} );
+    res.status(201).json(updatedPost);
+  } catch (err) {
+    res.status(401).json({ message: err.message });
+  }
+}
+
+export const downVote = async(req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const post = await Post.findById(id);
+    const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes - 1}, { new: true} );
+    res.status(201).json(updatedPost);
+  } catch (err) {
+    res.status(401).json({ message: err.message });
+  }
+}

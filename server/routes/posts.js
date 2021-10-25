@@ -27,4 +27,10 @@ PostRouter.patch("/:id", (req, res) => res.status(200).send());
 //Delete User By Id
 PostRouter.delete("/:id", deletePost);
 
+//Upvote post
+PostRouter.patch("/:id/upVote", upVote);
+
+//Downvote post
+PostRouter.patch("/:id/downVote", downVote);
+
 export default PostRouter;
