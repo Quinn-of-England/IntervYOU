@@ -26,6 +26,25 @@ const NavBar = () => {
       item: "Settings",
       path: "/settings",
     },
+    {
+      id: "nav-4",
+      item: "Login",
+      path: "/login",
+    },
+  ];
+
+  // Default Nav Items When Not Authenticated, To Be Implemented
+  const defaultNavItems = [
+    {
+      id: "nav-0",
+      item: "Sign Up",
+      path: "/signup",
+    },
+    {
+      id: "nav-1",
+      item: "Login",
+      path: "/login",
+    },
   ];
 
   const { pathname } = useLocation();
@@ -56,14 +75,17 @@ const StyledNavBar = styled.div`
   justify-content: space-between;
   align-items: center;
 
+  position: fixed;
+  top: 0;
+
   height: 50px;
   width: 100%;
 
-  padding: 0 20px;
+  padding: 0 40px;
 
   border-bottom: 1px solid #edeff1;
-  box-shadow: 0 1px 2px #0000000d, 0 1px 3px #0000000d, 0 2px 4px #0000000d;
-  background-color: #FFFFF;
+  box-shadow: 0 1px 2px #0000000d, 0 1px 3px #0000000d, 0 2px 3px #0000000d;
+  background: #fff;
 
   .nav-logo {
     font-size: 20px;
