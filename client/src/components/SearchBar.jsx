@@ -37,7 +37,7 @@ const StyledSearchBar = styled.div`
   padding-right: 6px;
 
   border-radius: 30px;
-  border: 1px solid ${COLORS.inputBorder};
+  border: 1px solid rgb(180, 180, 180); //${COLORS.inputBorder};
   box-shadow: 0 3px 8px ${COLORS.inputShadow};
 
   // Search Bar Text Input
@@ -58,7 +58,7 @@ const StyledSearchBar = styled.div`
     color: #253048;
 
     &::placeholder {
-      color: #999999;
+      color: rgb(100, 100, 100); //#999999;
     }
   }
 
