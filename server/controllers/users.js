@@ -36,7 +36,7 @@ export const login_post = async (req, res) => {
 }
 
 //Signup User
-export const signup_post = async (req, res) => {
+export const registration_post = async (req, res) => {
   try {
     let errors = { email: '', username: '', password: '' }
     let isEmpty = false

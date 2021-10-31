@@ -37,8 +37,8 @@ const NavBar = () => {
   const defaultNavItems = [
     {
       id: "nav-0",
-      item: "Sign Up",
-      path: "/signup",
+      item: "Registration",
+      path: "/registration",
     },
     {
       id: "nav-1",
