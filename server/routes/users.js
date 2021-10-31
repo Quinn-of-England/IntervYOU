@@ -6,8 +6,8 @@ const userRouter = Router();
 //Login - Find & Authenticate User
 userRouter.post("/login", userController.login_post);
 
-//Signup - Create User & Hash Password
-userRouter.post("/signup", userController.signup_post);
+//registration - Create User & Hash Password
+userRouter.post("/registration", userController.registration_post);
 
 //Logout - Delete cookie with refresh token
 userRouter.post("/logout", userController.logout_post)
