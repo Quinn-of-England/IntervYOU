@@ -2,7 +2,19 @@ import User from '../models/User.js'
 import bcrypt from 'bcrypt'
 import { createAccessToken, createRefreshToken } from '../auth.js'
 
-//Login User
+/**
+ * * This function will handle the user login
+ * * Will check if username and password matches user in database
+ * * If either is incorrect, will send 400(Bad request)
+ * * Will send 200(Ok) if user matches
+ * * Access token will be sent in 'Authorization' header and
+ * * Refresh token in cookie
+ * * Request must be formatted like bellow
+ * body: {
+ *  username: username of the user
+ *  password: password of the user
+ * }
+ */
 export const login_post = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username })
@@ -35,7 +47,21 @@ export const login_post = async (req, res) => {
   }
 }
 
-//Signup User
+/**
+ * * This function will handle the user registration
+ * * Will receive email, username and password
+ * * If the username or email already exists
+ * * A 409(Conflict) will be sent
+ * * Password will be hashed and stored in database
+ * * Access token will be sent in 'Authorization' header and
+ * * Refresh token in cookie
+ * * A 201(Create) will be sent when user has been created
+ * body: {
+ *  username,
+ *  email,
+ *  password
+ * }
+ */
 export const registration_post = async (req, res) => {
   try {
     let errors = { email: '', username: '', password: '' }
@@ -92,11 +118,15 @@ export const registration_post = async (req, res) => {
       })
     })
   } catch (err) {
-    res.status(500).json({ message: "Server error in signup_post", error: err.message })
+    res.status(500).json({ message: "Server error in registration_post", error: err.message })
   }
 }
 
-//Logout user
+/**
+ * * This function will handle the user logout
+ * * The refresh token will be deleted from the cookie
+ * * A 200(Ok) will be sent after success
+ */
 export const logout_post = (req, res) => {
   try{
     res.cookie('refreshToken', { maxAge: Date.now()})
@@ -109,25 +139,58 @@ export const logout_post = (req, res) => {
   }
 }
 
-//Get All Users
+/**
+ * * This function will get all the users from the database
+ * * Only the role, username and email of each user will be returned
+ * * A 200(Ok) will be sent after success 
+ * TODO: Check Whether User Has to Access All Users
+ */
 export const get_all_users = async (_, res) => {
   try {
-    //TODO: Check Whether User Has to Access All Users
     const users = await User.find({}, 'role username email')
     res.status(200).json(users)
   } catch (err) {
-    res.status(404).json({ message: err.message })
+    res.status(400).json({ message: err.message })
   }
 }
 
-//Get user by email
+/**
+ * * This function will fetch a user using the id
+ * * Will return a 200(Ok) with all the info of the user
+ * * Will return a 400(Bad request) if id does not exist
+ * Path parameters:
+ *  id
+ */
+export const get_user_by_id = async (req, res) => {
+  try{
+    const user = await User.findById(req.params.id, 'role username email')
+    if(user){
+      res.status(200).json(user)
+    }else{
+      res.status(400).json({ message: `Cant find user with id ${req.params.id}`})
+    }
+  }catch(err){
+    res.status(500).json({
+      message: `Server error while finding user with id`,
+      error: err.message
+    })
+  }
+}
+
+/**
+ * * This function will fetch a user using the email
+ * * Will return a 200(Ok) with all the info of the user
+ * * Will return a 400(Bad request) if email does not exist
+ * Path parameters:
+ *  email
+ */
 export const get_user_by_email = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }, 'role username email')
     if(user) {
       res.status(200).json(user)
     }else {
-      res.status(200).json({ message: `Cant find user with email ${req.params.email}`})
+      res.status(400).json({ message: `Cant find user with email ${req.params.email}`})
     }
   }catch(err){
     res.status(500).json({
@@ -137,14 +200,20 @@ export const get_user_by_email = async (req, res) => {
   }
 }
 
-//Get user by username
+/**
+ * * This function will fetch a user using the username
+ * * Will return a 200(Ok) with all the info of the user
+ * * Will return a 400(Bad request) if username does not exist
+ * Path parameters:
+ *  username
+ */
 export const get_user_by_username = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username }, 'role username email')
     if(user) {
       res.status(200).json(user)
     }else {
-      res.status(200).json({ message: `Cant find user with username ${req.params.username}`})
+      res.status(400).json({ message: `Cant find user with username ${req.params.username}`})
     }
   }catch(err){
     res.status(500).json({
@@ -154,14 +223,21 @@ export const get_user_by_username = async (req, res) => {
   }
 }
 
-//Get users by role
+/**
+ * * This function will fetch all users of a specific role
+ * * Only the username, email and role of the user will be sent
+ * * Will return a 200(Ok) with all the users of that role
+ * * Will return a 400(Bad request) if role does not exist
+ * Query parameters:
+ *  role
+ */
 export const get_all_users_by_role = async (req, res) => {
   try {
     const users = await User.find({ role: req.query.role }, 'role username email')
     if(users) {
       res.status(200).json(users)
     }else {
-      res.status(200).json({ message: `No users with role ${req.query.role}`})
+      res.status(400).json({ message: `No users with role ${req.query.role}`})
     }
   }catch(err){
     res.status(500).json({
@@ -171,14 +247,43 @@ export const get_all_users_by_role = async (req, res) => {
   }
 }
 
-//Delete user by email
+/**
+ * * This function will delete a user from the database using the id
+ * * Will return a 200(Ok) if user deleted
+ * * Will return a 400(Bad request) if id does not exist
+ * Path parameters:
+ *  id
+ */
+export const delete_user_by_id = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id)
+    if(user){
+      res.status(200).json({ message: `User ${user._id} deleted!`})
+    } else {
+      res.status(400).json({ message: `Not deleting user ${req.params.id} since id does not exist!`})
+    }
+  }catch(err){
+    res.status(500).json({
+      message: `Server error while deleting user with id`,
+      error: err.message
+    })
+  }
+}
+
+/**
+ * * This function will delete a user from the database using the email
+ * * Will return a 200(Ok) if user deleted
+ * * Will return a 400(Bad request) if email does not exist
+ * Path parameters:
+ *  email
+ */
 export const delete_user_by_email = async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ email: req.params.email}, 'role username email')
     if(user){
       res.status(200).json({ message: `User ${user.email} deleted!`})
     } else {
-      res.status(200).json({ message: `Not deleting user ${req.params.email} since email does not exist!`})
+      res.status(400).json({ message: `Not deleting user ${req.params.email} since email does not exist!`})
     }
   }catch(err){
     res.status(500).json({
@@ -188,7 +293,13 @@ export const delete_user_by_email = async (req, res) => {
   }
 }
 
-//Delete user by username
+/**
+ * * This function will delete a user from the database using the username
+ * * Will return a 200(Ok) if user deleted
+ * * Will return a 400(Bad request) if username does not exist
+ * Path parameters:
+ *  email
+ */
 export const delete_user_by_username = async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ username: req.params.username}, 'role username email')

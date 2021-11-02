@@ -18,6 +18,9 @@ userRouter.get("/", userController.get_all_users);
 //Read - Get all users with role
 userRouter.get("/role", userController.get_all_users_by_role)
 
+//Read - Get user by id
+userRouter.get("/:id", userController.get_user_by_id)
+
 //Read - Get user by email
 userRouter.get("/:email", userController.get_user_by_email)
 
@@ -29,7 +32,7 @@ userRouter.get("/:username", userController.get_user_by_username)
 //userRouter.patch("/:username", updateUserRole);
 
 //Delete User By Id
-//userRouter.delete('/:id', (req, res) => res.status(200).send());
+userRouter.delete('/:id', userController.delete_user_by_id);
 
 //Delete user by email
 userRouter.delete('/:email', userController.delete_user_by_email)

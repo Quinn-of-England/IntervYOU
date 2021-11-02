@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "MENTEE",
   },
+  posts: [
+    {
+      post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post'}
+    }
+  ],
   tokenVersion: {
     type: Number,
     default: 0,
