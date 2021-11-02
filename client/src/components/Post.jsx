@@ -9,6 +9,7 @@ import {
   BookmarkIcon,
   ShareLinkedinIcon,
 } from "../utils/icons";
+import File from "./File";
 import { COLORS } from "../utils/customStyles";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
@@ -52,6 +53,7 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
         <div className="post-title"> {title} </div>
         <div className="post-user"> {user} </div>
         <div className="post-description">{description}</div>
+        <File fileName="Sample.png" fileSize="25 MB" fileType="Picture" />
         <div className="post-footer">
           <div className="post-actions">
             <CommentsIcon />
