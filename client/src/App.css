@@ -15,13 +15,33 @@ li {
   list-style: none;
 }
 
+.row {
+  display:flex; 
+  flex-direction:row;
+  height: 100vh;
+}
+
 form {
-  border: 3px solid #f1f1f1;
   margin: 0 auto;
   margin-top: 100px;
-  width:20%;
+  width:40%;
   border: 3px solid #004e7c;
   border-radius: 10px;
+  background-color: #ccc;
+}
+
+button {
+  background-color: #006cbd;
+  color: white;
+  padding: 14px 20px;
+  margin: 5px;
+  border: none;
+  cursor: pointer;
+  width: 90%;
+}
+
+button:hover {
+  opacity: 0.8;
 }
 
 .logo {
@@ -37,20 +57,6 @@ form {
   margin-top: auto;
   margin: 0 auto;
   width: auto;
-}
-
-button {
-  background-color: #006cbd;
-  color: white;
-  padding: 14px 20px;
-  margin: 5px;
-  border: none;
-  cursor: pointer;
-  width: 90%;
-}
-
-button:hover {
-  opacity: 0.8;
 }
 
 .container {
@@ -86,7 +92,7 @@ input[type=text], input[type=username] {
   margin: 5px;
 }
 
-input[type=text], input[type=password_confirmation] {
+input[type=text], input[type=passwordconfirmation] {
   width: 90%;
   padding: 12px 20px;
   display: inline-block;
@@ -94,3 +100,4 @@ input[type=text], input[type=password_confirmation] {
   box-sizing: border-box;
   margin: 5px;
 }
+

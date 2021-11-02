@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import "./App.css";
 import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
+import Dashboard from "./pages/Dashboard";
 
 
 export default class App extends Component{
@@ -57,9 +58,15 @@ export default class App extends Component{
           <Route path={"/"} 
           exact
           render = {props => (
-            <Home { ... props} handleLogin={this.handleLogin} loggedInStatus = {this.state.loggedInStatus} />
+            <Dashboard { ... props} handleLogin={this.handleLogin} loggedInStatus = {this.state.loggedInStatus} />
           )}>
           </Route>  
+          <Route path={"/home"} 
+          exact
+          render = {props => (
+            <Home { ... props} handleLogin={this.handleLogin} loggedInStatus = {this.state.loggedInStatus} />
+          )}>
+          </Route> 
           <Route path={"/feed"}
             exact
             render = {props => (
@@ -88,6 +95,12 @@ export default class App extends Component{
             exact
             render = {props => (
             <Login { ... props} handleLogin={this.handleLogin} loggedInStatus = {this.state.loggedInStatus} />
+            )}>
+          </Route>
+          <Route path={"/dashboard"}
+            exact
+            render = {props => (
+            <Dashboard { ... props} handleLogin={this.handleLogin} loggedInStatus = {this.state.loggedInStatus} />
             )}>
           </Route>
         </Router>

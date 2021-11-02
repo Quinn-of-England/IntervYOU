@@ -9,7 +9,7 @@ const NavBar = () => {
     {
       id: "nav-0",
       item: "Home",
-      path: "/",
+      path: "/home",
     },
     {
       id: "nav-1",
@@ -29,7 +29,7 @@ const NavBar = () => {
     {
       id: "nav-4",
       item: "Login",
-      path: "/login",
+      path: "/dashboard",
     },
   ];
 

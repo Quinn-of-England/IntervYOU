@@ -29,11 +29,11 @@ export default class Login extends Component {
       .post(
         'http://localhost:5000/api/users/login', //change url
         {
-          user: {
+          
             email: email,
             username: username,
             password: password
-          }
+          
         },
         { withCredentials: true }
       )

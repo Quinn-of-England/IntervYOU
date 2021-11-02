@@ -88,7 +88,7 @@ export default class Registration extends Component {
                 required
               />
               <input
-                type="password"
+                type="passwordconfirmation"
                 name="password_confirmation"
                 placeholder="Password confirmation"
                 value={this.state.password_confirmation}
