@@ -9,6 +9,7 @@ import {
   BookmarkIcon,
   ShareLinkedinIcon,
 } from "../utils/icons";
+import Files from "./Files";
 import { COLORS } from "../utils/customStyles";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
@@ -41,6 +42,25 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const currentDownColor =
     voteState === -1 ? COLORS.burgundyRed : COLORS.fadedGrey;
 
+  // Dummy Data to Be Replaced By Axios Call to Get Data
+  const files = [
+    {
+      fileName: "Sample.doc",
+      fileSize: "20 MB",
+      fileType: "Word Document",
+    },
+    {
+      fileName: "Sampleasdfasdfasddsfads.ppt",
+      fileSize: "40 MB",
+      fileType: "Powerpoint Slides",
+    },
+    {
+      fileName: "Samplexl.xl",
+      fileSize: "10 MB",
+      fileType: "Excel Spreadsheet",
+    },
+  ];
+
   return (
     <StyledPost voteState={currentColor}>
       <div className="voting-buttons">
@@ -48,10 +68,14 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
         <div className="vote-total">{voteTotal}</div>
         <DownVoteArrowIcon color={currentDownColor} onDownVote={downVoted} />
       </div>
+
       <div className="post-content">
         <div className="post-title"> {title} </div>
         <div className="post-user"> {user} </div>
         <div className="post-description">{description}</div>
+
+        <Files files={files} />
+
         <div className="post-footer">
           <div className="post-actions">
             <CommentsIcon />
