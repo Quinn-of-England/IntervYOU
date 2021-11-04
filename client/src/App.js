@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import axios from "axios";
 import Home from "./pages/Home";
@@ -8,24 +8,23 @@ import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
 import Post from "./pages/Post";
 
-export default class App extends Component {
-  constructor() {
-    super();
+const App = () => {
+  const [loginStatus, setLoginStatus] = useState({
+    isLoggedIn: false,
+    userId: null,
+  });
 
-    this.state = {
-      //normal state of user
-      loggedInStatus: "NOT_LOGGED_IN",
-      user: {},
-    };
+  useEffect(() => {
+    console.log(loginStatus);
+    setLoginStatus((prevStatus) => ({ isLoggedIn: false, userId: null }));
+  }, [loginStatus]);
 
-    this.handleLogin = this.handleLogin.bind(this);
-  }
-
-  checkLoginStatus() {
+  const checkLoginStatus = () => {
     axios
-      .get("http://localhost:5000/api/logged_in", { withCredentials: true })
-      .then((response) => {
-        console.log("logged in?", response); //TODO add the follwoing comment in replace above console out logged in?
+      .get("http://localhost:5000/api/logged_in")
+      .then((res) => {
+        console.log("logged in?", res);
+        //TODO add the follwoing comment in replace above console out logged in?
         // if (response.data.logged_in &&  this.state.loggedInStatus === "NOT_LOGGED_IN"){
         //   this.setState({
         //     loggedInStatus: "LOGGED_IN",
@@ -37,82 +36,58 @@ export default class App extends Component {
         //     user: {}
         // }
       })
-      .catch((error) => {
-        console.log("Check login error");
+      .catch((err) => {
+        console.log(err.message);
       });
-  }
+  };
 
-  componentDidMount() {
-    this.checkLoginStatus();
-  }
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
 
-  handleLogin(data) {
-    this.setState({
-      loggedInStatus: "LOGGED_IN",
-      user: data,
-    });
-  }
+  // const handleLogin = (data) => {
+  //   setLoginStatus({
+  //     loginStatus: true,
+  //     userId: data,
+  //   });
+  // };
 
-  render() {
-    return (
-      <Router>
-        <Route
-          path={"/"}
-          exact
-          render={(props) => (
-            <Home
-              {...props}
-              handleLogin={this.handleLogin}
-              loggedInStatus={this.state.loggedInStatus}
-            />
-          )}
-        />
-        <Route path="/post" exact render={(props) => <Post {...props} />} />
-        <Route
-          path={"/feed"}
-          exact
-          render={(props) => (
-            <Home {...props} loggedInStatus={this.state.loggedInStatus} />
-          )}
-        ></Route>
-        <Route
-          path={"/profile"}
-          exact
-          render={(props) => (
-            <Home {...props} loggedInStatus={this.state.loggedInStatus} />
-          )}
-        ></Route>
-        <Route
-          path={"/settings"}
-          exact
-          render={(props) => (
-            <Home {...props} loggedInStatus={this.state.loggedInStatus} />
-          )}
-        ></Route>
-        <Route
-          path={"/registration"}
-          exact
-          render={(props) => (
-            <Registration
-              {...props}
-              loggedInStatus={this.state.loggedInStatus}
-            />
-          )}
-        ></Route>
-        <Route
-          path={"/login"}
-          exact
-          render={(props) => (
-            <Login
-              {...props}
-              handleLogin={this.handleLogin}
-              loggedInStatus={this.state.loggedInStatus}
-            />
-          )}
-        ></Route>
-      </Router>
-    );
-  }
-}
+  return (
+    <Router>
+      <Route path="/" exact>
+        <Home />
+      </Route>
+      <Route path="/feed">
+        <Home />
+      </Route>
+      <Route path="/post">
+        <Post />
+      </Route>
+      <Route path="/profile">
+        <Home />
+      </Route>
+      <Route path="/settings">
+        <Home />
+      </Route>
+      <Route path="/login">
+        <Login />
+      </Route>
+      <Route path="/signup">
+        <Registration />
+      </Route>
+    </Router>
+  );
+  // <Route
+  //   path={"/"}
+  //   exact
+  //   render={(props) => (
+  //     <Home
+  //       {...props}
+  //       handleLogin={handleLogin}
+  //       loggedInStatus={setLoginStatus}
+  //     />
+  //   )}
+  // />
+};
 
-// export default App;
+export default App;

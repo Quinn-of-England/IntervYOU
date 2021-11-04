@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import "../utils/global.css";
 
 const NavBar = () => {
+  const [isAuth, setIsAuth] = useState(true);
+
+  useEffect(() => {
+    setIsAuth(true);
+  }, []);
+
   const navItems = [
     {
       id: "nav-0",
@@ -56,7 +62,7 @@ const NavBar = () => {
       </Link>
 
       <ul className="nav-links">
-        {navItems.map(({ id, item, path }) => (
+        {(isAuth ? navItems : defaultNavItems).map(({ id, item, path }) => (
           <Link
             key={id}
             className={path === pathname ? "active-link" : undefined}

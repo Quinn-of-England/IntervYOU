@@ -84,7 +84,7 @@ const StyledFile = styled.div`
   .file-name {
     font-size: 16px;
     font-weight: 500;
-    color: rgb(15, 15, 15);
+    color: #0f0f0f;
 
     width: 200px;
 
@@ -101,7 +101,7 @@ const StyledFile = styled.div`
     align-items: center;
 
     font-size: 12px;
-    color: rgb(105, 105, 105);
+    color: #696969;
 
     padding: 2px 0 5px;
 

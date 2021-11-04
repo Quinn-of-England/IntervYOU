@@ -51,6 +51,7 @@ const Posts = () => {
   ];
 
   const posts = useSelector((state) => state.posts);
+  console.log("TODO IMPLEMENT: ", posts);
   const dispatch = useDispatch();
 
   useEffect(() => {

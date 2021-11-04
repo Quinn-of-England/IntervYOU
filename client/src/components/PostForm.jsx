@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 
-import BackButton from "./BackButton";
 import AddButton from "./AddButton";
 import InputField from "./InputField";
 import CancelButton from "./CancelButton";
@@ -11,14 +10,6 @@ import CancelButton from "./CancelButton";
 import File from "./File";
 
 const PostForm = () => {
-  const onCreatePost = (e) => {
-    e.preventDefault();
-
-    console.log("nice");
-
-    //     dispatchEvent(createPost(postData));
-  };
-
   const location = useLocation();
   const history = useHistory();
 
@@ -26,13 +17,30 @@ const PostForm = () => {
     { title: "", group: "", content: "", files: "" },
   ]);
 
+  useEffect(() => {
+    //TODO: Set Post Content for Update Page
+    console.log(postContent);
+    setPostContent({
+      title: "title",
+      group: "group",
+      content: "content",
+      files: "files",
+    });
+  }, [postContent]);
+
+  const onCreatePost = (e) => {
+    e.preventDefault();
+
+    history.push(location.pathname + "/home");
+    //     dispatchEvent(createPost(postData));
+  };
+
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
     const fileSizes = ["Bytes", "KB", "MB", "GB"];
 
-    console.log(fileBytes);
     let bytes = parseInt(fileBytes);
     while (bytes > 1024) {
       bytes /= 1024;
@@ -74,22 +82,14 @@ const PostForm = () => {
   const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
-  // const files = acceptedFiles.map((file) => (
-  //   <File
-  //   <li key={file.path}>
-  //     {file.path} - {file.size} bytes
-  //   </li>
-  // ));
-
   return (
     <StyledPostForm>
-      {/* Create Post Title */}
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
       <InputField label="Title" errMessage="Required *" />
       <InputField label="Community" errMessage="Required *" />
-      {/* Search for a community to post to */}
+      {/* TODO: Search for a community to post to */}
       <InputField label="Content" errMessage="" />
 
       {/* File Drag and Drop Section */}
@@ -98,7 +98,8 @@ const PostForm = () => {
       <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <p> Drag and Drop Files Here!</p>
+          <div> Drag and Drop Files Here!</div>
+          <div> Or Click to Select Files </div>
         </div>
       </div>
 
@@ -174,7 +175,7 @@ const StyledPostForm = styled.div`
   }
 
   .has-files {
-    color: rgb(135, 135, 135);
+    color: #878787;
     margin-bottom: 5px;
   }
 

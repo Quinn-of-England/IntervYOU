@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-import { RightArrowIcon } from "../utils/icons";
-
 const CancelButton = ({ btnText, handleClick }) => {
   return (
     <StyledCancelButton onClick={handleClick}>

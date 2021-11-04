@@ -4,23 +4,23 @@ import { Link } from "react-router-dom";
 
 import { CreatePostIcon } from "../utils/icons";
 
-const CreatePost = () => {
+const CreatePostButton = () => {
   // Send Post to DB
   const sendPost = () => {
     console.log("POST SENT");
   };
 
   return (
-    <StyledCreatePost onClick={sendPost}>
+    <StyledPostButton onClick={sendPost}>
       <Link to={"/post"}>
         <div className="btn-title"> Create a post </div>
         <CreatePostIcon />
       </Link>
-    </StyledCreatePost>
+    </StyledPostButton>
   );
 };
 
-const StyledCreatePost = styled.div`
+const StyledPostButton = styled.div`
   // Create Button Container
   display: flex;
   align-items: center;
@@ -63,4 +63,4 @@ const StyledCreatePost = styled.div`
   }
 `;
 
-export default CreatePost;
+export default CreatePostButton;

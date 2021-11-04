@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import NavBar from "../components/NavBar";
 import Posts from "../components/Posts";
 
 import SearchBar from "../components/SearchBar";
-import CreatePost from "../components/CreatePost";
+import CreatePostButton from "../components/CreatePostButton";
 
 // import { useHistory } from "react-router-dom";
-import Registration from "../components/authentication/Registration";
-import PostForm from "../components/PostForm";
+// import Registration from "../components/authentication/Registration";
+// import PostForm from "../components/PostForm";
 
 const Home = () => {
-  const [filteredInput, setFilteredInput] = useState("");
-  const [isAuth, setIsAuth] = useState(false);
+  // const [filteredInput, setFilteredInput] = useState("");
+  // const [isAuth, setIsAuth] = useState(false);
 
   // useEffect(() => {
   //   if (!isAuth) history.push("/login");
@@ -27,12 +27,13 @@ const Home = () => {
       {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}
       <div className="home-content">
         <div className="home-actions">
-          <h3>Status: {isAuth} </h3>
+          {/* Implement isAuth as Toast */}
+          {/* <h3>Status: {isAuth} </h3> */}
           <SearchBar
             placeHolder="Search for Interviews"
             // applyFilter={setFilteredInput}
           />
-          <CreatePost />
+          <CreatePostButton />
         </div>
         <Posts />
       </div>

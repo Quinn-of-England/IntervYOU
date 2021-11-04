@@ -7,6 +7,9 @@ const InputField = ({ label, errMessage }) => {
   const [input, setInput] = useState("");
   const [isValidInput, setIsValidInput] = useState(true);
 
+  // TODO; Set up Logic, Added this line to avoid warnings
+  setIsValidInput(false);
+
   return (
     <StyledInput>
       <div className="title-validation">
