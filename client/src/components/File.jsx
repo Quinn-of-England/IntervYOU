@@ -16,21 +16,25 @@ import {
 const File = ({ fileName, fileSize, fileType }) => {
   const generateFileIcon = () => {
     switch (fileType) {
-      case "Word Document" || "DOC":
+      case "Word Document":
         return <WordFile />;
-      case "Powerpoint Slides" || "PPT":
+      case "Powerpoint Slides":
         return <PptFile />;
-      case "Excel Spreadsheet" || "XL":
+      case "Excel Spreadsheet":
         return <ExcelFile />;
-      case "Picture" || "PNG" || "JPG":
+      case "Image (png)":
+      case "Image (jpg)":
+      case "Image (jpeg)":
+      case "Image (gif)":
         return <ImgFile />;
-      case "Audio" || "MP3":
+      case "Audio MP3":
         return <AudioFile />;
-      case "Video" || "MP4":
+      case "Video MP4":
         return <VideoFile />;
-      case "Acrobat" || "PDF":
+      case "PDF Document":
         return <PdfFile />;
-      case "Compressed Files" || "ZIP":
+      case "Compressed Files (zip)":
+      case "Compressed Files (rar)":
         return <ZipFile />;
       default:
         return <CodeFile />;

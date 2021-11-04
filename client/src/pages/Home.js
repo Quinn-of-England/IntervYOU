@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import NavBar from "../components/NavBar";
@@ -6,45 +6,38 @@ import Posts from "../components/Posts";
 
 import SearchBar from "../components/SearchBar";
 import CreatePost from "../components/CreatePost";
+
+// import { useHistory } from "react-router-dom";
 import Registration from "../components/authentication/Registration";
+import PostForm from "../components/PostForm";
 
+const Home = () => {
+  const [filteredInput, setFilteredInput] = useState("");
+  const [isAuth, setIsAuth] = useState(false);
 
+  // useEffect(() => {
+  //   if (!isAuth) history.push("/login");
+  // }, []);
+  //   handleSuccessfulAuth(data){
+  //     this.props.handleLogin(data);
 
-// const Home = () => {
-//   const [filteredInput, setFilteredInput] = useState("");
-export default class Home extends Component{
-  constructor(props){
-    super(props);
-
-    this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);    
-
-  }
-
-  handleSuccessfulAuth(data){
-    this.props.handleLogin(data);
-    this.props.history.push("/login");
-  }
-
-  render(){
-    return (
-      <StyledHome>
-        <NavBar />
-        <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/>
-        <div className="home-content">
-          <div className="home-actions">
-          <h3>Status: {this.props.loggedInStatus}</h3>
-            <SearchBar
-              placeHolder="Search for Interviews"
-              // applyFilter={setFilteredInput}
-            />
-            <CreatePost />
-          </div>
-          <Posts />
+  return (
+    <StyledHome>
+      <NavBar />
+      {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}
+      <div className="home-content">
+        <div className="home-actions">
+          <h3>Status: {isAuth} </h3>
+          <SearchBar
+            placeHolder="Search for Interviews"
+            // applyFilter={setFilteredInput}
+          />
+          <CreatePost />
         </div>
-        
-      </StyledHome>
-    );
-  }
+        <Posts />
+      </div>
+    </StyledHome>
+  );
 };
 
 const StyledHome = styled.div`
@@ -64,4 +57,4 @@ const StyledHome = styled.div`
   }
 `;
 
-// export default Home;
+export default Home;

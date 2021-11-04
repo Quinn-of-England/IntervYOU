@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 import { CreatePostIcon } from "../utils/icons";
 
@@ -11,8 +12,10 @@ const CreatePost = () => {
 
   return (
     <StyledCreatePost onClick={sendPost}>
-      <div className="btn-title"> Create a post </div>
-      <CreatePostIcon />
+      <Link to={"/post"}>
+        <div className="btn-title"> Create a post </div>
+        <CreatePostIcon />
+      </Link>
     </StyledCreatePost>
   );
 };

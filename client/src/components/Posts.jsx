@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Post from "./Post";
+import { getPosts } from "../actions/posts.js";
 
 const Posts = () => {
   // Dummy Data to Be Replaced By Axios Call to Get Data
@@ -46,6 +49,13 @@ const Posts = () => {
       currentUserVote: 0,
     },
   ];
+
+  const posts = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getPosts());
+  }, [dispatch]);
 
   return (
     <>
