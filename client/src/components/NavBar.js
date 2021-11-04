@@ -5,10 +5,10 @@ import styled from "styled-components";
 import "../utils/global.css";
 
 const NavBar = () => {
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
-    setIsAuth(true);
+    setIsAuth(false);
   }, []);
 
   const navItems = [
@@ -34,7 +34,7 @@ const NavBar = () => {
     },
     {
       id: "nav-4",
-      item: "Login",
+      item: "Logout",
       path: "/login",
     },
   ];
@@ -44,7 +44,7 @@ const NavBar = () => {
     {
       id: "nav-0",
       item: "Registration",
-      path: "/registration",
+      path: "/signup",
     },
     {
       id: "nav-1",

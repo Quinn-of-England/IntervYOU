@@ -7,10 +7,6 @@ import Posts from "../components/Posts";
 import SearchBar from "../components/SearchBar";
 import CreatePostButton from "../components/CreatePostButton";
 
-// import { useHistory } from "react-router-dom";
-// import Registration from "../components/authentication/Registration";
-// import PostForm from "../components/PostForm";
-
 const Home = () => {
   // const [filteredInput, setFilteredInput] = useState("");
   // const [isAuth, setIsAuth] = useState(false);
@@ -47,8 +43,8 @@ const StyledHome = styled.div`
   background: #eaf3f3;
 
   .home-content {
-    padding: 60px 0;
-    margin: 0 40px;
+    padding: 20px 0;
+    margin: 50px;
   }
 
   .home-actions {

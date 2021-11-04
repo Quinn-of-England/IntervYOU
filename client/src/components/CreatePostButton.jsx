@@ -5,14 +5,9 @@ import { Link } from "react-router-dom";
 import { CreatePostIcon } from "../utils/icons";
 
 const CreatePostButton = () => {
-  // Send Post to DB
-  const sendPost = () => {
-    console.log("POST SENT");
-  };
-
   return (
-    <StyledPostButton onClick={sendPost}>
-      <Link to={"/post"}>
+    <StyledPostButton>
+      <Link to={"/post"} className="post-link">
         <div className="btn-title"> Create a post </div>
         <CreatePostIcon />
       </Link>
@@ -22,10 +17,6 @@ const CreatePostButton = () => {
 
 const StyledPostButton = styled.div`
   // Create Button Container
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
   width: 150px;
 
   margin: 10px;
@@ -35,6 +26,13 @@ const StyledPostButton = styled.div`
   border: 1px solid #0b5ac4;
   box-shadow: 0 3px 8px #0b5ac41a;
   cursor: pointer;
+
+  //Link to Post
+  .post-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   // Create Post Btn Text
   .btn-title {
@@ -46,8 +44,7 @@ const StyledPostButton = styled.div`
     padding: 8px 0;
     padding-left: 20px;
 
-    width: 90%;
-    border-radius: 30px 0 0 30px;
+    //width: 90%;
   }
 
   // Create Icon

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -13,20 +13,9 @@ const PostForm = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const [postContent, setPostContent] = useState([
-    { title: "", group: "", content: "", files: "" },
-  ]);
-
-  useEffect(() => {
-    //TODO: Set Post Content for Update Page
-    console.log(postContent);
-    setPostContent({
-      title: "title",
-      group: "group",
-      content: "content",
-      files: "files",
-    });
-  }, [postContent]);
+  // const [postContent, setPostContent] = useState([
+  //   { title: "", group: "", content: "", files: "" },
+  // ]);
 
   const onCreatePost = (e) => {
     e.preventDefault();

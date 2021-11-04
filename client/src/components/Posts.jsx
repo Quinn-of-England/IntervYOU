@@ -61,7 +61,7 @@ const Posts = () => {
   return (
     <>
       {allPosts.map(({ id, ...post }) => (
-        <Post {...post} />
+        <Post key={id} {...post} />
       ))}
     </>
   );

@@ -172,7 +172,7 @@ export const BookmarkIcon = () => (
     width="24"
     height="24"
     stroke="currentColor"
-    stroke-width="2"
+    strokeWidth="2"
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
