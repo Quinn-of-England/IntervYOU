@@ -16,21 +16,25 @@ import {
 const File = ({ fileName, fileSize, fileType }) => {
   const generateFileIcon = () => {
     switch (fileType) {
-      case "Word Document" || "DOC":
+      case "Word Document":
         return <WordFile />;
-      case "Powerpoint Slides" || "PPT":
+      case "Powerpoint Slides":
         return <PptFile />;
-      case "Excel Spreadsheet" || "XL":
+      case "Excel Spreadsheet":
         return <ExcelFile />;
-      case "Picture" || "PNG" || "JPG":
+      case "Image (png)":
+      case "Image (jpg)":
+      case "Image (jpeg)":
+      case "Image (gif)":
         return <ImgFile />;
-      case "Audio" || "MP3":
+      case "Audio MP3":
         return <AudioFile />;
-      case "Video" || "MP4":
+      case "Video MP4":
         return <VideoFile />;
-      case "Acrobat" || "PDF":
+      case "PDF Document":
         return <PdfFile />;
-      case "Compressed Files" || "ZIP":
+      case "Compressed Files (zip)":
+      case "Compressed Files (rar)":
         return <ZipFile />;
       default:
         return <CodeFile />;
@@ -80,7 +84,7 @@ const StyledFile = styled.div`
   .file-name {
     font-size: 16px;
     font-weight: 500;
-    color: rgb(15, 15, 15);
+    color: #0f0f0f;
 
     width: 200px;
 
@@ -97,7 +101,7 @@ const StyledFile = styled.div`
     align-items: center;
 
     font-size: 12px;
-    color: rgb(105, 105, 105);
+    color: #696969;
 
     padding: 2px 0 5px;
 

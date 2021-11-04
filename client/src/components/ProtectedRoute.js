@@ -1,8 +1,19 @@
 import React from "react";
+import { Route, Redirect } from "react-router-dom";
 
 //TODO: Protected Route will check whether user is authenticated and redirect user otherwise.
-const ProtectedRoute = () => {
-  return <div> Protected Route</div>;
+const ProtectedRoute = ({ component: Component, ...rest }) => {
+  //TODO: Set up isAuth
+  const isAuth = () => {
+    return localStorage.getItem("user");
+  };
+
+  return (
+    <Route
+      {...rest}
+      render={() => (isAuth() ? <Component /> : <Redirect to="/login" />)}
+    />
+  );
 };
 
 export default ProtectedRoute;

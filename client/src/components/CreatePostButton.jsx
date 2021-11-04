@@ -1,28 +1,22 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 import { CreatePostIcon } from "../utils/icons";
 
-const CreatePost = () => {
-  // Send Post to DB
-  const sendPost = () => {
-    console.log("POST SENT");
-  };
-
+const CreatePostButton = () => {
   return (
-    <StyledCreatePost onClick={sendPost}>
-      <div className="btn-title"> Create a post </div>
-      <CreatePostIcon />
-    </StyledCreatePost>
+    <StyledPostButton>
+      <Link to={"/post"} className="post-link">
+        <div className="btn-title"> Create a post </div>
+        <CreatePostIcon />
+      </Link>
+    </StyledPostButton>
   );
 };
 
-const StyledCreatePost = styled.div`
+const StyledPostButton = styled.div`
   // Create Button Container
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
   width: 150px;
 
   margin: 10px;
@@ -32,6 +26,13 @@ const StyledCreatePost = styled.div`
   border: 1px solid #0b5ac4;
   box-shadow: 0 3px 8px #0b5ac41a;
   cursor: pointer;
+
+  //Link to Post
+  .post-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   // Create Post Btn Text
   .btn-title {
@@ -43,8 +44,7 @@ const StyledCreatePost = styled.div`
     padding: 8px 0;
     padding-left: 20px;
 
-    width: 90%;
-    border-radius: 30px 0 0 30px;
+    //width: 90%;
   }
 
   // Create Icon
@@ -60,4 +60,4 @@ const StyledCreatePost = styled.div`
   }
 `;
 
-export default CreatePost;
+export default CreatePostButton;

@@ -113,7 +113,7 @@ const StyledPost = styled.div`
   transition: all 0.6s ease;
 
   &:hover {
-    border: solid 1px rgb(150, 150, 150);
+    border: solid 1px #969696;
   }
 
   .voting-buttons {
@@ -173,7 +173,7 @@ const StyledPost = styled.div`
       padding-right: 55%;
 
       font-weight: 150;
-      color: rgb(169, 169, 169);
+      color: #a9a9a9;
       margin: 10px 0;
 
       .post-actions {
@@ -190,7 +190,7 @@ const StyledPost = styled.div`
 
         &:hover {
           cursor: pointer;
-          background: rgb(232, 232, 232);
+          background: #e8e8e8;
         }
       }
     }
