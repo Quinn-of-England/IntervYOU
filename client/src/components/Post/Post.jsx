@@ -8,9 +8,9 @@ import {
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
-} from "../utils/icons";
-import Files from "./Files";
-import { COLORS } from "../utils/customStyles";
+} from "../../utils/icons";
+import Files from "../File/Files";
+import { COLORS } from "../../utils/customStyles";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const [voteState, setVoteState] = useState(currentUserVote);

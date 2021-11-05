@@ -12,7 +12,6 @@ const Login = () => {
   //Use State Hook to Update Form Details
   const [details, setDetails] = useState({
     username: "",
-    email: "",
     password: "",
   });
 
@@ -29,7 +28,7 @@ const Login = () => {
     axios
       .post(`http://localhost:5000/api/users/login`, details)
       .then((res) => {
-        history.push("/home");
+        history.push("/");
         localStorage.setItem("Authorization", res.data.token);
         console.log("User Successfully Logged In!");
         setErrorMsgs([]);
@@ -70,11 +69,9 @@ const Login = () => {
         />
       </div>
 
-      <Link to="/home">
-        <button type="submit" className="btn-login" onClick={onPost}>
-          Login
-        </button>
-      </Link>
+      <button type="submit" className="btn-login" onClick={onPost}>
+        Login
+      </button>
 
       <div className="signup-link">
         <span className="login-account"> Don't have an Account? </span>

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import "../utils/global.css";
 
 const NavBar = () => {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
 
-  useEffect(() => {
-    setIsAuth(false);
-  }, []);
+  // To Remove Warning in Console for Now
+  if (!isAuth) {
+    setIsAuth((prevAuth) => !prevAuth);
+  }
 
   const navItems = [
     {
@@ -24,8 +25,8 @@ const NavBar = () => {
     },
     {
       id: "nav-2",
-      item: "Profile",
-      path: "/profile",
+      item: "Groups",
+      path: "/groups",
     },
     {
       id: "nav-3",
