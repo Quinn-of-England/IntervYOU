@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import NavBar from "../components/NavBar";
-import PostForm from "../components/PostForm";
+import PostForm from "../components/PostForm/PostForm";
 
-const Post = () => {
+const PostPage = () => {
   return (
     <StyledPostScreen>
       <NavBar />
@@ -24,4 +24,4 @@ const StyledPostScreen = styled.div`
   }
 `;
 
-export default Post;
+export default PostPage;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import "../utils/global.css";
+import "../../utils/global.css";
 
 const InputField = ({ label, errMessage }) => {
   const [input, setInput] = useState("");

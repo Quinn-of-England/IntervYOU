@@ -11,7 +11,7 @@ import {
   PptFile,
   WordFile,
   ZipFile,
-} from "../utils/imgs";
+} from "../../utils/imgs";
 
 const File = ({ fileName, fileSize, fileType }) => {
   const generateFileIcon = () => {

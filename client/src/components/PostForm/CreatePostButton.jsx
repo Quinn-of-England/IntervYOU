@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-import { CreatePostIcon } from "../utils/icons";
+import { CreatePostIcon } from "../../utils/icons";
 
 const CreatePostButton = () => {
   return (
