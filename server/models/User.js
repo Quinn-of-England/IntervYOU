@@ -23,6 +23,9 @@ const userSchema = new mongoose.Schema({
       post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post'}
     }
   ],
+  likes: {
+    type: Map
+  },
   tokenVersion: {
     type: Number,
     default: 0,

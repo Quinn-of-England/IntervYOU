@@ -12,9 +12,9 @@ import {
 import Files from "./Files";
 import { COLORS } from "../utils/customStyles";
 
-const Post = ({ title, user, description, voteCount, currentUserVote }) => {
-  const [voteState, setVoteState] = useState(currentUserVote);
-  const [voteTotal, setVoteTotal] = useState(voteCount);
+const Post = ({ title, userId, group, content, likes, currentuserIdVote }) => {
+  const [voteState, setVoteState] = useState(currentuserIdVote);
+  const [voteTotal, setVoteTotal] = useState(likes);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
@@ -71,8 +71,9 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
 
       <div className="post-content">
         <div className="post-title"> {title} </div>
-        <div className="post-user"> {user} </div>
-        <div className="post-description">{description}</div>
+        <div className="post-userId"> {userId} </div>
+        <div className="post-group"> {group} </div>
+        <div className="post-content">{content}</div>
 
         <Files files={files} />
 
@@ -152,13 +153,13 @@ const StyledPost = styled.div`
       padding-top: 8px;
     }
 
-    &-user {
+    &-userId {
       color: ${COLORS.fadedGrey};
       font-size: 14px;
       padding-bottom: 8px;
     }
 
-    &-description {
+    &-content {
       font-size: 16px;
       font-weight: 200;
       padding-bottom: 8px;

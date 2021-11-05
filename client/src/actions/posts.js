@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import * as api from '../index.js';
 const baseUrl = "http://localhost:5000/";
 
 const usersRoute = baseUrl + "users/";
@@ -26,10 +27,10 @@ export const getPosts = () => async (dispatch) => {
   }
 };
 
-export const createPost = (newPost) => async (dispatch) => {
+export const createPost = (post) => async (dispatch) => {
   try {
-    const { data } = await axios.get(postsRoute, newPost);
-    dispatch({ type: "CREATE_POST", payload: data });
+    const { data } = await AudioParam.createPost(post)
+    dispatch({ type: 'CREATE_POST', payload: data });
   } catch (err) {
     console.log(err.message);
   }

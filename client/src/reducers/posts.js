@@ -1,9 +1,9 @@
-export default (posts = [], { type, payload }) => {
+export default (posts = [], action) => {
   switch (type) {
     case "GET_POSTS":
-      return payload.data;
+      return action.payload.data;
     case "CREATE_POST":
-      return posts;
+      return [...posts, action.payload];
     case "EDIT_POST":
       return posts;
     case "DELETE_POST":

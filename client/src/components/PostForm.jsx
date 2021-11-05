@@ -1,27 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
-
 import AddButton from "./AddButton";
 import InputField from "./InputField";
 import CancelButton from "./CancelButton";
-
 import File from "./File";
+import { createPost } from "../actions/posts";
 
 const PostForm = () => {
   const location = useLocation();
   const history = useHistory();
 
-  // const [postContent, setPostContent] = useState([
-  //   { title: "", group: "", content: "", files: "" },
-  // ]);
+  const [postContent, setPostContent] = useState({
+    title: '', content: '', group: '', files: ''
+  });
 
   const onCreatePost = (e) => {
     e.preventDefault();
 
     history.push(location.pathname + "/home");
-    //     dispatchEvent(createPost(postData));
+    dispatchEvent(createPost(postContent));
   };
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -76,10 +75,10 @@ const PostForm = () => {
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
-      <InputField label="Title" errMessage="Required *" />
-      <InputField label="Community" errMessage="Required *" />
+      <InputField name="title" label="Title" errMessage="Required *" onChange={(e) => setPostContent({...postContent, title: e.target.value })} />
+      <InputField label="Community" errMessage="Required *" onChange={(e) => setPostContent({...postContent, group: e.target.value })}/>
       {/* TODO: Search for a community to post to */}
-      <InputField label="Content" errMessage="" />
+      <InputField label="Content" errMessage="" onChange={(e) => setPostContent({...postContent, content: e.target.value })}/>
 
       {/* File Drag and Drop Section */}
       {/* <input type="file" id="file_input" />
