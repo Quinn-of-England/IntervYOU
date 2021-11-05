@@ -7,7 +7,7 @@ import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 
-import { createPost } from "../actions/posts";
+import { createPost } from "../../actions/posts.js";
 import File from "../File/File";
 
 const PostForm = () => {

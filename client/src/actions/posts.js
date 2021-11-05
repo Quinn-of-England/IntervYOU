@@ -1,8 +1,8 @@
-import axios from "axios";
+import { CREATE_POST, GET_USERS, GET_POSTS } from '../utils/types.js'; 
+import * as api from '../api/index.js';
+import axios from 'axios';
 
-import * as api from '../index.js';
 const baseUrl = "http://localhost:5000/";
-
 const usersRoute = baseUrl + "users/";
 const postsRoute = baseUrl + "posts/";
 
@@ -12,7 +12,7 @@ const postsRoute = baseUrl + "posts/";
 export const getUsers = () => async (dispatch) => {
   try {
     const { data } = await axios.get(usersRoute);
-    dispatch({ type: "GET_USERS", payload: data });
+    dispatch({ type: GET_USERS, payload: data });
   } catch (err) {
     console.log(err.message);
   }
@@ -21,7 +21,7 @@ export const getUsers = () => async (dispatch) => {
 export const getPosts = () => async (dispatch) => {
   try {
     const { data } = await axios.get(postsRoute);
-    dispatch({ type: "GET_POSTS", payload: data });
+    dispatch({ type: GET_POSTS, payload: data });
   } catch (err) {
     console.log(err.message);
   }
@@ -29,8 +29,8 @@ export const getPosts = () => async (dispatch) => {
 
 export const createPost = (post) => async (dispatch) => {
   try {
-    const { data } = await AudioParam.createPost(post)
-    dispatch({ type: 'CREATE_POST', payload: data });
+    const { data } = await api.createPost(post)
+    dispatch({ type: CREATE_POST, payload: data });
   } catch (err) {
     console.log(err.message);
   }
