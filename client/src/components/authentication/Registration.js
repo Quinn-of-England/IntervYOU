@@ -32,7 +32,7 @@ const Registration = () => {
     axios
       .post(`http://localhost:5000/api/users/registration`, details)
       .then((res) => {
-        history.push("/home");
+        history.push("/");
         localStorage.setItem("Authorization", res.data.token);
 
         console.log("User Successfully Created!");
@@ -92,7 +92,7 @@ const Registration = () => {
         />
       </div>
 
-      <Link to="/home">
+      <Link to="/">
         <button type="submit" className="btn-login" onClick={onPost}>
           Sign Up
         </button>

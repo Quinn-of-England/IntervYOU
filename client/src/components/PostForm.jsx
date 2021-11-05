@@ -20,7 +20,7 @@ const PostForm = () => {
   const onCreatePost = (e) => {
     e.preventDefault();
 
-    history.push(location.pathname + "/home");
+    history.push(location.pathname + "/");
     //     dispatchEvent(createPost(postData));
   };
 
