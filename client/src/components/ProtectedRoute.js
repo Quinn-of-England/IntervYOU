@@ -5,14 +5,16 @@ import { Route, Redirect } from "react-router-dom";
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   //TODO: Set up isAuth
   const isAuth = () => {
-    return localStorage.getItem("user");
+    return localStorage.getItem("Authentication");
   };
 
   return (
-    <Route
-      {...rest}
-      render={() => (isAuth() ? <Component /> : <Redirect to="/login" />)}
-    />
+    // <Route
+    //   {...rest}
+    //   render={() => (isAuth() ? <Component /> : <Redirect to="/login" />)}
+    // />
+
+    <Route>{isAuth ? <Component /> : <Redirect to="/login" />}</Route>
   );
 };
 

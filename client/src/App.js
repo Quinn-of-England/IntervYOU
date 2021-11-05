@@ -5,7 +5,8 @@ import Home from "./pages/Home";
 import "./App.css";
 import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
-import Post from "./pages/Post";
+import PostPage from "./pages/PostPage";
+import GroupPage from "./pages/GroupPage";
 
 const App = () => {
   // const [loginStatus, setLoginStatus] = useState({
@@ -58,10 +59,10 @@ const App = () => {
         <Home />
       </Route>
       <Route path="/post">
-        <Post />
+        <PostPage />
       </Route>
-      <Route path="/profile">
-        <Home />
+      <Route path="/groups">
+        <GroupPage />
       </Route>
       <Route path="/settings">
         <Home />

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import { SearchIcon } from "../utils/icons";
+import { SearchIcon } from "../../utils/icons";
 
-import "../utils/global.css";
-import { COLORS } from "../utils/customStyles";
+import "../../utils/global.css";
+import { COLORS } from "../../utils/customStyles";
 
 const SearchBar = ({ placeHolder, applyFilter }) => {
   const [filter, setFilter] = useState("");
