@@ -72,7 +72,7 @@ const Post = ({ title, userId, group, content, likes, currentuserIdVote }) => {
       <div className="post-content">
         <div className="post-title"> {title} </div>
         <div className="post-userId"> {userId} </div>
-        <div className="post-group"> {group} </div>
+        {/* <div className="post-group"> {group} </div> */}
         <div className="post-content">{content}</div>
 
         <Files files={files} />
@@ -143,7 +143,6 @@ const StyledPost = styled.div`
 
   .post {
     &-content {
-      margin: 0 20px;
       width: 100%;
     }
 
