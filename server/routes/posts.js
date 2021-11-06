@@ -30,7 +30,7 @@ PostRouter.get("/:post", getPostsByTitle);
 PostRouter.get("/:date", getPostsByDate);
 
 //Update - Modify Existing Post by Id
-PostRouter.patch("/:id", updatePost);
+PostRouter.put("/:id", updatePost);
 
 //Delete User By Id
 PostRouter.delete("/:id", deletePost);

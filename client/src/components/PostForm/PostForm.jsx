@@ -32,9 +32,10 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-    
-    axios.post(baseUrl, {...postContent, userId: 1, postId: 2}).then((res) => {
-    history.push("/");
+    console.log(postContent); 
+    axios.post(baseUrl, {...postContent, userName: "Nich", postId: 2}).then((res) => {  
+      console.log(res.body); 
+      history.push("/");
     }).catch((err) => {
       console.log(err);
     });

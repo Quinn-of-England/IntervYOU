@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./pages/Home";
 
 import "./App.css";
-import Registration from "./components/authentication/Signup.js";
-import Login from "./components/authentication/Login";
+import SignUp from "./components/authentication/Signup.js";
+import Login from "./components/authentication/Login.js";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
 
@@ -71,7 +71,7 @@ const App = () => {
         <Login />
       </Route>
       <Route path="/signup">
-        <Registration />
+        <SignUp />
       </Route>
     </Router>
   );

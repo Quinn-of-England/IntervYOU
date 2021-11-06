@@ -41,8 +41,8 @@ export const getPostsByDate = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const {userId, postId, group, content, title, files, date, likes} = req.body;
-  const newPost = new Post({userId, postId, group, content, title, files, date, likes});
+  const {userName, postId, group, content, title, files, date, likes} = req.body;
+  const newPost = new Post({userName, postId, group, content, title, files, date, likes});
 
   try {
     //Successful Creation - 201
@@ -55,11 +55,11 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id } = req.params.id;
-  const {userId, postId, group, content, title, files, date, likes} = req.body;
+  const {userName, postId, group, content, title, files, date, likes} = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No valid post with id: ${id}`);
 
-  const updatedPost = {userId, postId, group, content, title, files, date, likes};
+  const updatedPost = {userName, postId, group, content, title, files, date, likes};
   try {
     await Post.findByIdAndUpdate(id, updatedPost, { new: true});
     res.status(201).json(updatedPost);
