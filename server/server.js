@@ -68,7 +68,7 @@ if (process.env.NODE_ENV == 'production') {
 
 //Define Endpoints/Routes for Requests
 app.use('/api/users/', userRouter)
-app.use('/api/posts/', verifyAuth, postRouter)
+app.use('/api/posts/', postRouter)
 
 //Main route of server
 app.get('/', (_, res) => {

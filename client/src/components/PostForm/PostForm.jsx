@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -6,26 +6,39 @@ import styled from "styled-components";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
-
+import axios from 'axios';
 import { createPost } from "../../actions/posts.js";
 import File from "../File/File";
 
+
+const baseUrl = "http://localhost:5000/api/posts/add-post";
+
 const PostForm = () => {
-  const location = useLocation();
   const history = useHistory();
 
   const [postContent, setPostContent] = useState({
-    title: '', content: '', group: '', files: ''
+    title: '', content: '', group: '', files: []
   });
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+
+  useEffect(() => {
+    console.log(postContent);
+  }, [postContent]);
+
+  useEffect(() => {
+    console.log(acceptedFiles);
+  }, [acceptedFiles]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
-
-    history.push(location.pathname + "/home");
-    dispatchEvent(createPost(postContent));
+    
+    axios.post(baseUrl, {...postContent, userId: 1, postId: 2}).then((res) => {
+    history.push("/");
+    }).catch((err) => {
+      console.log(err);
+    });
   };
-
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
@@ -77,10 +90,10 @@ const PostForm = () => {
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
-      <InputField name="title" label="Title" errMessage="Required *" onChange={(e) => setPostContent({...postContent, title: e.target.value })} />
-      <InputField label="Community" errMessage="Required *" onChange={(e) => setPostContent({...postContent, group: e.target.value })}/>
+      <InputField name="title" label="Title" errMessage="Required *" setPostAttribute={(e) => setPostContent({...postContent, title: e.target.value })} />
+      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) => setPostContent({...postContent, group: e.target.value })}/>
       {/* TODO: Search for a community to post to */}
-      <InputField label="Content" errMessage="" onChange={(e) => setPostContent({...postContent, content: e.target.value })}/>
+      <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({...postContent, content: e.target.value })}/>
 
       {/* File Drag and Drop Section */}
       {/* <input type="file" id="file_input" />
@@ -112,7 +125,7 @@ const PostForm = () => {
       )}
 
       <div className="post-actions">
-        <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
+        <CancelButton btnText="CANCEL" handleClick={() =>  history.push("/")} />
         <AddButton btnText="POST" handleClick={onCreatePost} />
       </div>
     </StyledPostForm>

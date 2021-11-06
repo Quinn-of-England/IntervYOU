@@ -2,7 +2,7 @@ import { CREATE_POST, GET_USERS, GET_POSTS } from '../utils/types.js';
 import * as api from '../api/index.js';
 import axios from 'axios';
 
-const baseUrl = "http://localhost:5000/";
+const baseUrl = "http://localhost:5000/api/";
 const usersRoute = baseUrl + "users/";
 const postsRoute = baseUrl + "posts/";
 
@@ -29,7 +29,7 @@ export const getPosts = () => async (dispatch) => {
 
 export const createPost = (post) => async (dispatch) => {
   try {
-    const { data } = await api.createPost(post)
+    const { data } = await axios.post("http://localhost:5000/api/posts/add-post");
     dispatch({ type: CREATE_POST, payload: data });
   } catch (err) {
     console.log(err.message);

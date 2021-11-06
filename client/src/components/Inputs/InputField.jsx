@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import "../../utils/global.css";
 
-const InputField = ({ label, errMessage }) => {
+const InputField = ({ label, errMessage, setPostAttribute }) => {
   const [input, setInput] = useState("");
   // const [isValidInput, setIsValidInput] = useState(true);
 
@@ -24,7 +24,7 @@ const InputField = ({ label, errMessage }) => {
         <input
           type="text"
           className="styled-input"
-          onChange={({ target: { value } }) => setInput(value)}
+          onChange={setPostAttribute}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
