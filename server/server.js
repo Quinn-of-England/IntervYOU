@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 
 import userRouter from './routes/users.js'
 import postRouter from './routes/posts.js'
+import groupRouter from './routes/groups.js'
 
 import { verifyAuth, verifyRefresh } from "./auth.js";
 
@@ -36,6 +37,7 @@ if (process.env.NODE_ENV == 'production') {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     })
     .then(() => {
       console.log('Connected to MongoDB Database on Atlas!')
@@ -54,6 +56,7 @@ if (process.env.NODE_ENV == 'production') {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
       user: 'root',
       pass: 'root',
     })
@@ -69,6 +72,7 @@ if (process.env.NODE_ENV == 'production') {
 //Define Endpoints/Routes for Requests
 app.use('/api/users/', userRouter)
 app.use('/api/posts/', verifyAuth, postRouter)
+app.use('/api/groups/', verifyAuth, groupRouter)
 
 //Main route of server
 app.get('/', (_, res) => {
@@ -78,4 +82,9 @@ app.get('/', (_, res) => {
 //Api route
 app.get('/api/', (_, res) => {
   res.send("You have reached the api of this server")
+})
+
+//Verify refresh token
+app.post('/api/refreshToken/', (req, res) => {
+  verifyRefresh(req, res)
 })
