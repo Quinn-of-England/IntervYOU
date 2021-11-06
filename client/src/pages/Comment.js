@@ -21,6 +21,8 @@ const StyledCommentScreen = styled.div`
 
   .comment-container {
     padding: 70px 0 0 0;
+    width: 90%;
+    margin: auto;
   }
 
 `

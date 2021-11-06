@@ -30,18 +30,21 @@ const Registration = () => {
     event.preventDefault();
 
     axios
-      .post(`http://localhost:5000/api/users/registration`, details)
+      .post('http://localhost:5000/api/users/registration',
+      details,
+      {withCredentials: true})
       .then((res) => {
         history.push("/");
         localStorage.setItem("Authorization", res.data.token);
-
         console.log("User Successfully Created!");
+        
         setErrorMsgs([]);
       })
-      .catch((err) => setErrorMsgs([err.response.data]));
+      .catch((error) => {
+        console.log("Registration error", error.response.data)});
   };
 
-  console.log(details);
+  // console.log(details);
 
   return (
     <StyledSignup>

@@ -11,6 +11,8 @@ import {
 import Files from "./Files";
 import { COLORS } from "../utils/customStyles";
 import CreateCommentButton from "./CreateCommentButton";
+import CommentList from "./CommentList";
+import CommentForm from "./CommentForm";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const [voteState, setVoteState] = useState(currentUserVote);
@@ -62,6 +64,7 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   ];
 
   return (
+    <>
     <StyledPost voteState={currentColor}>
       <div className="voting-buttons">
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
@@ -92,7 +95,11 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
           </div>
         </div>
       </div>
+      
     </StyledPost>
+    <CommentList />
+    <CommentForm />
+    </>
   );
 };
 

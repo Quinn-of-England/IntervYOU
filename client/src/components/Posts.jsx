@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Post from "./Post";
 import { getPosts } from "../actions/posts.js";
 
+
 const Posts = () => {
   // Dummy Data to Be Replaced By Axios Call to Get Data
   const allPosts = [

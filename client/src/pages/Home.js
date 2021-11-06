@@ -9,13 +9,16 @@ import CreatePostButton from "../components/CreatePostButton";
 
 const Home = () => {
   // const [filteredInput, setFilteredInput] = useState("");
-  // const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
-  // useEffect(() => {
-  //   if (!isAuth) history.push("/login");
-  // }, []);
-  //   handleSuccessfulAuth(data){
-  //     this.props.handleLogin(data);
+  useEffect(() => {
+    if (!isAuth) history.push("/login");
+  }, []);
+
+  // handleSuccessfulAuth(data){
+  //   this.props.handleLogin(data);
+  // };
+
 
   return (
     <StyledHome>

@@ -6,7 +6,7 @@ import "./App.css";
 import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
 import Post from "./pages/Post";
-import Comment from "./pages/Comment";
+
 
 const App = () => {
   // const [loginStatus, setLoginStatus] = useState({
@@ -60,9 +60,6 @@ const App = () => {
       </Route>
       <Route path="/post">
         <Post />
-      </Route>
-      <Route path="/comment">
-        <Comment />
       </Route>
       <Route path="/profile">
         <Home />
