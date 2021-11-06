@@ -26,10 +26,11 @@ const userSchema = new mongoose.Schema({
   likes: {
     type: Map
   },
-  tokenVersion: {
-    type: Number,
-    default: 0,
-  },
+  groups: [
+    {
+      group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group'}
+    }
+  ],
 });
 
 const User = mongoose.model("user", userSchema);

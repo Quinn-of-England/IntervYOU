@@ -30,7 +30,7 @@ const Registration = () => {
     event.preventDefault();
 
     axios
-      .post(`http://localhost:5000/api/users/registration`, details)
+      .post(`http://localhost:5000/api/users/registration`, details, {withCredentials})
       .then((res) => {
         history.push("/home");
         localStorage.setItem("Authorization", res.data.token);

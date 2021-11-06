@@ -19,25 +19,30 @@ userRouter.get("/", userController.get_all_users);
 userRouter.get("/role", userController.get_all_users_by_role)
 
 //Read - Get user by id
-userRouter.get("/:id", userController.get_user_by_id)
+userRouter.get("/id/:id", userController.get_user_by_id)
 
 //Read - Get user by email
-userRouter.get("/:email", userController.get_user_by_email)
+userRouter.get("/email/:email", userController.get_user_by_email)
 
 //Read - Get user by username
-userRouter.get("/:username", userController.get_user_by_username)
+userRouter.get("/username/:username", userController.get_user_by_username)
 
-//Update, Promote, or Demote User
-//Patch - Updates Only Changed User Details
-//userRouter.patch("/:username", updateUserRole);
+//Read - Get list of groups
+userRouter.get("/groups/id/:id", userController.get_groups_by_id)
+
+//Update - Update user
+userRouter.put("/id/:id", userController.update_user_by_id)
+
+//Update - Add group
+userRouter.patch("/groups/id/:id", userController.update_group_list)
 
 //Delete User By Id
-userRouter.delete('/:id', userController.delete_user_by_id);
+userRouter.delete('/id/:id', userController.delete_user_by_id);
 
 //Delete user by email
-userRouter.delete('/:email', userController.delete_user_by_email)
+userRouter.delete('/email/:email', userController.delete_user_by_email)
 
 //Delete user by username
-userRouter.delete('/:username', userController.delete_user_by_username)
+userRouter.delete('/username/:username', userController.delete_user_by_username)
 
 export default userRouter;
