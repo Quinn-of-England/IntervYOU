@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Post from "./Post";
 import { getPosts } from "../../actions/posts.js";
+<<<<<<< HEAD:client/src/components/Post/Posts.jsx
 
+=======
+>>>>>>> b06fa3e2bba315aaefd42c5ede5c348285e99891:client/src/components/Post/Posts.jsx
 
 const Posts = () => {
   // Dummy Data to Be Replaced By Axios Call to Get Data

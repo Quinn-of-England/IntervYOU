@@ -7,7 +7,10 @@ import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
+<<<<<<< HEAD
 
+=======
+>>>>>>> b06fa3e2bba315aaefd42c5ede5c348285e99891
 
 const App = () => {
   // const [loginStatus, setLoginStatus] = useState({
