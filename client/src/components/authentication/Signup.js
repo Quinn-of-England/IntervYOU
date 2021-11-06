@@ -7,7 +7,7 @@ import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
 
-const Registration = () => {
+const SignUp = () => {
   //Update Current Link & User Profile
   const history = useHistory();
 
@@ -30,17 +30,16 @@ const Registration = () => {
     event.preventDefault();
 
     axios
-      .post(`http://localhost:5000/api/users/registration`, details, {withCredentials})
+      .post('http://localhost:5000/api/users/signup', details, {withCredentials: true})
       .then((res) => {
-        history.push("/home");
         localStorage.setItem("Authorization", res.data.token);
-
         console.log("User Successfully Created!");
+        history.push("/");
         setErrorMsgs([]);
       })
-      .catch((err) => setErrorMsgs([err.response.data]));
+      .catch((err) => { console.log(err); setErrorMsgs([err.response.data]);});
   };
-
+  
   console.log(details);
 
   return (
@@ -248,4 +247,4 @@ const StyledSignup = styled.div`
   }
 `;
 
-export default Registration;
+export default SignUp;
