@@ -41,6 +41,19 @@ const Registration = () => {
         });
     }
 
+    if (details["username"].length<3){
+      registrationIsValid = false;
+      toast.warn("Username must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
     //Email
     if (!details["email"]) {
       registrationIsValid = false;
@@ -60,9 +73,9 @@ const Registration = () => {
       let dotPosition = details["email"].lastIndexOf(".");
       if (
         !(
-          addressPosition < dotPosition && //basically format has to be something@something.
+          addressPosition < dotPosition && //basically format has to be something@something.som
           addressPosition > 0 &&
-          details["email"].indexOf("@") === -1 &&
+          details["email"].indexOf("@") !== -1 &&
           dotPosition > 2 &&
           details["email"].length - dotPosition > 2
         )
@@ -92,6 +105,31 @@ const Registration = () => {
         draggable: true,
         progress: undefined,
     });
+    }
+    if (details["password"].length<3){
+      registrationIsValid = false;
+      toast.warn("Password must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    if(details["password"] !== details["confirmPass"]){
+      registrationIsValid = false;
+      toast.warn("Password and confirm password must match", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }
     return registrationIsValid;
   }

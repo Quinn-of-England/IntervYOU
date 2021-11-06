@@ -37,6 +37,18 @@ const Login = () => {
         progress: undefined,
       });
     }
+    if (details["username"].length<3){
+      loginIsValid = false;
+      toast.warn("Username must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
     
     //password
     if (!details["password"]) {
@@ -50,6 +62,18 @@ const Login = () => {
         draggable: true,
         progress: undefined,
       });
+    }
+    if (details["password"].length<3){
+      loginIsValid = false;
+      toast.warn("Password must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }
 
     return loginIsValid;
