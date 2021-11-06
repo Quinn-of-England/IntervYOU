@@ -51,6 +51,7 @@ const StyledAddButton = styled.div`
     fill: #fff;
 
     padding: 10px;
+    margin-left: 15px;
 
     border-radius: 50%;
     background: #2f69eb;

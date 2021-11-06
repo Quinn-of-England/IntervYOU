@@ -12,10 +12,11 @@ import reducers from "./reducers/index";
 // Wrap Application with Provider, Giving Access to Store to All Components in App
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 
+
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+        <App />
     </React.StrictMode>
   </Provider>,
   document.getElementById("root")

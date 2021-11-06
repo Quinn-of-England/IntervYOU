@@ -14,8 +14,11 @@ const Home = () => {
   // useEffect(() => {
   //   if (!isAuth) history.push("/login");
   // }, []);
-  //   handleSuccessfulAuth(data){
-  //     this.props.handleLogin(data);
+
+  // handleSuccessfulAuth(data){
+  //   this.props.handleLogin(data);
+  // };
+
 
   return (
     <StyledHome>

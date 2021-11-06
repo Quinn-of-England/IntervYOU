@@ -4,13 +4,13 @@ import styled from "styled-components";
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
-  CommentsIcon,
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
 } from "../../utils/icons";
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
+import CreateCommentButton from "../Comment/CreateCommentButton";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const [voteState, setVoteState] = useState(currentUserVote);
@@ -62,6 +62,7 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   ];
 
   return (
+    <>
     <StyledPost voteState={currentColor}>
       <div className="voting-buttons">
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
@@ -77,10 +78,7 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
         <Files files={files} />
 
         <div className="post-footer">
-          <div className="post-actions">
-            <CommentsIcon />
-            <span> Comments </span>
-          </div>
+          <CreateCommentButton />
           <div className="post-actions">
             <DownloadDocumentIcon />
             <span> Download </span>
@@ -95,7 +93,9 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
           </div>
         </div>
       </div>
+      
     </StyledPost>
+    </>
   );
 };
 

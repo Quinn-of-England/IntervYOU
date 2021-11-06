@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
 
 import axios from "axios";
@@ -20,7 +21,118 @@ const Registration = () => {
   });
 
   //Error Messages from Form Validation
-  const [errMsgs, setErrorMsgs] = useState([]);
+  // const [errMsgs, setErrorMsgs] = useState([]);
+
+  //validate registration
+  function validateForm() {
+    let registrationIsValid = true;
+    
+    //username
+    if (!details["username"]) {
+      registrationIsValid = false;
+      toast.warn("Username cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    if (details["username"].length<3){
+      registrationIsValid = false;
+      toast.warn("Username must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    //Email
+    if (!details["email"]) {
+      registrationIsValid = false;
+      toast.warn("Email cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    if (typeof details["email"] !== "undefined") {
+      let addressPosition = details["email"].lastIndexOf("@");
+      let dotPosition = details["email"].lastIndexOf(".");
+      if (
+        !(
+          addressPosition < dotPosition && //basically format has to be something@something.som
+          addressPosition > 0 &&
+          details["email"].indexOf("@") !== -1 &&
+          dotPosition > 2 &&
+          details["email"].length - dotPosition > 2
+        )
+      ) {
+        registrationIsValid = false;
+        toast.warn("Email is not valid", { 
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      }
+    }
+
+    //password
+    if (!details["password"]) {
+      registrationIsValid = false;
+      toast.warn("Password cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+    }
+    if (details["password"].length<3){
+      registrationIsValid = false;
+      toast.warn("Password must be longer than 3 characters", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    if(details["password"] !== details["confirmPass"]){
+      registrationIsValid = false;
+      toast.warn("Password and confirm password must match", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+    return registrationIsValid;
+  }
 
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
@@ -28,33 +140,62 @@ const Registration = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
-
-    axios
-      .post(`http://localhost:5000/api/users/registration`, details)
+    if (validateForm()) {
+      toast("Form submitted");
+      axios
+      .post('http://localhost:5000/api/users/registration',
+      details,
+      {withCredentials: true})
       .then((res) => {
-        history.push("/home");
+        history.push("/");
         localStorage.setItem("Authorization", res.data.token);
-
         console.log("User Successfully Created!");
-        setErrorMsgs([]);
+        
+        // setErrorMsgs([]);
       })
-      .catch((err) => setErrorMsgs([err.response.data]));
+      .catch((error) => {
+        console.log("Registration error", error.response.data)});
+    } else {
+      toast.warn("Errors in Registration", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+    
   };
 
-  console.log(details);
+  // console.log(details);
 
   return (
     <StyledSignup>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+        {}
+      <ToastContainer />
       <p className="title"> Create an Account </p>
 
       {
         /* ERROR MESSAGES */
-        errMsgs.length !== 0 &&
-          errMsgs.map((i) => (
-            <p className="missingInForm" key={i}>
-              {i}
-            </p>
-          ))
+        // errMsgs.length !== 0 &&
+        //   errMsgs.map((i) => (
+        //     <p className="missingInForm" key={i}>
+        //       {i}
+        //     </p>
+          // ))
       }
 
       <div class="login-details">
@@ -92,7 +233,7 @@ const Registration = () => {
         />
       </div>
 
-      <Link to="/home">
+      <Link to="/">
         <button type="submit" className="btn-login" onClick={onPost}>
           Sign Up
         </button>
