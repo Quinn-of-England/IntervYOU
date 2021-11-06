@@ -3,11 +3,11 @@ import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 
-import AddButton from "./AddButton";
-import InputField from "./InputField";
+import AddButton from "../Buttons/AddButton";
+import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 
-import File from "./File";
+import File from "../File/File";
 
 const PostForm = () => {
   const location = useLocation();

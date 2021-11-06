@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from './models/User.js'
+import { refreshTokens } from './controllers/users.js'
 
 //Store User Id and email in JWT
 const storeUserCredentials = (user) => ({
@@ -28,7 +29,7 @@ export const verifyAuth = async (req, res, next) => {
   if (!authorization)
     return res
       .status(401)
-      .send({ auth: false, message: 'Access Denied! No Token Present.' })
+      .json({ auth: false, message: 'Access Denied! No Token Present.' })
 
   try {
     //Verify Access Token is Valid
@@ -36,26 +37,17 @@ export const verifyAuth = async (req, res, next) => {
     if (token) {
       jwt.verify(token, process.env.JWT_ACCESS_SECRET, async (err, decodedToken) => {
         if (err) {
-          console.error(`Token error: ${err.message}`)
+          return res.status(403).json({
+            message: "Access denied...",
+            error: err.message
+          })
         } else {
           //Verfiy User Exists
           const user = await User.findById(decodedToken._id)
           if (!user)
             return res
               .status(401)
-              .send({ auth: false, message: 'Access Denied! User Not Found.' })
-
-          // //Verify Token Versions Match (Invalidate Tokens that Haven't Expired Yet)
-          // if (user.tokenVersion !== payload.tokenVersion)
-          //   return res
-          //     .status(401)
-          //     .send({ auth: false, message: "Access Denied! Invalid Token." });
-
-          //Pass Payload to Request
-          req._id = decodedToken._id
-          req.role = decodedToken.email
-          //req.tokenVersion = payload.tokenVersion;
-
+              .json({ auth: false, message: 'Access Denied! User Not Found.' })
           next()
         }
       })
@@ -63,55 +55,49 @@ export const verifyAuth = async (req, res, next) => {
   } catch {
     res
       .status(401)
-      .send({ auth: false, message: 'Access Denied! Server Error.' })
+      .json({ auth: false, message: 'Access Denied! Server Error.' })
   }
 }
 
 //Verify Refresh Token
-export const verifyRefresh = async (req, res, next) => {
+export const verifyRefresh = async (req, res) => {
   // Retrieve Refresh Token from Cookies
   const token = req.cookies.refreshToken
-  if (!token)
+  if (!token || !(token in refreshTokens))
     return res
       .status(401)
-      .send({ auth: false, message: 'Access Denied! No Cookie Found.' })
+      .json({ auth: false, message: 'Access Denied! No Cookie Found.' })
 
   try {
     //Verfiy Refresh Token is Valid
     if (token) {
       jwt.verify(token, process.env.JWT_REFRESH_SECRET, async (err, decodedToken) => {
         if (err) {
-          console.error(`Refresh token error: ${err.message}`)
+          return res.status(403).json({ message: err.message})
         } else {
           //Verfiy User Exists
           const user = await User.findById(decodedToken._id)
           if (!user)
             return res
               .status(401)
-              .send({ auth: false, message: 'Access Denied! User Not Found.' })
-
-          //Verify Token Versions Match (Invalidate Old Tokens that Haven't Expired Yet)
-          // if (user.tokenVersion !== payload.tokenVersion)
-          //   return res
-          //     .status(401)
-          //     .send({ auth: false, message: "Access Denied! Invalid Token." });
+              .json({ auth: false, message: 'Access Denied! User Not Found.' })
 
           //Create New Access Token
           const updatedToken = createAccessToken(user)
           res.setHeader('Authorization', updatedToken)
+          const newRefreshToken = createRefreshToken(user)
+          res.cookie('refreshToken', newRefreshToken, { httpOnly: true })
+          refreshTokens[newRefreshToken] = user._id
 
-          //Pass Payload to Request
-          req._id = decodedToken._id
-          req.role = decodedToken.email
-          //req.tokenVersion = payload.tokenVersion;
-
-          next()
+          return res.status(200).json({
+            message: "New tokens created!"
+          })
         }
       })
     }
   } catch {
     res
       .status(401)
-      .send({ auth: false, message: 'Access Denied! Server Error.' })
+      .json({ auth: false, message: 'Access Denied! Server Error.' })
   }
 }

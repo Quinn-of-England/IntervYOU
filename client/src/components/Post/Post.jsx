@@ -7,12 +7,10 @@ import {
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
-} from "../utils/icons";
-import Files from "./Files";
-import { COLORS } from "../utils/customStyles";
-import CreateCommentButton from "./CreateCommentButton";
-import CommentList from "./CommentList";
-import CommentForm from "./CommentForm";
+} from "../../utils/icons";
+import Files from "../File/Files";
+import { COLORS } from "../../utils/customStyles";
+import CreateCommentButton from "../Comment/CreateCommentButton";
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const [voteState, setVoteState] = useState(currentUserVote);
@@ -97,8 +95,6 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
       </div>
       
     </StyledPost>
-    <CommentList />
-    <CommentForm />
     </>
   );
 };

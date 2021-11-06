@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
@@ -12,12 +14,31 @@ const Login = () => {
   //Use State Hook to Update Form Details
   const [details, setDetails] = useState({
     username: "",
-    email: "",
     password: "",
   });
 
   //Error Messages from Form Validation
   const [errMsgs, setErrorMsgs] = useState([]);
+
+  //validate registration
+  function validateForm() {
+    let loginIsValid = true;
+    
+    //username
+    if (!details["username"]) {
+      loginIsValid = false;
+      setErrorMsgs(["Username cannot be blank"]);
+    }
+    
+    //password
+    if (!details["password"]) {
+      loginIsValid = false;
+      setErrorMsgs(["Password cannot be blank"]);
+    }
+
+    return loginIsValid;
+  }
+
 
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
@@ -25,6 +46,20 @@ const Login = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
+    if (validateForm()) {
+      toast("Form submitted");
+    } else {
+        toast.warn({errMsgs}, { //TODO send array of errMsgs to toast to print out
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      
+    }
 
     axios
       .post(`http://localhost:5000/api/users/login`, details)
@@ -34,21 +69,34 @@ const Login = () => {
         console.log("User Successfully Logged In!");
         setErrorMsgs([]);
       })
-      .catch((err) => setErrorMsgs([err.response.data]));
+      .catch((error) => {console.log("Registration error", error.response.data)});
   };
 
   return (
     <StyledLogin>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+        {}
+      <ToastContainer />
       <p className="title"> Login </p>
 
       {
         /* ERROR MESSAGES */
-        errMsgs.length !== 0 &&
-          errMsgs.map((i) => (
-            <p className="missingInForm" key={i}>
-              {i}
-            </p>
-          ))
+        // errMsgs.length !== 0 &&
+        //   errMsgs.map((i) => (
+        //     <p className="missingInForm" key={i}>
+        //       {i}
+        //     </p>
+        //   ))
       }
 
       <div class="login-details">
@@ -70,11 +118,9 @@ const Login = () => {
         />
       </div>
 
-      <Link to="/">
-        <button type="submit" className="btn-login" onClick={onPost}>
-          Login
-        </button>
-      </Link>
+      <button type="submit" className="btn-login" onClick={onPost}>
+        Login
+      </button>
 
       <div className="signup-link">
         <span className="login-account"> Don't have an Account? </span>

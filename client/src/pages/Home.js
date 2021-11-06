@@ -2,18 +2,18 @@ import React from "react";
 import styled from "styled-components";
 
 import NavBar from "../components/NavBar";
-import Posts from "../components/Posts";
+import Posts from "../components/Post/Posts";
 
-import SearchBar from "../components/SearchBar";
-import CreatePostButton from "../components/CreatePostButton";
+import SearchBar from "../components/Inputs/SearchBar";
+import CreatePostButton from "../components/PostForm/CreatePostButton";
 
 const Home = () => {
   // const [filteredInput, setFilteredInput] = useState("");
-  const [isAuth, setIsAuth] = useState(false);
+  // const [isAuth, setIsAuth] = useState(false);
 
-  useEffect(() => {
-    if (!isAuth) history.push("/login");
-  }, []);
+  // useEffect(() => {
+  //   if (!isAuth) history.push("/login");
+  // }, []);
 
   // handleSuccessfulAuth(data){
   //   this.props.handleLogin(data);

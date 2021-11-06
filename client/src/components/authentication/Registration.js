@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
 
 import axios from "axios";
@@ -22,13 +23,60 @@ const Registration = () => {
   //Error Messages from Form Validation
   const [errMsgs, setErrorMsgs] = useState([]);
 
+  //validate registration
+  function validateForm() {
+    let registrationIsValid = true;
+    
+    //username
+    if (!details["username"]) {
+      registrationIsValid = false;
+      setErrorMsgs(["Username cannot be blank"]);
+    }
+
+    //Email
+    if (!details["email"]) {
+      registrationIsValid = false;
+      setErrorMsgs(["Email cannot be blank"]);
+    }
+
+    if (typeof details["email"] !== "undefined") {
+      let addressPosition = details["email"].lastIndexOf("@");
+      let dotPosition = details["email"].lastIndexOf(".");
+      if (
+        !(
+          addressPosition < dotPosition && //basically format has to be something@something.
+          addressPosition > 0 &&
+          details["email"].indexOf("@") === -1 &&
+          dotPosition > 2 &&
+          details["email"].length - dotPosition > 2
+        )
+      ) {
+        registrationIsValid = false;
+        setErrorMsgs(["Email is not valid"]);
+      }
+    }
+    return registrationIsValid;
+  }
+
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
 
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
-
+    if (validateForm()) {
+      toast("Form submitted");
+    } else {
+      toast.warn(errMsgs, { //TODO send array of errMsgs to toast to print out
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
     axios
       .post('http://localhost:5000/api/users/registration',
       details,
@@ -48,16 +96,29 @@ const Registration = () => {
 
   return (
     <StyledSignup>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+        {}
+      <ToastContainer />
       <p className="title"> Create an Account </p>
 
       {
         /* ERROR MESSAGES */
-        errMsgs.length !== 0 &&
-          errMsgs.map((i) => (
-            <p className="missingInForm" key={i}>
-              {i}
-            </p>
-          ))
+        // errMsgs.length !== 0 &&
+        //   errMsgs.map((i) => (
+        //     <p className="missingInForm" key={i}>
+        //       {i}
+        //     </p>
+          // ))
       }
 
       <div class="login-details">
