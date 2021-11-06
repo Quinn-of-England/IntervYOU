@@ -10,10 +10,7 @@ import {
 } from "../../utils/icons";
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
-<<<<<<< HEAD:client/src/components/Post/Post.jsx
 import CreateCommentButton from "../Comment/CreateCommentButton";
-=======
->>>>>>> b06fa3e2bba315aaefd42c5ede5c348285e99891:client/src/components/Post/Post.jsx
 
 const Post = ({ title, user, description, voteCount, currentUserVote }) => {
   const [voteState, setVoteState] = useState(currentUserVote);

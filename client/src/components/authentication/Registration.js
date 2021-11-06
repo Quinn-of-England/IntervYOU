@@ -21,7 +21,7 @@ const Registration = () => {
   });
 
   //Error Messages from Form Validation
-  const [errMsgs, setErrorMsgs] = useState([]);
+  // const [errMsgs, setErrorMsgs] = useState([]);
 
   //validate registration
   function validateForm() {
@@ -30,13 +30,29 @@ const Registration = () => {
     //username
     if (!details["username"]) {
       registrationIsValid = false;
-      setErrorMsgs(["Username cannot be blank"]);
+      toast.warn("Username cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }
 
     //Email
     if (!details["email"]) {
       registrationIsValid = false;
-      setErrorMsgs(["Email cannot be blank"]);
+      toast.warn("Email cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }
 
     if (typeof details["email"] !== "undefined") {
@@ -52,8 +68,30 @@ const Registration = () => {
         )
       ) {
         registrationIsValid = false;
-        setErrorMsgs(["Email is not valid"]);
+        toast.warn("Email is not valid", { 
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
       }
+    }
+
+    //password
+    if (!details["password"]) {
+      registrationIsValid = false;
+      toast.warn("Password cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
     }
     return registrationIsValid;
   }
@@ -66,8 +104,21 @@ const Registration = () => {
     event.preventDefault();
     if (validateForm()) {
       toast("Form submitted");
+      axios
+      .post('http://localhost:5000/api/users/registration',
+      details,
+      {withCredentials: true})
+      .then((res) => {
+        history.push("/");
+        localStorage.setItem("Authorization", res.data.token);
+        console.log("User Successfully Created!");
+        
+        // setErrorMsgs([]);
+      })
+      .catch((error) => {
+        console.log("Registration error", error.response.data)});
     } else {
-      toast.warn(errMsgs, { //TODO send array of errMsgs to toast to print out
+      toast.warn("Errors in Registration", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -77,19 +128,7 @@ const Registration = () => {
         progress: undefined,
         });
     }
-    axios
-      .post('http://localhost:5000/api/users/registration',
-      details,
-      {withCredentials: true})
-      .then((res) => {
-        history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
-        console.log("User Successfully Created!");
-        
-        setErrorMsgs([]);
-      })
-      .catch((error) => {
-        console.log("Registration error", error.response.data)});
+    
   };
 
   // console.log(details);

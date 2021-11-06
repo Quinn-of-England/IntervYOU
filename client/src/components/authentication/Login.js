@@ -18,7 +18,7 @@ const Login = () => {
   });
 
   //Error Messages from Form Validation
-  const [errMsgs, setErrorMsgs] = useState([]);
+  // const [errMsgs, setErrorMsgs] = useState([]);
 
   //validate registration
   function validateForm() {
@@ -27,13 +27,29 @@ const Login = () => {
     //username
     if (!details["username"]) {
       loginIsValid = false;
-      setErrorMsgs(["Username cannot be blank"]);
+      toast.warn("Username cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
     
     //password
     if (!details["password"]) {
       loginIsValid = false;
-      setErrorMsgs(["Password cannot be blank"]);
+      toast.warn("Password cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
 
     return loginIsValid;
@@ -48,8 +64,17 @@ const Login = () => {
     event.preventDefault();
     if (validateForm()) {
       toast("Form submitted");
+      axios
+      .post(`http://localhost:5000/api/users/login`, details)
+      .then((res) => {
+        history.push("/");
+        localStorage.setItem("Authorization", res.data.token);
+        console.log("User Successfully Logged In!");
+        // setErrorMsgs([]);
+      })
+      .catch((error) => {console.log("Registration error", error.response.data)});
     } else {
-        toast.warn({errMsgs}, { //TODO send array of errMsgs to toast to print out
+        toast.warn("Errors in Login", { //TODO send array of errMsgs to toast to print out
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -58,18 +83,7 @@ const Login = () => {
           draggable: true,
           progress: undefined,
         });
-      
     }
-
-    axios
-      .post(`http://localhost:5000/api/users/login`, details)
-      .then((res) => {
-        history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
-        console.log("User Successfully Logged In!");
-        setErrorMsgs([]);
-      })
-      .catch((error) => {console.log("Registration error", error.response.data)});
   };
 
   return (
