@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from 'axios';
 
 import {
   UpVoteArrowIcon,
@@ -12,9 +13,40 @@ import {
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
 
-const Post = ({ title, userId, group, content, likes, currentuserIdVote }) => {
-  const [voteState, setVoteState] = useState(currentuserIdVote);
+const userPath = "http://localhost:5000/api/users/";
+const postPath = "http://localhost:5000/api/posts/";
+const Post = ({ postId, title, userId, group, content, likes }) => {
+  const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
+
+  useEffect(() => {
+    axios.get(userPath + userId).then((res) => {
+
+      //Access Hashmap of Liked Posts
+      setVoteState(res.data.likes.get(postId) ??  0);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
+  useEffect(() => {
+    // Updated the User Liked Map Status
+    axios.patch(userPath + userId, {postId: voteState}).then((res) => {     
+      console.log(res); 
+      // if (voteState === -1) {
+      //   axios.patch(postPath + postId + "/downVote", ).then((res) => {      
+      //       //
+      //   }).catch((err) => {
+      //     console.log(err);
+      //   });
+
+      // } else {
+      // axios.patch(postPath + postId + "/upVote", )
+      // }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, [voteState])
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
