@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import userRouter from './routes/users.js'
 import postRouter from './routes/posts.js'
 import groupRouter from './routes/groups.js'
+import fileRouter from './routes/files.js'
 
 import { verifyAuth, verifyRefresh } from "./auth.js";
 
@@ -73,6 +74,7 @@ if (process.env.NODE_ENV == 'production') {
 app.use('/api/users/', userRouter)
 app.use('/api/posts/', verifyAuth, postRouter)
 app.use('/api/groups/', verifyAuth, groupRouter)
+app.use('/api/files/', fileRouter)
 
 //Main route of server
 app.get('/', (_, res) => {
