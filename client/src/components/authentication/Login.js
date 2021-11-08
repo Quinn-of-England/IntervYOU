@@ -15,18 +15,23 @@ const Login = () => {
   const [details, setDetails] = useState({
     username: "",
     password: "",
+    
   });
 
-  //Error Messages from Form Validation
-  // const [errMsgs, setErrorMsgs] = useState([]);
+  // Error Messages from Form Validation
+  // const [errMsgs, setErrorMsgs] = useState({
+  //   username: "",
+  //   password:"",
+  // });
 
   //validate registration
   function validateForm() {
     let loginIsValid = true;
-    
+    // let errMsgs = {};
     //username
     if (!details["username"]) {
       loginIsValid = false;
+      // errMsgs["username"] = "Username cannot be blank";
       toast.warn("Username cannot be blank", { 
         position: "top-right",
         autoClose: 5000,
@@ -75,8 +80,10 @@ const Login = () => {
         progress: undefined,
         });
     }
-
+    // setErrorMsgs({ errMsgs: errMsgs });
+    
     return loginIsValid;
+    
   }
 
 
@@ -146,6 +153,7 @@ const Login = () => {
           onChange={updateDetails}
           required
         />
+        {/* <span style={{ color: "red" }}>{errMsgs["username"]}</span> */}
         <input
           id="password"
           type="password"

@@ -1,9 +1,9 @@
 import React from 'react'
 import { useLocation, useHistory } from "react-router";
 import styled from "styled-components";
-import AddButton from "./AddButton";
-import InputField from "./InputField";
-import CancelButton from "./CancelButton";
+import SubmitCommentButton from "../Buttons/SubmitCommentButton";
+import CommentField from "../Inputs/CommentField";
+// import Comments from '../../actions/comments';
 
 const CommentForm = () => {
     const location = useLocation();
@@ -11,18 +11,15 @@ const CommentForm = () => {
 
     const onCreateComment = (e) => {
         e.preventDefault();
-    
-        history.push(location.pathname + "/");
+        //TODO add axios post when server comments are done
+        history.push(location.pathname + "/comment");
     };
 
     return (
         <StyledCommentForm>
-            <div className="create-form-title"> Create a comment </div>
-            <InputField label="Title" errMessage="Required *" />
-            <InputField label="Content" errMessage="Required" />
+            <CommentField/>
             <div className="post-actions">
-                <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
-                <AddButton btnText="COMMENT" handleClick={onCreateComment} />
+                <SubmitCommentButton btnText="Add Comment" handleClick={onCreateComment} />
             </div>
         </StyledCommentForm>
     )
@@ -30,28 +27,21 @@ const CommentForm = () => {
 
 const StyledCommentForm = styled.div`
 display: flex;
-flex-direction: column;
-justify-items: center;
-align-center: center;
+justify-content: flex-start;
+flex-direction: row;
+align-items: center;
 
-background: #fff;
-border-radius: 20px;
+height: 50px;
+width: 100%;
 
-padding: 20px;
-margin: auto;
+padding-right: 30px;
+padding-left: 30px
 
-.create-form-title {
-  font-size: 24px;
-  font-family: "Noto Sans JP", sans-serif;
-
-  margin: 5px 10px;
-}
 
 .post-actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
+    padding-left: 10px;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
 `
 
