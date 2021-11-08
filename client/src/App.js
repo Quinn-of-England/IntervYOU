@@ -7,6 +7,7 @@ import Registration from "./components/authentication/Registration";
 import Login from "./components/authentication/Login";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
+import CommentPage from "./pages/CommentPage";
 
 const App = () => {
   // const [loginStatus, setLoginStatus] = useState({
@@ -72,6 +73,9 @@ const App = () => {
       </Route>
       <Route path="/signup">
         <Registration />
+      </Route>
+      <Route path="/comment">
+        <CommentPage />
       </Route>
     </Router>
   );
