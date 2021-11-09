@@ -8,6 +8,9 @@ import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
 
+// import dotenv from "dotenv";
+import { IP, SERVER_PORT } from '../../utils/types.js'; 
+
 const Registration = () => {
   //Update Current Link & User Profile
   const history = useHistory();
@@ -32,7 +35,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Username cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -45,7 +48,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Username must be longer than 3 characters", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -59,7 +62,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Email cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -83,7 +86,7 @@ const Registration = () => {
         registrationIsValid = false;
         toast.warn("Email is not valid", { 
           position: "top-right",
-          autoClose: 5000,
+          autoClose: SERVER_PORT,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -98,7 +101,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -110,7 +113,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password must be longer than 3 characters", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -123,7 +126,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password and confirm password must match", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -143,12 +146,12 @@ const Registration = () => {
     if (validateForm()) {
       toast("Form submitted");
       axios
-      .post('http://localhost:5000/api/users/registration',
+      .post(`${IP}:${SERVER_PORT}/api/users/registration`,
       details,
       {withCredentials: true})
       .then((res) => {
         history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
+        localStorage.setItem("Authorization", res.headers.authorization);
         console.log("User Successfully Created!");
         
         // setErrorMsgs([]);
@@ -158,7 +161,7 @@ const Registration = () => {
     } else {
       toast.warn("Errors in Registration", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -169,13 +172,11 @@ const Registration = () => {
     
   };
 
-  // console.log(details);
-
   return (
     <StyledSignup>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={SERVER_PORT}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -186,64 +187,66 @@ const Registration = () => {
         />
         {}
       <ToastContainer />
-      <p className="title"> Create an Account </p>
+      <div className="signup-container">
+        <p className="title"> Create an Account </p>
 
-      {
-        /* ERROR MESSAGES */
-        // errMsgs.length !== 0 &&
-        //   errMsgs.map((i) => (
-        //     <p className="missingInForm" key={i}>
-        //       {i}
-        //     </p>
-          // ))
-      }
+        {
+          /* ERROR MESSAGES */
+          // errMsgs.length !== 0 &&
+          //   errMsgs.map((i) => (
+          //     <p className="missingInForm" key={i}>
+          //       {i}
+          //     </p>
+          //   ))
+        }
 
-      <div class="login-details">
-        <input
-          id="username"
-          type="username"
-          className="login-input"
-          placeholder="Username"
-          onChange={updateDetails}
-          required
-        />
-        <input
-          id="email"
-          type="email"
-          className="login-input"
-          placeholder="Email"
-          onChange={updateDetails}
-          required
-        />
-        <input
-          id="password"
-          type="password"
-          className="login-input"
-          placeholder="Password"
-          onChange={updateDetails}
-          required
-        />
-        <input
-          id="confirmPass"
-          type="password"
-          className="login-input"
-          placeholder="Confirm Password"
-          onChange={updateDetails}
-          required
-        />
-      </div>
+        <div className="login-details">
+          <input
+            id="username"
+            type="username"
+            className="login-input"
+            placeholder="Username"
+            onChange={updateDetails}
+            required
+          />
+          <input
+            id="email"
+            type="email"
+            className="login-input"
+            placeholder="Email"
+            onChange={updateDetails}
+            required
+          />
+          <input
+            id="password"
+            type="password"
+            className="login-input"
+            placeholder="Password"
+            onChange={updateDetails}
+            required
+          />
+          <input
+            id="confirmPass"
+            type="password"
+            className="login-input"
+            placeholder="Confirm Password"
+            onChange={updateDetails}
+            required
+          />
+        </div>
 
-      <Link to="/">
-        <button type="submit" className="btn-login" onClick={onPost}>
-          Sign Up
-        </button>
-      </Link>
-
-      <div className="signup-link">
-        <span className="login-account"> Already have an Account? </span>
-        <Link to="/login">
-          <span className="signup-page"> Login </span>
+        <Link to="/home">
+          <button type="submit" className="btn-login" onClick={onPost}>
+            Sign Up
+          </button>
         </Link>
+
+        <div className="signup-link">
+          <span className="login-account"> Already have an Account? </span>
+          <Link to="/login">
+            <span className="signup-page"> Login </span>
+          </Link>
+        </div>
       </div>
     </StyledSignup>
   );
@@ -255,11 +258,21 @@ const StyledSignup = styled.div`
   justify-content: center;
   align-items: center;
 
-  border: 1px solid ${COLORS.superLightGrey};
-  border-radius: 20px;
+  margin: 6rem;
 
-  padding: 15px 0 30px;
-  margin: 4rem;
+  .signup-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px 10px 40px;
+
+    border-radius: 20px;
+    border: 1px solid ${COLORS.cloudWhite};
+    box-shadow: 0px 13px 27px -5px rgba(50, 50, 93, 0.25),
+      0px 8px 16px -8px rgba(0, 0, 0, 0.3);
+  }
 
   .login {
     display: flex;
@@ -305,7 +318,7 @@ const StyledSignup = styled.div`
   .login-input {
     display: inline-block;
 
-    width: 90%;
+    width: 70%;
 
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -325,7 +338,7 @@ const StyledSignup = styled.div`
     border-radius: 10px;
 
     padding: 0.5rem 5rem;
-    margin: 0.75rem 0 1rem;
+    margin: 1.5rem 0 1rem;
 
     font-size: 1.3rem;
     font-family: "Barlow Condensed", sans-serif;

@@ -2,8 +2,13 @@ import { Router } from "express";
 import {
   createPost,
   getAllPosts,
-  getPostsByName,
+  getPostById,
+  getPostsByTitle,
+  getPostsByDate,
   deletePost,
+  updatePost,
+  upVote,
+  downVote,
 } from "../controllers/posts.js";
 import Post from "../models/Post.js";
 
@@ -15,16 +20,25 @@ PostRouter.post("/add-post", createPost);
 //Read - Get All Posts
 PostRouter.get("/", getAllPosts);
 
-//Read - Get Posts By Name
-PostRouter.get("/:post", getPostsByName);
+//Read - Get Posts By ID
+PostRouter.get("/:id", getPostById);
+
+//Read - Get Posts By Title
+PostRouter.get("/:post", getPostsByTitle);
 
 //Read - Get Posts By Date
-PostRouter.get("/:date", (req, res) => res.status(200).send());
+PostRouter.get("/:date", getPostsByDate);
 
 //Update - Modify Existing Post by Id
-PostRouter.patch("/:id", (req, res) => res.status(200).send());
+PostRouter.patch("/:id", updatePost);
 
 //Delete User By Id
 PostRouter.delete("/:id", deletePost);
+
+//Upvote post
+PostRouter.patch("/:id/upVote", upVote);
+
+//Downvote post
+PostRouter.patch("/:id/downVote", downVote);
 
 export default PostRouter;

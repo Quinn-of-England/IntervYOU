@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.10",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -13,14 +15,16 @@
     "react-alert-template-basic": "^1.0.2",
     "react-bootstrap": "^2.0.0-rc.1",
     "react-dom": "^17.0.2",
-    "react-dropzone": "^11.4.2",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
+    "react-dropzone":"11.4.2",
     "react-scripts": "^3.4.4",
     "react-toastify": "^8.1.0",
     "redux-thunk": "^2.4.0",
     "styled-components": "^5.3.1",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "redux": "^4.0.5",
+    "jwt-decode":"3.1.2"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
+// import dotenv from "dotenv";
+
+console.log(`${IP}, ${SERVER_PORT}`)
 
 const Login = () => {
   //Update Current Link & User Profile
@@ -15,7 +19,6 @@ const Login = () => {
   const [details, setDetails] = useState({
     username: "",
     password: "",
-    
   });
 
   // Error Messages from Form Validation
@@ -32,9 +35,9 @@ const Login = () => {
     if (!details["username"]) {
       loginIsValid = false;
       // errMsgs["username"] = "Username cannot be blank";
-      toast.warn("Username cannot be blank", { 
+      toast.warn("Username cannot be blank", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT ,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -42,25 +45,25 @@ const Login = () => {
         progress: undefined,
       });
     }
-    if (details["username"].length<3){
+    if (details["username"].length < 3) {
       loginIsValid = false;
-      toast.warn("Username must be longer than 3 characters", { 
+      toast.warn("Username must be longer than 3 characters", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
     }
-    
+
     //password
     if (!details["password"]) {
       loginIsValid = false;
-      toast.warn("Password cannot be blank", { 
+      toast.warn("Password cannot be blank", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -68,24 +71,22 @@ const Login = () => {
         progress: undefined,
       });
     }
-    if (details["password"].length<3){
+    if (details["password"].length < 3) {
       loginIsValid = false;
-      toast.warn("Password must be longer than 3 characters", { 
+      toast.warn("Password must be longer than 3 characters", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
     }
     // setErrorMsgs({ errMsgs: errMsgs });
-    
-    return loginIsValid;
-    
-  }
 
+    return loginIsValid;
+  }
 
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
@@ -93,27 +94,31 @@ const Login = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
+    console.log(`${IP}, ${SERVER_PORT}`)
     if (validateForm()) {
       toast("Form submitted");
       axios
-      .post(`http://localhost:5000/api/users/login`, details)
-      .then((res) => {
-        history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
-        console.log("User Successfully Logged In!");
-        // setErrorMsgs([]);
-      })
-      .catch((error) => {console.log("Registration error", error.response.data)});
-    } else {
-        toast.warn("Errors in Login", { //TODO send array of errMsgs to toast to print out
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+        .post(`${IP}:${SERVER_PORT }/api/users/login`, details)
+        .then((res) => {
+          history.push("/");
+          localStorage.setItem("Authorization", res.headers.authorization);
+          console.log("User Successfully Logged In!");
+          // setErrorMsgs([]);
+        })
+        .catch((error) => {
+          console.log("Registration error", error.response.data);
         });
+    } else {
+      toast.warn("Errors in Login", {
+        //TODO send array of errMsgs to toast to print out
+        position: "top-right",
+        autoClose: SERVER_PORT,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
@@ -121,7 +126,7 @@ const Login = () => {
     <StyledLogin>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={SERVER_PORT}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -129,50 +134,51 @@ const Login = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        />
-        {}
+      />
+      {}
       <ToastContainer />
-      <p className="title"> Login </p>
+      <div className="login-container">
+        <p className="title"> Login </p>
 
-      {
-        /* ERROR MESSAGES */
-        // errMsgs.length !== 0 &&
-        //   errMsgs.map((i) => (
-        //     <p className="missingInForm" key={i}>
-        //       {i}
-        //     </p>
-        //   ))
-      }
+        {
+          /* ERROR MESSAGES */
+          // errMsgs.length !== 0 &&
+          //   errMsgs.map((i) => (
+          //     <p className="missingInForm" key={i}>
+          //       {i}
+          //     </p>
+          //   ))
+        }
 
-      <div class="login-details">
-        <input
-          id="username"
-          type="username"
-          className="login-input"
-          placeholder="Username"
-          onChange={updateDetails}
-          required
-        />
-        {/* <span style={{ color: "red" }}>{errMsgs["username"]}</span> */}
-        <input
-          id="password"
-          type="password"
-          className="login-input"
-          placeholder="Password"
-          onChange={updateDetails}
-          required
-        />
-      </div>
+        <div className="login-details">
+          <input
+            id="username"
+            type="username"
+            className="login-input"
+            placeholder="Username"
+            onChange={updateDetails}
+            required
+          />
+          <input
+            id="password"
+            type="password"
+            className="login-input"
+            placeholder="Password"
+            onChange={updateDetails}
+            required
+          />
+        </div>
 
-      <button type="submit" className="btn-login" onClick={onPost}>
-        Login
-      </button>
+        <button type="submit" className="btn-login" onClick={onPost}>
+          Login
+        </button>
 
-      <div className="signup-link">
-        <span className="login-account"> Don't have an Account? </span>
-        <Link to="/signup">
-          <span className="signup-page"> Sign Up </span>
-        </Link>
+        <div className="signup-link">
+          <span className="login-account"> Don't have an Account? </span>
+          <Link to="/signup">
+            <span className="signup-page"> Sign Up </span>
+          </Link>
+        </div>
       </div>
     </StyledLogin>
   );
@@ -184,11 +190,21 @@ const StyledLogin = styled.div`
   justify-content: center;
   align-items: center;
 
-  border: 1px solid ${COLORS.superLightGrey};
-  border-radius: 20px;
+  margin: 6rem;
 
-  padding: 15px 0 30px;
-  margin: 4rem;
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px 10px 40px;
+
+    border-radius: 20px;
+    border: 1px solid ${COLORS.cloudWhite};
+    box-shadow: 0px 13px 27px -5px rgba(50, 50, 93, 0.25),
+      0px 8px 16px -8px rgba(0, 0, 0, 0.3);
+  }
 
   .login {
     display: flex;
@@ -234,7 +250,7 @@ const StyledLogin = styled.div`
   .login-input {
     display: inline-block;
 
-    width: 90%;
+    width: 70%;
 
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -254,7 +270,7 @@ const StyledLogin = styled.div`
     border-radius: 10px;
 
     padding: 0.5rem 5rem;
-    margin: 0.75rem 0 1rem;
+    margin: 1.5rem 0 1rem;
 
     font-size: 1.3rem;
     font-family: "Barlow Condensed", sans-serif;

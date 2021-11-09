@@ -1,8 +1,7 @@
-import express from 'express'
-import mongoose from 'mongoose'
-import cors from 'cors'
-import dotenv from 'dotenv'
-import cookieParser from 'cookie-parser'
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 import userRouter from './routes/users.js'
 import postRouter from './routes/posts.js'
@@ -12,27 +11,18 @@ import fileRouter from './routes/files.js'
 import { verifyAuth, verifyRefresh } from "./auth.js";
 
 //Load Environment Variables
-dotenv.config()
-const { DB_USER, DB_PASS, DB_NAME, MONGO_PORT, LOCAL_PORT, CLOUD_PORT } =
-  process.env
+dotenv.config();
 
 // Create Express Server
-const app = express()
+const app = express();
 
-// Init Middleware
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-)
-app.use(express.json())
+app.use(express.json());
 app.use(cookieParser());
 
 //Connect to MongoDB
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV == "production") {
   //Connect to mongo db on atlas
-  const dbUri = `mongodb+srv://${DB_USER}:${DB_PASS}@intervyoucluster.vah3w.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
+  const dbUri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@intervyoucluster.vah3w.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
   mongoose
     .connect(dbUri, {
       useNewUrlParser: true,
@@ -41,33 +31,37 @@ if (process.env.NODE_ENV == 'production') {
       useFindAndModify: false,
     })
     .then(() => {
-      console.log('Connected to MongoDB Database on Atlas!')
+      console.log("Connected to MongoDB Database on Atlas!");
 
       //Start server
-      app.listen(CLOUD_PORT, () => console.log(`Server Running on Port ${CLOUD_PORT}!`))
+      app.listen(process.env.CLOUD_PORT, () =>
+        console.log(`Server Running on Port ${process.env.CLOUD_PORT}!`)
+      );
     })
     .catch((err) => {
-      console.warn(`Unable to connect to ${DB_NAME}`)
-      console.error(`Error: ${err.message}`)
-    })
+      console.warn(`Unable to connect to ${process.env.DB_NAME}`);
+      console.error(`Error: ${err.message}`);
+    });
 } else {
   //Connect to local mongo db
   mongoose
-    .connect(`mongodb://mongo:${MONGO_PORT}`, {
+    .connect(`mongodb://mongo:${process.env.MONGO_PORT}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
       useFindAndModify: false,
-      user: 'root',
-      pass: 'root',
+      user: "root",
+      pass: "root",
     })
     .then(() => {
-      console.log('Connected to local MongoDB Database!')
+      console.log("Connected to local MongoDB Database!");
 
       //Start server
-      app.listen(LOCAL_PORT, () => console.log(`Server Running on Port ${LOCAL_PORT}!`))
+      app.listen(process.env.LOCAL_PORT, () =>
+        console.log(`Server Running on Port ${process.env.LOCAL_PORT}!`)
+      );
     })
-    .catch((err) => console.error(`Message: ${err.message}`))
+    .catch((err) => console.error(`Message: ${err.message}`));
 }
 
 //Define Endpoints/Routes for Requests
@@ -77,16 +71,20 @@ app.use('/api/groups/', verifyAuth, groupRouter)
 app.use('/api/files/', fileRouter)
 
 //Main route of server
-app.get('/', (_, res) => {
-  res.send("You have reached the server of IntervYOU!")
-})
+app.get("/", (_, res) => {
+  res.send("You have reached the server of IntervYOU!");
+});
 
 //Api route
-app.get('/api/', (_, res) => {
-  res.send("You have reached the api of this server")
-})
+app.get("/api/", (_, res) => {
+  res.send("You have reached the api of this server");
+});
 
-//Verify refresh token
-app.post('/api/refreshToken/', (req, res) => {
-  verifyRefresh(req, res)
-})
+// //Verify access and refresh token
+// app.post("/api/accessToken/", (req, res) => {
+//   verifyAuth(req, res);
+// });
+
+// app.post("/api/refreshToken/", (req, res) => {
+//   verifyRefresh(req, res);
+// });

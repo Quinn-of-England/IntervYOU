@@ -2,22 +2,22 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-import { CreatePostIcon } from "../../utils/icons";
+import { CreateIcon } from "../../utils/icons";
 
-const CreatePostButton = () => {
+const CreateButton = ({ btnText, linkPath }) => {
   return (
-    <StyledPostButton>
-      <Link to={"/post"} className="post-link">
-        <div className="btn-title"> Create a post </div>
-        <CreatePostIcon />
+    <StyledCreateButton>
+      <Link to={linkPath} className="post-link">
+        <div className="btn-title"> {btnText} </div>
+        <CreateIcon />
       </Link>
-    </StyledPostButton>
+    </StyledCreateButton>
   );
 };
 
-const StyledPostButton = styled.div`
+const StyledCreateButton = styled.div`
   // Create Button Container
-  width: 150px;
+  width: 160px;
 
   margin: 10px;
   padding-right: 15px;
@@ -60,4 +60,4 @@ const StyledPostButton = styled.div`
   }
 `;
 
-export default CreatePostButton;
+export default CreateButton;
