@@ -151,7 +151,7 @@ const Registration = () => {
       {withCredentials: true})
       .then((res) => {
         history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
+        localStorage.setItem("Authorization", res.data.accessToken);
         console.log("User Successfully Created!");
         
         // setErrorMsgs([]);

@@ -37,9 +37,6 @@ const PostForm = () => {
     let token = "";
     if (localStorage.getItem("Authorization")) {
       token = jwt(localStorage.getItem("Authorization"));
-    } else {
-      console.log("empty token")
-      return
     }
     const userId = token._id;
     const name = token.name;
