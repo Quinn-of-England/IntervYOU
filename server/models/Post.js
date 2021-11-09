@@ -6,10 +6,6 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  _id: {
-    type: Number,
-    required: true,
-  },
   group: {
     type: String,
     required: true,

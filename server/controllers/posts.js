@@ -41,15 +41,16 @@ export const getPostsByDate = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const {userId, postId, group, content, title, files, date, likes} = req.body;
-  const newPost = new Post({userId, postId, group, content, title, files, date, likes});
-
+  const {userName, _id, group, content, title, files, date, likes} = req.body;
+  const newPost = new Post({userName, _id, group, content, title, files, date, likes});
+  console.log(req.body);
+  console.log(newPost);
   try {
     //Successful Creation - 201
     await newPost.save();
     res.status(201).json(newPost);
   } catch (err) {
-    res.status(401).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 

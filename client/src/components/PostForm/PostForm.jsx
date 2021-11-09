@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
+import jwt from 'jwt-decode';
 
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
@@ -28,18 +29,21 @@ const PostForm = () => {
     console.log(acceptedFiles);
   }, [acceptedFiles]);
 
-  // useEffect(() => {
-  //   console.log(postContent);
-  // }, [postContent]);
-
-  userId = jwt(localStorage.getItem("Authorization"))._id;
   const onCreatePost = (e) => {
     e.preventDefault();
+
+    const token = jwt(localStorage.getItem("Authorization"));
+    const userId = token._id;
+    const name = token.name;
+
     console.log(postContent);
-    axios.post(baseUrl, { userId, ...postContent }).then((res) => {
+    axios.post(baseUrl, { userName: name, ...postContent }).then((res) => {
       console.log(res.body);
       history.push("/");
     }).catch((err) => {
+      console.log(token);
+      console.log(userId);
+      console.log(name);
       console.log(err);
     });
   }
