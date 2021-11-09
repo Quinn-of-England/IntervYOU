@@ -20,7 +20,7 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
   const [voteTotal, setVoteTotal] = useState(likes);
 
   useEffect(() => {
-    axios.get(userPath + userName).then((res) => {
+    axios.get(userPath + "username/" + userName).then((res) => {
       //Access Hashmap of Liked Posts
       setVoteState(res.data.likes.get(postId) ??  0);
     }).catch((err) => {

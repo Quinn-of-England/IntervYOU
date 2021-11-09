@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -30,11 +30,16 @@ const PostForm = () => {
     console.log(acceptedFiles);
   }, [acceptedFiles]);
 
+  useEffect(() => {
+    console.log(postContent);
+  }, [postContent]);
+
   const onCreatePost = (e) => {
     e.preventDefault();
-    // TODO: Add jwt.verify to get the userName
-    axios.post(baseUrl, {...postContent, userName: 1}).then((res) => {
-    history.push("/");
+    console.log(postContent);
+    axios.post(baseUrl, { ...postContent, userName: "Nich" }, { headers: { 'Authorization': "TODO" } }).then((res) => {
+      console.log(res.body);
+      history.push("/");
     }).catch((err) => {
       console.log(err);
     });
@@ -90,10 +95,10 @@ const PostForm = () => {
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
-      <InputField name="title" label="Title" errMessage="Required *" setPostAttribute={(e) => setPostContent({...postContent, title: e.target.value })} />
-      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) => setPostContent({...postContent, group: e.target.value })}/>
+      <InputField name="title" label="Title" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, title: e.target.value })} />
+      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, group: e.target.value })} />
       {/* TODO: Search for a community to post to */}
-      <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({...postContent, content: e.target.value })}/>
+      <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({ ...postContent, content: e.target.value })} />
 
       {/* File Drag and Drop Section */}
       {/* <input type="file" id="file_input" />
@@ -125,7 +130,7 @@ const PostForm = () => {
       )}
 
       <div className="post-actions">
-        <CancelButton btnText="CANCEL" handleClick={() =>  history.push("/")} />
+        <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
         <AddButton btnText="POST" handleClick={onCreatePost} />
       </div>
     </StyledPostForm>
