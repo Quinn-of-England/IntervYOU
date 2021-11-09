@@ -2,6 +2,7 @@ import User from '../models/User.js'
 import Group from '../models/Group.js'
 import bcrypt from 'bcrypt'
 import { createAccessToken, createRefreshToken } from '../auth.js'
+import Post from '../models/Post.js'
 export const refreshTokens = {}
 
 /**
@@ -49,7 +50,7 @@ export const login_post = async (req, res) => {
 
     res.status(200).send({ message: 'Success! Logging In...' })
   } catch (err) {
-    res.status(500).send({ message: err.message })
+    res.status(500).send({ message: err.message})
   }
 }
 
@@ -135,6 +136,37 @@ export const registration_post = async (req, res) => {
       })
   }
 }
+
+export const update_user_likes = (req, res) => {
+  const { postId } = req.params;
+
+  // try {
+  //   const users = await User.find({ $and: [ { _id: { $ne: req.params.id } }, { $or: [ { "username": req.body.username }, { "email": req.body.email } ] }, ], })
+  //   const thisUser = await User.findById(req.params.id)
+  //   if(users.length){
+  //     return res.status(400).json({ message: "fields used"})
+  //   }
+
+  //   User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'likes': 1 }}, (err, result) => {
+  //     if(err){
+  //       res.status(400).json({
+  //         message: 'Could not update user',
+  //         error: err.message,
+  //       })
+  //     }else{
+  //       res.status(200).json({
+  //         message: 'User updated!',
+  //         groups: result,
+  //       })
+  //     }
+  //   })
+
+  //   res.status(201).json()
+  // } catch (err) {
+  //   res.status(401).json({ message: err.message });
+  // }
+}
+
 
 /**
  * * This function will handle the user logout

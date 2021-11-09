@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 
 //Post Schema
 const PostSchema = new mongoose.Schema({
-  userId: {
-    type: Number,
+  userName: {
+    type: String,
     required: true,
   },
-  postId: {
-    type: Number,
+  group: {
+    type: String,
     required: true,
   },
-  post: {
+  content: {
     type: String,
     required: true,
   },
@@ -18,12 +18,16 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  content: {
-    type: String,
+  files: { 
+    type: [String],
   },
   date: {
     type: Date,
-    required: true,
+    default: new Date(),
+  },
+  likes: {
+    type: Number,
+    default: 0,
   },
 });
 

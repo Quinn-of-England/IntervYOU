@@ -8,6 +8,9 @@ import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
 
+// import dotenv from "dotenv";
+import { IP, SERVER_PORT } from '../../utils/types.js'; 
+
 const Registration = () => {
   //Update Current Link & User Profile
   const history = useHistory();
@@ -32,7 +35,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Username cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -45,7 +48,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Username must be longer than 3 characters", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -59,7 +62,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Email cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -83,7 +86,7 @@ const Registration = () => {
         registrationIsValid = false;
         toast.warn("Email is not valid", { 
           position: "top-right",
-          autoClose: 5000,
+          autoClose: SERVER_PORT,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -98,7 +101,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password cannot be blank", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -110,7 +113,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password must be longer than 3 characters", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -123,7 +126,7 @@ const Registration = () => {
       registrationIsValid = false;
       toast.warn("Password and confirm password must match", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -143,12 +146,12 @@ const Registration = () => {
     if (validateForm()) {
       toast("Form submitted");
       axios
-      .post('http://localhost:5000/api/users/registration',
+      .post(`${IP}:${SERVER_PORT}/api/users/registration`,
       details,
       {withCredentials: true})
       .then((res) => {
         history.push("/");
-        localStorage.setItem("Authorization", res.data.token);
+        localStorage.setItem("Authorization", res.headers.authorization);
         console.log("User Successfully Created!");
         
         // setErrorMsgs([]);
@@ -158,7 +161,7 @@ const Registration = () => {
     } else {
       toast.warn("Errors in Registration", { 
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -168,13 +171,12 @@ const Registration = () => {
     }
     
   };
-  };
 
   return (
     <StyledSignup>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={SERVER_PORT}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

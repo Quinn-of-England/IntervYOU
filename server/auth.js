@@ -6,6 +6,7 @@ import { refreshTokens } from './controllers/users.js'
 const storeUserCredentials = (user) => ({
   _id: user._id,
   email: user.email,
+  name: user.username,
 })
 
 //Create Access Token

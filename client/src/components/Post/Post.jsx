@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
+import axios from 'axios';
+import jwt from 'jwt-decode';
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
@@ -10,13 +11,58 @@ import {
 } from "../../utils/icons";
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 import CommentForm from "../Comment/CommentForm";
 import { CommentsIcon } from "../../utils/icons";
 
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Post = ({ title, user, description, voteCount, currentUserVote }) => {
-  const [voteState, setVoteState] = useState(currentUserVote);
-  const [voteTotal, setVoteTotal] = useState(voteCount);
+const Post = ({ postId, title, userName, group, content, likes }) => {
+  const [voteState, setVoteState] = useState(0);
+  const [voteTotal, setVoteTotal] = useState(likes);
+  const [onLoad, setOnLoad] = useState(true);
+  let userId = "";
+  if (localStorage.getItem("Authorization")) {
+    userId = jwt(localStorage.getItem("Authorization"))._id;
+  }
+  useEffect(() => {
+    axios.get(userPath + "id/" + userId).then((res) => {
+      //TODO: Access Hashmap of Liked Posts
+      // setVoteState(res.data.likes.get("null") ??  0);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
+  useEffect(() => {
+
+    if (!onLoad) {
+      // Updated the User Liked Map Status
+      axios.get(userPath + "id/" + userId).then((res) => {         
+        console.log(res); 
+        if (voteState === -1) {
+          axios.patch(postPath + postId + "/downVote").then((res) => {  
+            //    
+          }).catch((err) => {
+            console.log(err);
+          });
+
+        } else {
+        axios.patch(postPath + postId + "/upVote").then((res) => {      
+            //
+          }).catch((err) => {
+            console.log(err);
+          });
+
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    }  else {
+      setOnLoad(false);
+    }
+  }, [voteState])
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
@@ -80,8 +126,9 @@ const Post = ({ title, user, description, voteCount, currentUserVote }) => {
 
       <div className="post-content">
         <div className="post-title"> {title} </div>
-        <div className="post-user"> {user} </div>
-        <div className="post-description">{description}</div>
+        <div className="post-userId"> {`u/${userName}`} </div>
+        <div className="post-group"> {`g/${group}`} </div>
+        <div className="post-content">{content}</div>
 
         <Files files={files} />
 
@@ -155,27 +202,24 @@ const StyledPost = styled.div`
   }
 
   .post {
-    &-content {
-      margin: 0 20px;
-      width: 100%;
-    }
-
     &-title {
       font-size: 22px;
       font-weight: 550;
       padding-top: 8px;
     }
 
-    &-user {
+    &-userName {
       color: ${COLORS.fadedGrey};
       font-size: 14px;
       padding-bottom: 8px;
     }
 
-    &-description {
+    &-content {
+      width: 100%;
       font-size: 16px;
       font-weight: 200;
       padding-bottom: 8px;
+      padding-left: 20px;
     }
 
     &-footer {
@@ -188,7 +232,6 @@ const StyledPost = styled.div`
 
       font-weight: 150;
       color: #a9a9a9;
-      margin: 10px 0;
 
       .btn-comment {
         display: flex;

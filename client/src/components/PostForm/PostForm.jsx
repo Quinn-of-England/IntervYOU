@@ -1,49 +1,57 @@
 import React, { useState, useEffect } from "react";
+// import dotenv from "dotenv";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
+import jwt from 'jwt-decode';
 
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
-
+import axios from 'axios';
 import File from "../File/File";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 
-import { createPost } from "../../actions/posts";
-import { useDispatch, useSelector } from "react-redux";
+const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
-const PostForm = ({ selectedPostId }) => {
-  const dispatch = useDispatch();
-
-  const location = useLocation();
+const PostForm = () => {
   const history = useHistory();
 
-  const post = useSelector((state) =>
-    selectedPostId ? state.posts.find((p) => p._id === selectedPostId) : null
-  );
+  const [postContent, setPostContent] = useState({
+    title: '', content: '', group: '', files: []
+  });
 
-  const [postContent, setPostContent] = useState([
-    { title: "", group: "", content: "", files: "" },
-  ]);
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   useEffect(() => {
-    if (post) {
-      setPostContent(post);
-    }
-  }, [post]);
+    console.log(postContent);
+  }, [postContent]);
+
+  useEffect(() => {
+    console.log(acceptedFiles);
+  }, [acceptedFiles]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
 
-        history.push(location.pathname + "/home");
+    let token = "";
+    if (localStorage.getItem("Authorization")) {
+      token = jwt(localStorage.getItem("Authorization"));
+    }
+    const userId = token._id;
+    const name = token.name;
 
-    // dispatch(createPost(postContent));
-    // selectedPostId = null;
-    // history.push(location.pathname + "/");
-  };
-
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
-
+    console.log(postContent);
+    axios.post(baseUrl, { userName: name, ...postContent }).then((res) => {
+      console.log(res.body);
+      history.push("/");
+    }).catch((err) => {
+      console.log(token);
+      console.log(userId);
+      console.log(name);
+      console.log(err);
+    });
+  }
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
     const fileSizes = ["Bytes", "KB", "MB", "GB"];
@@ -86,7 +94,7 @@ const PostForm = ({ selectedPostId }) => {
     }
   };
 
-  const getFileExtension = (fileType) =>
+  const getFileExtension = (fileType) => 
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
   return (
@@ -94,10 +102,10 @@ const PostForm = ({ selectedPostId }) => {
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
-      <InputField label="Title" errMessage="Required *" />
-      <InputField label="Community" errMessage="Required *" />
+      <InputField name="title" label="Title" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, title: e.target.value })} />
+      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, group: e.target.value })} />
       {/* TODO: Search for a community to post to */}
-      <InputField label="Content" errMessage="" />
+      <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({ ...postContent, content: e.target.value })} />
 
       {/* File Drag and Drop Section */}
       {/* <input type="file" id="file_input" />
