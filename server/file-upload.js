@@ -12,7 +12,7 @@ AWS.config.update({
   accessKeyId: process.env.BUCKET_ACCESS_KEY,
 })
 
-var s3 = new AWS.S3()
+export var s3 = new AWS.S3()
 
 export const upload = multer({
     storage: multerS3({

@@ -1,4 +1,4 @@
-import { upload } from '../file-upload.js'
+import { upload, s3 } from '../file-upload.js'
 
 /* *
  * * This function will upload all files to S3 bucket
