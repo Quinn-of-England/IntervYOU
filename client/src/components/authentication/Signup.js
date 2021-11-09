@@ -168,7 +168,6 @@ const Registration = () => {
     }
     
   };
-  };
 
   return (
     <StyledSignup>

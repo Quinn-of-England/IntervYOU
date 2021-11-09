@@ -96,7 +96,7 @@ const Login = () => {
         .post(`http://localhost:5000/api/users/login`, details)
         .then((res) => {
           history.push("/");
-          localStorage.setItem("Authorization", res.data.token);
+          localStorage.setItem("Authorization", res.data.accessToken);
           console.log("User Successfully Logged In!");
           // setErrorMsgs([]);
         })

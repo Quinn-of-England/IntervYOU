@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import jwt from 'jwt-decode';
 
 import {
   UpVoteArrowIcon,
@@ -17,12 +18,13 @@ import { CommentsIcon } from "../../utils/icons";
 
 const userPath = "http://localhost:5000/api/users/";
 const postPath = "http://localhost:5000/api/posts/";
-const Post = ({ postId, title, userName, group, content, likes }) => {
+const Post = ({ postId, title, userId, group, content, likes }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
 
+  userId = jwt(localStorage.getItem("Authorization"))._id;
   useEffect(() => {
-    axios.get(userPath + userName).then((res) => {
+    axios.get(userPath + "id/" + userId).then((res) => {
       //Access Hashmap of Liked Posts
       setVoteState(res.data.likes.get(postId) ??  0);
     }).catch((err) => {
@@ -30,13 +32,12 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
     });
   }, []);
 
-  userName = "6185dfba66659100137e4281";
   useEffect(() => {
     // Updated the User Liked Map Status
-    axios.get(userPath  + userName).then((res) => {     
+    axios.get(userPath + "id/" + userId).then((res) => {     
       console.log(res); 
       if (voteState === -1) {
-        axios.patch(postPath + postId + "/downVote", ).then((res) => {      
+        axios.patch(postPath + postId + "/downVote").then((res) => {      
             //
         }).catch((err) => {
           console.log(postId)
@@ -44,7 +45,13 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
         });
 
       } else {
-      axios.patch(postPath + postId + "/upVote", )
+      axios.patch(postPath + postId + "/upVote").then((res) => {      
+            //
+        }).catch((err) => {
+          console.log(postId)
+          console.log(err);
+        });
+
       }
     }).catch((err) => {
       console.log(err);
@@ -113,7 +120,7 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
 
       <div className="post-content">
         <div className="post-title"> {title} </div>
-        <div className="post-userName"> {userName} </div>
+        <div className="post-userId"> {userId} </div>
         {/* <div className="post-group"> {group} </div> */}
         <div className="post-content">{content}</div>
 
@@ -189,26 +196,24 @@ const StyledPost = styled.div`
   }
 
   .post {
-    &-content {
-      width: 100%;
-    }
-
     &-title {
       font-size: 22px;
       font-weight: 550;
       padding-top: 8px;
     }
 
-    &-userName {
+    &-userId {
       color: ${COLORS.fadedGrey};
       font-size: 14px;
       padding-bottom: 8px;
     }
 
     &-content {
+      width: 100%;
       font-size: 16px;
       font-weight: 200;
       padding-bottom: 8px;
+      padding-left: 20px;
     }
 
     &-footer {

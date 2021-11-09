@@ -7,9 +7,7 @@ import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 import axios from 'axios';
-import { createPost } from "../../actions/posts.js";
 import File from "../File/File";
-
 
 const baseUrl = "http://localhost:5000/api/posts/add-post";
 
@@ -30,20 +28,21 @@ const PostForm = () => {
     console.log(acceptedFiles);
   }, [acceptedFiles]);
 
-  useEffect(() => {
-    console.log(postContent);
-  }, [postContent]);
+  // useEffect(() => {
+  //   console.log(postContent);
+  // }, [postContent]);
 
+  userId = jwt(localStorage.getItem("Authorization"))._id;
   const onCreatePost = (e) => {
     e.preventDefault();
     console.log(postContent);
-    axios.post(baseUrl, { ...postContent, userName: "Nich" }, { headers: { 'Authorization': "TODO" } }).then((res) => {
+    axios.post(baseUrl, { ...postContent }, { headers: { 'Authorization': localStorage.getItem("Authorization")} }).then((res) => {
       console.log(res.body);
       history.push("/");
     }).catch((err) => {
       console.log(err);
     });
-    
+  }
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
     const fileSizes = ["Bytes", "KB", "MB", "GB"];
@@ -86,7 +85,7 @@ const PostForm = () => {
     }
   };
 
-  const getFileExtension = (fileType) =>
+  const getFileExtension = (fileType) => 
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
   return (

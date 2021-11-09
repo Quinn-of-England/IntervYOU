@@ -5,14 +5,14 @@ import axios from 'axios';
 const baseUrl = "http://localhost:5000/api/posts";
 
 //Redux Thunk Uses to Specify Asynchronous Action for Asynchronous Calls
-export const getPosts = () => async (dispatch) => {
-  try {
-    const { data } = await axios.get(usersRoute);
-    dispatch({ type: GET_USERS, payload: data });
-  } catch (err) {
-    console.log(err.message);
-  }
-};
+// export const getPosts = () => async (dispatch) => {
+//   try {
+//     const { data } = await axios.get(usersRoute);
+//     dispatch({ type: GET_USERS, payload: data });
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// };
 
 export const getPosts = (newPost) => async (dispatch) => {
   try {
@@ -34,7 +34,7 @@ export const createPost = (post) => async (dispatch) => {
 
 export const updatePost = (postId, updatedPost) => async (dispatch) => {
   try {
-    const { data } = await axios.patch(postsRoute + "/" + postId, updatedPost);
+    const { data } = await axios.patch(baseUrl + "/" + postId, updatedPost);
     dispatch({ type: EDIT_POST, payload: data });
   } catch (err) {
     console.log(err.message);
