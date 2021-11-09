@@ -7,10 +7,10 @@ export default (posts = [], action) => {
     case CREATE_POST:
       return [...posts, action.payload];
     case EDIT_POST:
-      return posts;
+      return posts.map((p) => (p._id === action.payload.id ? action.payload : p));
     case DELETE_POST:
-      return posts;
+      return posts.filter((p) => p._id !== action.payload); 
     default:
       return posts;
-  }
-};
+  };
+}

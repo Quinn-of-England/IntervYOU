@@ -43,8 +43,7 @@ const PostForm = () => {
     }).catch((err) => {
       console.log(err);
     });
-  };
-
+    
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
     const fileSizes = ["Bytes", "KB", "MB", "GB"];

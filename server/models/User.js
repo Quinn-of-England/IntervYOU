@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  groups: [
+    {
+      group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group'}
+    }
+  ],
 });
 
 const User = mongoose.model("user", userSchema);

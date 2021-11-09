@@ -5,13 +5,15 @@ import axios from 'axios';
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
-  CommentsIcon,
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
 } from "../../utils/icons";
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
+import CommentForm from "../Comment/CommentForm";
+import { CommentsIcon } from "../../utils/icons";
+
 
 const userPath = "http://localhost:5000/api/users/";
 const postPath = "http://localhost:5000/api/posts/";
@@ -94,7 +96,14 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
     },
   ];
 
+  const [commentState, setCommentState] = useState(false);
+
+  const onClickComment = (e) => {
+      setCommentState({commentState: (!{commentState})});
+  }
+
   return (
+    
     <StyledPost voteState={currentColor}>
       <div className="voting-buttons">
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
@@ -111,9 +120,9 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
         <Files files={files} />
 
         <div className="post-footer">
-          <div className="post-actions">
-            <CommentsIcon />
-            <span> Comments </span>
+          <div onClick={onClickComment} className="btn-comment"> 
+              <CommentsIcon />
+              <span> Comments </span>
           </div>
           <div className="post-actions">
             <DownloadDocumentIcon />
@@ -128,8 +137,13 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
             <span> Share </span>
           </div>
         </div>
+        {
+          commentState && <CommentForm/>
+        }
       </div>
+      
     </StyledPost>
+    
   );
 };
 
@@ -208,6 +222,26 @@ const StyledPost = styled.div`
       font-weight: 150;
       color: #a9a9a9;
       margin: 10px 0;
+
+      .btn-comment {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    
+        padding: 5px 10px;
+        border-radius: 18px;
+        font-weight: 150;
+        color: #a9a9a9;
+    
+        span {
+          padding-left: 8px;
+        }
+    
+        &:hover {
+          cursor: pointer;
+          background: #e8e8e8;
+        }
+      }
 
       .post-actions {
         display: flex;

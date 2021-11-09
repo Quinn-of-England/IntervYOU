@@ -30,13 +30,13 @@ const NavBar = () => {
     },
     {
       id: "nav-3",
-      item: "Settings",
-      path: "/settings",
+      item: "Profile",
+      path: "/profile",
     },
     {
       id: "nav-4",
       item: "Logout",
-      path: "/login",
+      path: "/logout",
     },
   ];
 

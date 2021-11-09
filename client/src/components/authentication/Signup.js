@@ -1,37 +1,36 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
 
-const Login = () => {
+const Registration = () => {
   //Update Current Link & User Profile
   const history = useHistory();
 
   //Use State Hook to Update Form Details
   const [details, setDetails] = useState({
     username: "",
+    email: "",
     password: "",
+    confirmPass: "",
   });
 
-  // Error Messages from Form Validation
-  // const [errMsgs, setErrorMsgs] = useState({
-  //   username: "",
-  //   password:"",
-  // });
+  //Error Messages from Form Validation
+  // const [errMsgs, setErrorMsgs] = useState([]);
 
   //validate registration
   function validateForm() {
-    let loginIsValid = true;
-    // let errMsgs = {};
+    let registrationIsValid = true;
+    
     //username
     if (!details["username"]) {
-      loginIsValid = false;
-      // errMsgs["username"] = "Username cannot be blank";
-      toast.warn("Username cannot be blank", {
+      registrationIsValid = false;
+      toast.warn("Username cannot be blank", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -39,11 +38,12 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      });
+        });
     }
-    if (details["username"].length < 3) {
-      loginIsValid = false;
-      toast.warn("Username must be longer than 3 characters", {
+
+    if (details["username"].length<3){
+      registrationIsValid = false;
+      toast.warn("Username must be longer than 3 characters", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -51,13 +51,52 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      });
+        });
+    }
+
+    //Email
+    if (!details["email"]) {
+      registrationIsValid = false;
+      toast.warn("Email cannot be blank", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    if (typeof details["email"] !== "undefined") {
+      let addressPosition = details["email"].lastIndexOf("@");
+      let dotPosition = details["email"].lastIndexOf(".");
+      if (
+        !(
+          addressPosition < dotPosition && //basically format has to be something@something.som
+          addressPosition > 0 &&
+          details["email"].indexOf("@") !== -1 &&
+          dotPosition > 2 &&
+          details["email"].length - dotPosition > 2
+        )
+      ) {
+        registrationIsValid = false;
+        toast.warn("Email is not valid", { 
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      }
     }
 
     //password
     if (!details["password"]) {
-      loginIsValid = false;
-      toast.warn("Password cannot be blank", {
+      registrationIsValid = false;
+      toast.warn("Password cannot be blank", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -65,11 +104,11 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      });
+    });
     }
-    if (details["password"].length < 3) {
-      loginIsValid = false;
-      toast.warn("Password must be longer than 3 characters", {
+    if (details["password"].length<3){
+      registrationIsValid = false;
+      toast.warn("Password must be longer than 3 characters", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -77,11 +116,22 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      });
+        });
     }
-    // setErrorMsgs({ errMsgs: errMsgs });
 
-    return loginIsValid;
+    if(details["password"] !== details["confirmPass"]){
+      registrationIsValid = false;
+      toast.warn("Password and confirm password must match", { 
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+    return registrationIsValid;
   }
 
   const updateDetails = ({ target: { id, value } }) =>
@@ -93,19 +143,20 @@ const Login = () => {
     if (validateForm()) {
       toast("Form submitted");
       axios
-        .post(`http://localhost:5000/api/users/login`, details)
-        .then((res) => {
-          history.push("/");
-          localStorage.setItem("Authorization", res.data.token);
-          console.log("User Successfully Logged In!");
-          // setErrorMsgs([]);
-        })
-        .catch((error) => {
-          console.log("Registration error", error.response.data);
-        });
+      .post('http://localhost:5000/api/users/registration',
+      details,
+      {withCredentials: true})
+      .then((res) => {
+        history.push("/");
+        localStorage.setItem("Authorization", res.data.token);
+        console.log("User Successfully Created!");
+        
+        // setErrorMsgs([]);
+      })
+      .catch((error) => {
+        console.log("Registration error", error.response.data)});
     } else {
-      toast.warn("Errors in Login", {
-        //TODO send array of errMsgs to toast to print out
+      toast.warn("Errors in Registration", { 
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -113,12 +164,14 @@ const Login = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      });
+        });
     }
+    
+  };
   };
 
   return (
-    <StyledLogin>
+    <StyledSignup>
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -129,11 +182,11 @@ const Login = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
-      {}
+        />
+        {}
       <ToastContainer />
-      <div className="login-container">
-        <p className="title"> Login </p>
+      <div className="signup-container">
+        <p className="title"> Create an Account </p>
 
         {
           /* ERROR MESSAGES */
@@ -155,6 +208,14 @@ const Login = () => {
             required
           />
           <input
+            id="email"
+            type="email"
+            className="login-input"
+            placeholder="Email"
+            onChange={updateDetails}
+            required
+          />
+          <input
             id="password"
             type="password"
             className="login-input"
@@ -162,24 +223,34 @@ const Login = () => {
             onChange={updateDetails}
             required
           />
+          <input
+            id="confirmPass"
+            type="password"
+            className="login-input"
+            placeholder="Confirm Password"
+            onChange={updateDetails}
+            required
+          />
         </div>
 
-        <button type="submit" className="btn-login" onClick={onPost}>
-          Login
-        </button>
+        <Link to="/home">
+          <button type="submit" className="btn-login" onClick={onPost}>
+            Sign Up
+          </button>
+        </Link>
 
         <div className="signup-link">
-          <span className="login-account"> Don't have an Account? </span>
-          <Link to="/signup">
-            <span className="signup-page"> Sign Up </span>
+          <span className="login-account"> Already have an Account? </span>
+          <Link to="/login">
+            <span className="signup-page"> Login </span>
           </Link>
         </div>
       </div>
-    </StyledLogin>
+    </StyledSignup>
   );
 };
 
-const StyledLogin = styled.div`
+const StyledSignup = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -187,7 +258,7 @@ const StyledLogin = styled.div`
 
   margin: 6rem;
 
-  .login-container {
+  .signup-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -329,4 +400,4 @@ const StyledLogin = styled.div`
   }
 `;
 
-export default Login;
+export default Registration;
