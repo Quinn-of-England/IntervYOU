@@ -36,7 +36,7 @@ const PostForm = () => {
   const onCreatePost = (e) => {
     e.preventDefault();
     console.log(postContent);
-    axios.post(baseUrl, { ...postContent }, { headers: { 'Authorization': localStorage.getItem("Authorization")} }).then((res) => {
+    axios.post(baseUrl, { userId, ...postContent }).then((res) => {
       console.log(res.body);
       history.push("/");
     }).catch((err) => {
