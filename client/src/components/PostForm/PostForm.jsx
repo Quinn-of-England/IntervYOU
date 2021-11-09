@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -9,19 +9,37 @@ import CancelButton from "./CancelButton";
 
 import File from "../File/File";
 
-const PostForm = () => {
+import { createPost } from "../../actions/posts";
+import { useDispatch, useSelector } from "react-redux";
+
+const PostForm = ({ selectedPostId }) => {
+  const dispatch = useDispatch();
+
   const location = useLocation();
   const history = useHistory();
 
-  // const [postContent, setPostContent] = useState([
-  //   { title: "", group: "", content: "", files: "" },
-  // ]);
+  const post = useSelector((state) =>
+    selectedPostId ? state.posts.find((p) => p._id === selectedPostId) : null
+  );
+
+  const [postContent, setPostContent] = useState([
+    { title: "", group: "", content: "", files: "" },
+  ]);
+
+  useEffect(() => {
+    if (post) {
+      setPostContent(post);
+    }
+  }, [post]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
 
-    history.push(location.pathname + "/");
-    //     dispatchEvent(createPost(postData));
+        history.push(location.pathname + "/home");
+
+    // dispatch(createPost(postContent));
+    // selectedPostId = null;
+    // history.push(location.pathname + "/");
   };
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();

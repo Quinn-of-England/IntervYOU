@@ -1,19 +1,34 @@
-import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import Home from "./pages/Home";
 
 import "./App.css";
-import Registration from "./components/authentication/Registration";
+import Signup from "./components/authentication/Signup";
 import Login from "./components/authentication/Login";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
+import CommunityPage from "./pages/CommunityPage";
+import NavBar from "./components/NavBar";
 import CommentPage from "./pages/CommentPage";
 
 const App = () => {
-  // const [loginStatus, setLoginStatus] = useState({
-  //   isLoggedIn: false,
-  //   userId: null,
-  // });
+  const [loginStatus, setLoginStatus] = useState({
+    isLoggedIn: false,
+    userId: null,
+  });
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      setLoginStatus(true);
+    } else {
+      setLoginStatus(false);
+    }
+  }, []);
 
   // console.log(loginStatus);
   // setLoginStatus((prevStatus) => ({ isLoggedIn: false, userId: null }));
@@ -53,43 +68,23 @@ const App = () => {
 
   return (
     <Router>
-      <Route path="/" exact>
-        <Home />
-      </Route>
-      <Route path="/feed">
-        <Home />
-      </Route>
-      <Route path="/post">
-        <PostPage />
-      </Route>
-      <Route path="/groups">
-        <GroupPage />
-      </Route>
-      <Route path="/settings">
-        <Home />
-      </Route>
-      <Route path="/login">
-        <Login />
-      </Route>
-      <Route path="/signup">
-        <Registration />
-      </Route>
-      <Route path="/comment">
-        <CommentPage />
-      </Route>
+      <NavBar />
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/feed" component={Home} />
+        <Route path="/post" component={PostPage} />
+        <Route path="/:id/comments" component={CommentPage} />
+        <Route path="/groups" component={GroupPage} />
+        <Route path="/group/create" component={CommunityPage} />
+        <Route path="/profile" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/signup" component={Signup} />
+        <Route path="*">
+          <Redirect to="/login" />
+        </Route>
+      </Switch>
     </Router>
   );
-  // <Route
-  //   path={"/"}
-  //   exact
-  //   render={(props) => (
-  //     <Home
-  //       {...props}
-  //       handleLogin={handleLogin}
-  //       loggedInStatus={setLoginStatus}
-  //     />
-  //   )}
-  // />
 };
 
 export default App;
