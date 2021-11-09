@@ -5,7 +5,7 @@ import { RightArrowIcon } from "../../utils/icons";
 
 const AddButton = ({ btnText, handleClick }) => {
   return (
-    <StyledAddButton handleClick={handleClick}>
+    <StyledAddButton onClick={handleClick}>
       <div className="btn-text"> {btnText} </div>
       <div className="svg-holder">
         <RightArrowIcon />

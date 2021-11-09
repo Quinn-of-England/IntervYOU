@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-import NavBar from "../components/NavBar";
 import Posts from "../components/Post/Posts";
 
 import SearchBar from "../components/Inputs/SearchBar";
-import CreatePostButton from "../components/PostForm/CreatePostButton";
+import CreateButton from "../components/PostForm/CreateButton";
 
 const Home = () => {
   // const [filteredInput, setFilteredInput] = useState("");
@@ -19,20 +18,17 @@ const Home = () => {
 
   return (
     <StyledHome>
-      <NavBar />
       {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}
-      <div className="home-content">
-        <div className="home-actions">
-          {/* Implement isAuth as Toast */}
-          {/* <h3>Status: {isAuth} </h3> */}
-          <SearchBar
-            placeHolder="Search for Interviews"
-            // applyFilter={setFilteredInput}
-          />
-          <CreatePostButton />
-        </div>
-        <Posts />
+      <div className="home-actions">
+        {/* Implement isAuth as Toast */}
+        {/* <h3>Status: {isAuth} </h3> */}
+        <SearchBar
+          placeHolder="Search for posts"
+          // applyFilter={setFilteredInput}
+        />
+        <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
+      <Posts />
     </StyledHome>
   );
 };
@@ -40,12 +36,11 @@ const Home = () => {
 const StyledHome = styled.div`
   width: 100vw;
   height: 100%;
+  min-height: 100vh;
   background: #eaf3f3;
 
-  .home-content {
-    padding: 20px 0;
-    margin: 50px;
-  }
+  padding: 50px;
+  margin-top: 20px;
 
   .home-actions {
     display: flex;

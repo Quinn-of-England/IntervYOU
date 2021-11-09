@@ -38,46 +38,48 @@ const Login = () => {
 
   return (
     <StyledLogin>
-      <p className="title"> Login </p>
+      <div className="login-container">
+        <p className="title"> Login </p>
 
-      {
-        /* ERROR MESSAGES */
-        errMsgs.length !== 0 &&
-          errMsgs.map((i) => (
-            <p className="missingInForm" key={i}>
-              {i}
-            </p>
-          ))
-      }
+        {
+          /* ERROR MESSAGES */
+          errMsgs.length !== 0 &&
+            errMsgs.map((i) => (
+              <p className="missingInForm" key={i}>
+                {i}
+              </p>
+            ))
+        }
 
-      <div class="login-details">
-        <input
-          id="username"
-          type="username"
-          className="login-input"
-          placeholder="Username"
-          onChange={updateDetails}
-          required
-        />
-        <input
-          id="password"
-          type="password"
-          className="login-input"
-          placeholder="Password"
-          onChange={updateDetails}
-          required
-        />
-      </div>
+        <div className="login-details">
+          <input
+            id="username"
+            type="username"
+            className="login-input"
+            placeholder="Username"
+            onChange={updateDetails}
+            required
+          />
+          <input
+            id="password"
+            type="password"
+            className="login-input"
+            placeholder="Password"
+            onChange={updateDetails}
+            required
+          />
+        </div>
 
-      <button type="submit" className="btn-login" onClick={onPost}>
-        Login
-      </button>
+        <button type="submit" className="btn-login" onClick={onPost}>
+          Login
+        </button>
 
-      <div className="signup-link">
-        <span className="login-account"> Don't have an Account? </span>
-        <Link to="/signup">
-          <span className="signup-page"> Sign Up </span>
-        </Link>
+        <div className="signup-link">
+          <span className="login-account"> Don't have an Account? </span>
+          <Link to="/signup">
+            <span className="signup-page"> Sign Up </span>
+          </Link>
+        </div>
       </div>
     </StyledLogin>
   );
@@ -89,11 +91,21 @@ const StyledLogin = styled.div`
   justify-content: center;
   align-items: center;
 
-  border: 1px solid ${COLORS.superLightGrey};
-  border-radius: 20px;
+  margin: 6rem;
 
-  padding: 15px 0 30px;
-  margin: 4rem;
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px 10px 40px;
+
+    border-radius: 20px;
+    border: 1px solid ${COLORS.cloudWhite};
+    box-shadow: 0px 13px 27px -5px rgba(50, 50, 93, 0.25),
+      0px 8px 16px -8px rgba(0, 0, 0, 0.3);
+  }
 
   .login {
     display: flex;
@@ -139,7 +151,7 @@ const StyledLogin = styled.div`
   .login-input {
     display: inline-block;
 
-    width: 90%;
+    width: 70%;
 
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -159,7 +171,7 @@ const StyledLogin = styled.div`
     border-radius: 10px;
 
     padding: 0.5rem 5rem;
-    margin: 0.75rem 0 1rem;
+    margin: 1.5rem 0 1rem;
 
     font-size: 1.3rem;
     font-family: "Barlow Condensed", sans-serif;
