@@ -20,7 +20,7 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
   const [voteTotal, setVoteTotal] = useState(likes);
 
   useEffect(() => {
-    axios.get(userPath + "username/" + userName).then((res) => {
+    axios.get(userPath + userName).then((res) => {
       //Access Hashmap of Liked Posts
       setVoteState(res.data.likes.get(postId) ??  0);
     }).catch((err) => {
@@ -28,10 +28,10 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
     });
   }, []);
 
-  userName = "Nich";
+  userName = "6185dfba66659100137e4281";
   useEffect(() => {
     // Updated the User Liked Map Status
-    axios.get(userPath + "username/" + userName).then((res) => {     
+    axios.get(userPath  + userName).then((res) => {     
       console.log(res); 
       if (voteState === -1) {
         axios.patch(postPath + postId + "/downVote", ).then((res) => {      
