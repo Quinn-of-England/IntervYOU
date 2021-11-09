@@ -48,7 +48,7 @@ export const login_post = async (req, res) => {
     res.cookie('refreshToken', refreshToken, { httpOnly: true })
     refreshTokens[refreshToken] = user._id
 
-    res.status(200).send({ message: 'Success! Logging In...',  accessToken: token  })
+    res.status(200).send({ message: 'Success! Logging In...' })
   } catch (err) {
     res.status(500).send({ message: err.message})
   }

@@ -101,7 +101,7 @@ const Login = () => {
         .post(`${IP}:${SERVER_PORT }/api/users/login`, details)
         .then((res) => {
           history.push("/");
-          localStorage.setItem("Authorization", res.data.accessToken);
+          localStorage.setItem("Authorization", res.headers.authorization);
           console.log("User Successfully Logged In!");
           // setErrorMsgs([]);
         })
