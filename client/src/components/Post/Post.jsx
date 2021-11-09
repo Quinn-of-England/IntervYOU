@@ -18,44 +18,48 @@ import { CommentsIcon } from "../../utils/icons";
 
 const userPath = "http://localhost:5000/api/users/";
 const postPath = "http://localhost:5000/api/posts/";
-const Post = ({ postId, title, userId, group, content, likes }) => {
+const Post = ({ postId, title, userName, group, content, likes }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
+  const [onLoad, setOnLoad] = useState(true);
 
-  userId = jwt(localStorage.getItem("Authorization"))._id;
+  const userId = jwt(localStorage.getItem("Authorization"))._id;
   useEffect(() => {
     axios.get(userPath + "id/" + userId).then((res) => {
-      //Access Hashmap of Liked Posts
-      setVoteState(res.data.likes.get(postId) ??  0);
+      //TODO: Access Hashmap of Liked Posts
+      // setVoteState(res.data.likes.get("null") ??  0);
     }).catch((err) => {
       console.log(err);
     });
   }, []);
 
   useEffect(() => {
-    // Updated the User Liked Map Status
-    axios.get(userPath + "id/" + userId).then((res) => {     
-      console.log(res); 
-      if (voteState === -1) {
-        axios.patch(postPath + postId + "/downVote").then((res) => {      
-            //
-        }).catch((err) => {
-          console.log(postId)
-          console.log(err);
-        });
 
-      } else {
-      axios.patch(postPath + postId + "/upVote").then((res) => {      
-            //
-        }).catch((err) => {
-          console.log(postId)
-          console.log(err);
-        });
+    if (!onLoad) {
+      // Updated the User Liked Map Status
+      axios.get(userPath + "id/" + userId).then((res) => {         
+        console.log(res); 
+        if (voteState === -1) {
+          axios.patch(postPath + postId + "/downVote").then((res) => {      
+              //
+          }).catch((err) => {
+            console.log(err);
+          });
 
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
+        } else {
+        axios.patch(postPath + postId + "/upVote").then((res) => {      
+              //
+          }).catch((err) => {
+            console.log(err);
+          });
+
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    }  else {
+      setOnLoad(false);
+    }
   }, [voteState])
 
   const upVoted = () => onVoteChange(1);
@@ -120,8 +124,8 @@ const Post = ({ postId, title, userId, group, content, likes }) => {
 
       <div className="post-content">
         <div className="post-title"> {title} </div>
-        <div className="post-userId"> {userId} </div>
-        {/* <div className="post-group"> {group} </div> */}
+        <div className="post-userId"> {`u/${userName}`} </div>
+        <div className="post-group"> {`g/${group}`} </div>
         <div className="post-content">{content}</div>
 
         <Files files={files} />
@@ -202,7 +206,7 @@ const StyledPost = styled.div`
       padding-top: 8px;
     }
 
-    &-userId {
+    &-userName {
       color: ${COLORS.fadedGrey};
       font-size: 14px;
       padding-bottom: 8px;
@@ -226,7 +230,6 @@ const StyledPost = styled.div`
 
       font-weight: 150;
       color: #a9a9a9;
-      margin: 10px 0;
 
       .btn-comment {
         display: flex;
