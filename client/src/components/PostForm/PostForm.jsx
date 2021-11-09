@@ -35,9 +35,11 @@ const PostForm = ({ selectedPostId }) => {
   const onCreatePost = (e) => {
     e.preventDefault();
 
-    dispatch(createPost(postContent));
-    history.push(location.pathname + "/home");
-    selectedPostId = null;
+        history.push(location.pathname + "/home");
+
+    // dispatch(createPost(postContent));
+    // selectedPostId = null;
+    // history.push(location.pathname + "/");
   };
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
