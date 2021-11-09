@@ -32,8 +32,8 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-    
-    axios.post(baseUrl, {...postContent, userId: 1, postId: 2}).then((res) => {
+    // TODO: Add jwt.verify to get the userName
+    axios.post(baseUrl, {...postContent, userName: 1}).then((res) => {
     history.push("/");
     }).catch((err) => {
       console.log(err);

@@ -20,7 +20,7 @@ const Posts = () => {
   return (
     <>
       {allPosts.map(({ _id, ...post }) => (
-        <Post key={_id} {...post} />
+        <Post key={_id} postId={_id} {...post} />
       ))}
     </>
   );

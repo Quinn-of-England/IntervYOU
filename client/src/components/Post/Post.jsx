@@ -15,13 +15,12 @@ import { COLORS } from "../../utils/customStyles";
 
 const userPath = "http://localhost:5000/api/users/";
 const postPath = "http://localhost:5000/api/posts/";
-const Post = ({ postId, title, userId, group, content, likes }) => {
+const Post = ({ postId, title, userName, group, content, likes }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
 
   useEffect(() => {
-    axios.get(userPath + userId).then((res) => {
-
+    axios.get(userPath + userName).then((res) => {
       //Access Hashmap of Liked Posts
       setVoteState(res.data.likes.get(postId) ??  0);
     }).catch((err) => {
@@ -29,20 +28,22 @@ const Post = ({ postId, title, userId, group, content, likes }) => {
     });
   }, []);
 
+  userName = "Nich";
   useEffect(() => {
     // Updated the User Liked Map Status
-    axios.patch(userPath + userId, {postId: voteState}).then((res) => {     
+    axios.get(userPath + "username/" + userName).then((res) => {     
       console.log(res); 
-      // if (voteState === -1) {
-      //   axios.patch(postPath + postId + "/downVote", ).then((res) => {      
-      //       //
-      //   }).catch((err) => {
-      //     console.log(err);
-      //   });
+      if (voteState === -1) {
+        axios.patch(postPath + postId + "/downVote", ).then((res) => {      
+            //
+        }).catch((err) => {
+          console.log(postId)
+          console.log(err);
+        });
 
-      // } else {
-      // axios.patch(postPath + postId + "/upVote", )
-      // }
+      } else {
+      axios.patch(postPath + postId + "/upVote", )
+      }
     }).catch((err) => {
       console.log(err);
     })
@@ -103,7 +104,7 @@ const Post = ({ postId, title, userId, group, content, likes }) => {
 
       <div className="post-content">
         <div className="post-title"> {title} </div>
-        <div className="post-userId"> {userId} </div>
+        <div className="post-userName"> {userName} </div>
         {/* <div className="post-group"> {group} </div> */}
         <div className="post-content">{content}</div>
 
@@ -184,7 +185,7 @@ const StyledPost = styled.div`
       padding-top: 8px;
     }
 
-    &-userId {
+    &-userName {
       color: ${COLORS.fadedGrey};
       font-size: 14px;
       padding-bottom: 8px;
