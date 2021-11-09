@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// import dotenv from "dotenv";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -9,8 +10,9 @@ import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 import axios from 'axios';
 import File from "../File/File";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 
-const baseUrl = "http://localhost:5000/api/posts/add-post";
+const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
 const PostForm = () => {
   const history = useHistory();
@@ -32,7 +34,10 @@ const PostForm = () => {
   const onCreatePost = (e) => {
     e.preventDefault();
 
-    const token = jwt(localStorage.getItem("Authorization"));
+    let token = "";
+    if (localStorage.getItem("Authorization")) {
+      token = jwt(localStorage.getItem("Authorization"));
+    }
     const userId = token._id;
     const name = token.name;
 

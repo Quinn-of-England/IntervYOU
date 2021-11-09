@@ -15,6 +15,8 @@ import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
 import NavBar from "./components/NavBar";
 import CommentPage from "./pages/CommentPage";
+// import dotenv from "dotenv";
+import { IP, SERVER_PORT   } from './utils/types.js'; 
 
 const App = () => {
   const [loginStatus, setLoginStatus] = useState({
@@ -35,7 +37,7 @@ const App = () => {
 
   // const checkLoginStatus = () => {
   //   axios
-  //     .get("http://localhost:5000/api/logged_in")
+  //     .get(`${IP}:${SERVER_PORT }/api/logged_in`)
   //     .then((res) => {
   //       console.log("logged in?", res);
   //       //TODO add the follwoing comment in replace above console out logged in?

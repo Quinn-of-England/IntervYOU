@@ -6,6 +6,10 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 import { COLORS } from "../../utils/customStyles";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
+// import dotenv from "dotenv";
+
+console.log(`${IP}, ${SERVER_PORT}`)
 
 const Login = () => {
   //Update Current Link & User Profile
@@ -33,7 +37,7 @@ const Login = () => {
       // errMsgs["username"] = "Username cannot be blank";
       toast.warn("Username cannot be blank", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT ,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -45,7 +49,7 @@ const Login = () => {
       loginIsValid = false;
       toast.warn("Username must be longer than 3 characters", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -59,7 +63,7 @@ const Login = () => {
       loginIsValid = false;
       toast.warn("Password cannot be blank", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -71,7 +75,7 @@ const Login = () => {
       loginIsValid = false;
       toast.warn("Password must be longer than 3 characters", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -90,10 +94,11 @@ const Login = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
+    console.log(`${IP}, ${SERVER_PORT}`)
     if (validateForm()) {
       toast("Form submitted");
       axios
-        .post(`http://localhost:5000/api/users/login`, details)
+        .post(`${IP}:${SERVER_PORT }/api/users/login`, details)
         .then((res) => {
           history.push("/");
           localStorage.setItem("Authorization", res.data.accessToken);
@@ -107,7 +112,7 @@ const Login = () => {
       toast.warn("Errors in Login", {
         //TODO send array of errMsgs to toast to print out
         position: "top-right",
-        autoClose: 5000,
+        autoClose: SERVER_PORT,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -121,7 +126,7 @@ const Login = () => {
     <StyledLogin>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={SERVER_PORT}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios';
 import jwt from 'jwt-decode';
-
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
@@ -12,18 +11,21 @@ import {
 } from "../../utils/icons";
 import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 import CommentForm from "../Comment/CommentForm";
 import { CommentsIcon } from "../../utils/icons";
 
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const userPath = "http://localhost:5000/api/users/";
-const postPath = "http://localhost:5000/api/posts/";
 const Post = ({ postId, title, userName, group, content, likes }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
   const [onLoad, setOnLoad] = useState(true);
-
-  const userId = jwt(localStorage.getItem("Authorization"))._id;
+  let userId = "";
+  if (localStorage.getItem("Authorization")) {
+    userId = jwt(localStorage.getItem("Authorization"))._id;
+  }
   useEffect(() => {
     axios.get(userPath + "id/" + userId).then((res) => {
       //TODO: Access Hashmap of Liked Posts
@@ -40,15 +42,15 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
       axios.get(userPath + "id/" + userId).then((res) => {         
         console.log(res); 
         if (voteState === -1) {
-          axios.patch(postPath + postId + "/downVote").then((res) => {      
-              //
+          axios.patch(postPath + postId + "/downVote").then((res) => {  
+            //    
           }).catch((err) => {
             console.log(err);
           });
 
         } else {
         axios.patch(postPath + postId + "/upVote").then((res) => {      
-              //
+            //
           }).catch((err) => {
             console.log(err);
           });

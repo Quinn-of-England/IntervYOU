@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+// import dotenv from "dotenv";
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 import { useDispatch, useSelector } from "react-redux";
 import axios from 'axios';
 import Post from "./Post";
@@ -9,7 +11,7 @@ const Posts = () => {
   const [allPosts, setAllPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/posts/").then((res) => {
+    axios.get(`${IP}:${SERVER_PORT}/api/posts/`).then((res) => {
       setAllPosts(() => res.data);
       console.log(allPosts)
     }).catch((err) => {

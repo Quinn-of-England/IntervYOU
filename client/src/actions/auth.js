@@ -1,6 +1,8 @@
 import axios from "axios";
+// import dotenv from "dotenv";
+import { IP, SERVER_PORT   } from '../utils/types.js'; 
 
-const baseUrl = "http://localhost:5000/api/";
+const baseUrl = `${IP}:${SERVER_PORT }/api/`;
 const accessRoute = baseUrl + "accessToken/";
 const refreshRoute = baseUrl + "refreshToken/";
 

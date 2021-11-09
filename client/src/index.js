@@ -7,8 +7,9 @@ import thunk from "redux-thunk";
 
 import App from "./App";
 import reducers from "./reducers/index";
+import { IP, CLIENT_PORT  } from './utils/types.js'; 
 
-const url = 'http://localhost:5000/post';
+const url = `${IP}:${CLIENT_PORT }/post`;
 
 // Store Consists of Reducers and Thunk Middleware
 // Wrap Application with Provider, Giving Access to Store to All Components in App

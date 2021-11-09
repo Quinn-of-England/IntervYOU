@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
@@ -12,26 +11,17 @@ import { verifyAuth, verifyRefresh } from "./auth.js";
 
 //Load Environment Variables
 dotenv.config();
-const { DB_USER, DB_PASS, DB_NAME, MONGO_PORT, LOCAL_PORT, CLOUD_PORT } =
-  process.env;
 
 // Create Express Server
 const app = express();
 
-// Init Middleware
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
 app.use(express.json());
 app.use(cookieParser());
 
 //Connect to MongoDB
 if (process.env.NODE_ENV == "production") {
   //Connect to mongo db on atlas
-  const dbUri = `mongodb+srv://${DB_USER}:${DB_PASS}@intervyoucluster.vah3w.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+  const dbUri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@intervyoucluster.vah3w.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
   mongoose
     .connect(dbUri, {
       useNewUrlParser: true,
@@ -43,18 +33,18 @@ if (process.env.NODE_ENV == "production") {
       console.log("Connected to MongoDB Database on Atlas!");
 
       //Start server
-      app.listen(CLOUD_PORT, () =>
-        console.log(`Server Running on Port ${CLOUD_PORT}!`)
+      app.listen(process.env.CLOUD_PORT, () =>
+        console.log(`Server Running on Port ${process.env.CLOUD_PORT}!`)
       );
     })
     .catch((err) => {
-      console.warn(`Unable to connect to ${DB_NAME}`);
+      console.warn(`Unable to connect to ${process.env.DB_NAME}`);
       console.error(`Error: ${err.message}`);
     });
 } else {
   //Connect to local mongo db
   mongoose
-    .connect(`mongodb://mongo:${MONGO_PORT}`, {
+    .connect(`mongodb://mongo:${process.env.MONGO_PORT}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
@@ -66,8 +56,8 @@ if (process.env.NODE_ENV == "production") {
       console.log("Connected to local MongoDB Database!");
 
       //Start server
-      app.listen(LOCAL_PORT, () =>
-        console.log(`Server Running on Port ${LOCAL_PORT}!`)
+      app.listen(process.env.LOCAL_PORT, () =>
+        console.log(`Server Running on Port ${process.env.LOCAL_PORT}!`)
       );
     })
     .catch((err) => console.error(`Message: ${err.message}`));
