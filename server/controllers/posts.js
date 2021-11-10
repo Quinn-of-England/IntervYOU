@@ -1,7 +1,6 @@
-import express from 'express'
 import mongoose from 'mongoose'
 import Post from "../models/Post.js";
-import PostRouter from "../routes/posts.js";
+import { upload } from "../file-upload.js"
 
 export const getAllPosts = async (_, res) => {
   try {
@@ -40,15 +39,37 @@ export const getPostsByDate = async (req, res) => {
   }
 };
 
+/* *
+ * * This function will create a post
+ * * The request must be sent using multipart/form-data since files can be uploaded
+ * * The files must be passed with key "files"
+ */
 export const createPost = async (req, res) => {
-  const {userName, _id, group, content, title, files, date, likes} = req.body;
-  const newPost = new Post({userName, _id, group, content, title, files, date, likes});
-  console.log(req.body);
-  console.log(newPost);
   try {
     //Successful Creation - 201
-    await newPost.save();
-    res.status(201).json(newPost);
+    upload(req, res, async (err) => {
+      if(err){
+        res.status(422).json({
+            message: "Unable to create post",
+            error: err.message
+        })
+      }else{
+        let files = []
+        req.files.forEach(file => {
+          const object = {
+            name: file.originalname,
+            key: file.key,
+            size: file.size,
+          }
+          files.push(object)
+        });
+        req.body.files = files
+        await Post.create(req.body);
+        res.status(201).json({
+            message: "Post created",
+        })
+      }
+    })
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
