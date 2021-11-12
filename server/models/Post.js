@@ -18,9 +18,6 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  files: { 
-    type: [String],
-  },
   date: {
     type: Date,
     default: new Date(),
