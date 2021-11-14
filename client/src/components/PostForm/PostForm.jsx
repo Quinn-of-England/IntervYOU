@@ -9,6 +9,7 @@ import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 import axios from 'axios';
+import FormData from 'form-data'
 import File from "../File/File";
 import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 
@@ -18,18 +19,21 @@ const PostForm = () => {
   const history = useHistory();
 
   const [postContent, setPostContent] = useState({
-    title: '', content: '', group: '', files: []
+    title: '', content: '', group: ''
   });
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  // const [files, setFiles] = useState([{fileName: '', fileType: '', fileSize: '', fileContent: ''}]);
+  const [files, setFiles] = useState([]);
+
+  // const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   useEffect(() => {
     console.log(postContent);
   }, [postContent]);
 
-  useEffect(() => {
-    console.log(acceptedFiles);
-  }, [acceptedFiles]);
+  // useEffect(() => {
+  //   console.log(acceptedFiles);
+  // }, [acceptedFiles]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
@@ -38,12 +42,37 @@ const PostForm = () => {
     if (localStorage.getItem("Authorization")) {
       token = jwt(localStorage.getItem("Authorization"));
     }
+    
+    console.log(token);
+
     const userId = token._id;
     const name = token.name;
 
-    console.log(postContent);
-    axios.post(baseUrl, { userName: name, ...postContent }).then((res) => {
-      console.log(res.body);
+
+    console.log(...files);
+
+    console.log(files[0]);
+    const formData = new FormData();
+    formData.append('userName', name);
+    formData.append('title', postContent.title);
+    formData.append('group', postContent.group)
+    formData.append('content', postContent.content)
+    formData.append('files', ...files);
+
+    for(let pair of formData.entries()){
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    console.log(formData.values());
+
+    axios.post(baseUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((res) => {
+      console.log(res);
+      console.log(files);
+
       history.push("/");
     }).catch((err) => {
       console.log(token);
@@ -97,6 +126,15 @@ const PostForm = () => {
   const getFileExtension = (fileType) => 
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
+
+  const onDroppedFile = () => {
+    // Get Input By Id to Access Dropped File
+    const fileInput = document.getElementById("file_input");
+    
+    setFiles(() => fileInput.files);
+    console.log(fileInput.files);
+  };
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Create a post </div>
@@ -108,17 +146,18 @@ const PostForm = () => {
       <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({ ...postContent, content: e.target.value })} />
 
       {/* File Drag and Drop Section */}
-      {/* <input type="file" id="file_input" />
-      <label for="file_input" /> */}
-      <div className="dropzone-container">
+      <input type="file" id="file_input" onChange={onDroppedFile} />
+      <label for="file_input"> Click to Add Files </label> 
+
+      {/* <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
           <div> Drag and Drop Files Here!</div>
           <div> Or Click to Select Files </div>
         </div>
-      </div>
+      </div> */}
 
-      {acceptedFiles.length > 0 ? (
+      {/* {acceptedFiles.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
@@ -134,7 +173,7 @@ const PostForm = () => {
         </div>
       ) : (
         <div className="no-files">No Files</div>
-      )}
+      )} */}
 
       <div className="post-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />

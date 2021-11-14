@@ -53,7 +53,7 @@ export const createPost = async (req, res) => {
             message: "Unable to create post",
             error: err.message
         })
-      }else{
+      } else {
         let files = []
         req.files.forEach(file => {
           const object = {
@@ -64,9 +64,11 @@ export const createPost = async (req, res) => {
           files.push(object)
         });
         req.body.files = files
+        
         await Post.create(req.body);
         res.status(201).json({
             message: "Post created",
+            result: req.files
         })
       }
     })
