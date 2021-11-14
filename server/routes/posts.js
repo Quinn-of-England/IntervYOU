@@ -10,7 +10,6 @@ import {
   upVote,
   downVote,
 } from "../controllers/posts.js";
-import Post from "../models/Post.js";
 
 const PostRouter = Router();
 

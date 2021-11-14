@@ -18,9 +18,6 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  files: { 
-    type: [String],
-  },
   date: {
     type: Date,
     default: new Date(),
@@ -29,6 +26,13 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  files: [
+    {
+      name: String,
+      key: String,
+      size: Number,
+    }
+  ],
 });
 
 const Post = mongoose.model("Post", PostSchema);

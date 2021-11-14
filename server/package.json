@@ -21,6 +21,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.15",
     "nodemon": "^2.0.7",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "multer": "^1.4.3",
+    "aws-sdk": "^2.1023.0",
+    "multer-s3": "^2.10.0",
+    "uuid": "^8.3.2"
   }
 }
