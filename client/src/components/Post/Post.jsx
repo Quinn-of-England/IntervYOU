@@ -18,7 +18,7 @@ import { CommentsIcon } from "../../utils/icons";
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Post = ({ postId, title, userName, group, content, likes }) => {
+const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes);
   const [onLoad, setOnLoad] = useState(true);
@@ -91,27 +91,28 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
     voteState === -1 ? COLORS.burgundyRed : COLORS.fadedGrey;
 
   // Dummy Data to Be Replaced By Axios Call to Get Data
-  const files = [
-    {
-      fileName: "Sample.doc",
-      fileSize: "20 MB",
-      fileType: "Word Document",
-    },
-    {
-      fileName: "Sampleasdfasdfasddsfads.ppt",
-      fileSize: "40 MB",
-      fileType: "Powerpoint Slides",
-    },
-    {
-      fileName: "Samplexl.xl",
-      fileSize: "10 MB",
-      fileType: "Excel Spreadsheet",
-    },
-  ];
+  // const files = [
+  //   {
+  //     fileName: "Sample.doc",
+  //     fileSize: "20 MB",
+  //     fileType: "Word Document",
+  //   },
+  //   {
+  //     fileName: "Sampleasdfasdfasddsfads.ppt",
+  //     fileSize: "40 MB",
+  //     fileType: "Powerpoint Slides",
+  //   },
+  //   {
+  //     fileName: "Samplexl.xl",
+  //     fileSize: "10 MB",
+  //     fileType: "Excel Spreadsheet",
+  //   },
+  // ];
 
   const [commentState, setCommentState] = useState(false);
 
   const onClickComment = (e) => {
+      //setCommentState((prevState) => !prevState);
       setCommentState({commentState: (!{commentState})});
   }
 

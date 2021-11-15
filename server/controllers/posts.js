@@ -60,6 +60,7 @@ export const createPost = async (req, res) => {
             name: file.originalname,
             key: file.key,
             size: file.size,
+            file_type: file.mimetype,
           }
           files.push(object)
         });
@@ -67,7 +68,8 @@ export const createPost = async (req, res) => {
         
         await Post.create(req.body);
         res.status(201).json({
-            message: "Post created"
+            message: "Post created",
+            result: req.files
         })
       }
     })

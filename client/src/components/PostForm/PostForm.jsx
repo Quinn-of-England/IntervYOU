@@ -26,6 +26,8 @@ const PostForm = () => {
 
   const onDroppedFiles = (droppedFiles) => {
     setFiles((prevFiles) => { 
+      // Format File Type and File Size
+      //const formattedFiles = 
       if(prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(df => !prevFiles.some(pf => pf.path === df.path));
@@ -88,6 +90,7 @@ const PostForm = () => {
       console.log(err);
     });
   }
+
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
     const fileSizes = ["Bytes", "KB", "MB", "GB"];

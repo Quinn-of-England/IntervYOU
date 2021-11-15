@@ -7,8 +7,9 @@ const Files = ({ files }) => {
   return (
     <StyledFiles>
       {files.map((file, i) => (
-        <File key={i} {...file} />
+        <File key={i} fileName={file.name} fileSize={file.size} fileType={file.file_type} />
       ))}
+      {/* <File key={i} {...file} /> */}
     </StyledFiles>
   );
 };
