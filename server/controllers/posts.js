@@ -67,8 +67,7 @@ export const createPost = async (req, res) => {
         
         await Post.create(req.body);
         res.status(201).json({
-            message: "Post created",
-            result: req.files
+            message: "Post created"
         })
       }
     })

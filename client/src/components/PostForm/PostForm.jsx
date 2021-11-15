@@ -22,18 +22,31 @@ const PostForm = () => {
     title: '', content: '', group: ''
   });
 
-  // const [files, setFiles] = useState([{fileName: '', fileType: '', fileSize: '', fileContent: ''}]);
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState();
 
-  // const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const onDroppedFiles = (droppedFiles) => {
+    setFiles((prevFiles) => { 
+      if(prevFiles?.length > 0) {
+        // Remove Duplicate Files from Upload
+        const filteredDroppedFiles = droppedFiles.filter(df => !prevFiles.some(pf => pf.path === df.path));
+        return [...prevFiles, ...filteredDroppedFiles];
+      }  else { 
+        return droppedFiles;
+      }
+    });
+  }
+
+  //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop: onDroppedFiles});
 
   useEffect(() => {
     console.log(postContent);
   }, [postContent]);
 
-  // useEffect(() => {
-  //   console.log(acceptedFiles);
-  // }, [acceptedFiles]);
+  useEffect(() => {
+    console.log(files);
+  }, [files]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
@@ -42,28 +55,22 @@ const PostForm = () => {
     if (localStorage.getItem("Authorization")) {
       token = jwt(localStorage.getItem("Authorization"));
     }
-    
-    console.log(token);
 
     const userId = token._id;
     const name = token.name;
 
+    console.log(files);
 
-    console.log(...files);
-
-    console.log(files[0]);
     const formData = new FormData();
     formData.append('userName', name);
     formData.append('title', postContent.title);
-    formData.append('group', postContent.group)
-    formData.append('content', postContent.content)
-    formData.append('files', ...files);
+    formData.append('group', postContent.group);
+    formData.append('content', postContent.content);
 
-    for(let pair of formData.entries()){
-      console.log(pair[0] + ', ' + pair[1]);
-    }
-
-    console.log(formData.values());
+    //Add Files to Form Data
+    files?.forEach((file) => {
+      formData.append('files', file);
+    });
 
     axios.post(baseUrl, formData, {
       headers: {
@@ -127,13 +134,13 @@ const PostForm = () => {
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
 
-  const onDroppedFile = () => {
-    // Get Input By Id to Access Dropped File
-    const fileInput = document.getElementById("file_input");
+  // const onDroppedFile = () => {
+  //   // Get Input By Id to Access Dropped File
+  //   const fileInput = document.getElementById("file_input");
     
-    setFiles(() => fileInput.files);
-    console.log(fileInput.files);
-  };
+  //   setFiles(() => fileInput.files);
+  //   console.log(fileInput.files);
+  // };
 
   return (
     <StyledPostForm>
@@ -146,22 +153,22 @@ const PostForm = () => {
       <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({ ...postContent, content: e.target.value })} />
 
       {/* File Drag and Drop Section */}
-      <input type="file" id="file_input" onChange={onDroppedFile} />
-      <label for="file_input"> Click to Add Files </label> 
+      {/* <input type="file" id="file_input" onChange={onDroppedFile} />
+      <label for="file_input"> Click to Add Files </label>  */}
 
-      {/* <div className="dropzone-container">
+      <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
           <div> Drag and Drop Files Here!</div>
           <div> Or Click to Select Files </div>
         </div>
-      </div> */}
+      </div>
 
-      {/* {acceptedFiles.length > 0 ? (
+      {files?.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
-            {acceptedFiles.map((file) => (
+            {files.map((file) => (
               <File
                 key={file.path}
                 fileName={file.path}
@@ -173,7 +180,7 @@ const PostForm = () => {
         </div>
       ) : (
         <div className="no-files">No Files</div>
-      )} */}
+      )}
 
       <div className="post-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
