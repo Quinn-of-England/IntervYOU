@@ -52,25 +52,24 @@ export const createPost = async (req, res) => {
         res.status(422).json({
             message: "Unable to create post",
             error: err.message
-        })
+        });
       } else {
         let files = []
         req.files.forEach(file => {
-          const object = {
-            name: file.originalname,
+          const newFile = {
             key: file.key,
-            size: file.size,
-            file_type: file.mimetype,
-          }
-          files.push(object)
+            name: file.originalname,
+            size: formatFileSize(file.size),
+            file_type: formatFileType(file.mimetype),
+          };
+          files.push(newFile);
         });
-        req.body.files = files
+        req.body.files = files;
         
         await Post.create(req.body);
         res.status(201).json({
             message: "Post created",
-            result: req.files
-        })
+        });
       }
     })
   } catch (err) {
@@ -78,12 +77,13 @@ export const createPost = async (req, res) => {
   }
 };
 
+
 export const updatePost = async (req, res) => {
   const { id } = req.params.id;
   const {userId, postId, group, content, title, files, date, likes} = req.body;
-
+  
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No valid post with id: ${id}`);
-
+  
   const updatedPost = {userId, postId, group, content, title, files, date, likes};
   try {
     await Post.findByIdAndUpdate(id, updatedPost, { new: true});
@@ -95,9 +95,9 @@ export const updatePost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   const { id } = req.params.id;
-
+  
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No valid post with id: ${id}`);
-
+  
   try {
     //Successful Deletion by Id - 202
     await Post.findByIdAndDelete(id);
@@ -132,3 +132,49 @@ export const downVote = async(req, res) => {
     res.status(401).json({ message: err.message });
   }
 }
+
+// Functions to Convert Post for Upload
+const formatFileSize = (fileBytes) => {
+    let currSizeIndex = 0;
+    const fileSizes = ["Bytes", "KB", "MB", "GB"];
+
+    let bytes = parseInt(fileBytes);
+    while (bytes > 1024) {
+      bytes /= 1024;
+      currSizeIndex++;
+    }
+
+    return Math.round(bytes) + " " + fileSizes[currSizeIndex];
+}
+
+const formatFileType = (fileType) => {
+  switch (fileType) {
+    case "image/png":
+    case "image/jpg":
+    case "image/jpeg":
+    case "image/gif":
+      return "Image (" + getFileExtension(fileType) + ")";
+    case "audio/mp3":
+      return "Audio MP3";
+    case "video/mp4":
+      return "Video MP4";
+    case "application/pdf":
+      return "PDF Document";
+    case "application/zip":
+    case "application/rar":
+      return "Compressed Files (" + getFileExtension(fileType) + ")";
+    default:
+      if (fileType && fileType.includes("presentation")) {
+        return "Powerpoint Slides";
+      } else if (fileType && fileType.includes("sheet")) {
+        return "Excel Spreadsheet";
+      } else if (fileType && fileType.includes("word")) {
+        return "Word Document";
+      } else {
+        return "Undefined File";
+      }
+  }
+}
+
+const getFileExtension = (fileType) => 
+  fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);

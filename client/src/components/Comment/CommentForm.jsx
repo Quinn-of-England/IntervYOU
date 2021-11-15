@@ -11,6 +11,7 @@ const CommentForm = () => {
 
     const onCreateComment = (e) => {
         e.preventDefault();
+        
         //TODO add axios post when server comments are done
         history.push(location.pathname + "/comment");
     };

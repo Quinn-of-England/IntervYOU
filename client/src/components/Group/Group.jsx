@@ -9,6 +9,8 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
 
   const updateFollowStatus = () =>
     setIsFollowing((prevFollowing) => !prevFollowing);
+
+
   return (
     <StyledGroup isFollowing={isFollowing}>
       <div className="group-header">

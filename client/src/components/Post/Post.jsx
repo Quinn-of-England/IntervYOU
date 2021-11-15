@@ -14,14 +14,20 @@ import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT  } from '../../utils/types.js'; 
 import CommentForm from "../Comment/CommentForm";
 import { CommentsIcon } from "../../utils/icons";
+import {useHistory} from "react-router-dom";
 
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
+const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 
 const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
-  const [voteTotal, setVoteTotal] = useState(likes);
+  const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [onLoad, setOnLoad] = useState(true);
+  const [commentState, setCommentState] = useState(false);
+  
+  const history = useHistory();
+
   let userId = "";
   if (localStorage.getItem("Authorization")) {
     userId = jwt(localStorage.getItem("Authorization"))._id;
@@ -36,7 +42,6 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   }, []);
 
   useEffect(() => {
-
     if (!onLoad) {
       // Updated the User Liked Map Status
       axios.get(userPath + "id/" + userId).then((res) => {         
@@ -54,7 +59,6 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
           }).catch((err) => {
             console.log(err);
           });
-
         }
       }).catch((err) => {
         console.log(err);
@@ -62,7 +66,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     }  else {
       setOnLoad(false);
     }
-  }, [voteState])
+  }, [voteState]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
@@ -90,35 +94,45 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const currentDownColor =
     voteState === -1 ? COLORS.burgundyRed : COLORS.fadedGrey;
 
-  // Dummy Data to Be Replaced By Axios Call to Get Data
-  // const files = [
-  //   {
-  //     fileName: "Sample.doc",
-  //     fileSize: "20 MB",
-  //     fileType: "Word Document",
-  //   },
-  //   {
-  //     fileName: "Sampleasdfasdfasddsfads.ppt",
-  //     fileSize: "40 MB",
-  //     fileType: "Powerpoint Slides",
-  //   },
-  //   {
-  //     fileName: "Samplexl.xl",
-  //     fileSize: "10 MB",
-  //     fileType: "Excel Spreadsheet",
-  //   },
-  // ];
 
-  const [commentState, setCommentState] = useState(false);
-
-  const onClickComment = (e) => {
-      //setCommentState((prevState) => !prevState);
-      setCommentState({commentState: (!{commentState})});
+  const onClickComment = () => {
+      setCommentState((prevState) => !prevState);
   }
+
+  const onClickPost = () => {
+    // Pass Post Id to Comments Page
+    history.push("/" + postId + "/comments");
+  };
+
+  const onDownloadAllFiles = () => {
+    // Download Files On At a Time
+    files.forEach((file) => {
+      axios.get(filePath + "download/" + file.key, {
+        responseType: "blob"
+      })
+        .then((res) => { 
+          // Define Blob for the File
+          const blob = new Blob([res.data], { type: res.headers["content-type"] });
+
+          // Create Link for File Download
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = file.name;
+
+          // Click to Download File + Add and Remove Link After Download Complete
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  };
 
   return (
     
-    <StyledPost voteState={currentColor}>
+    <StyledPost voteState={currentColor} onClick={onClickPost}>
       <div className="voting-buttons">
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
         <div className="vote-total">{voteTotal}</div>
@@ -131,17 +145,22 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
         <div className="post-group"> {`g/${group}`} </div>
         <div className="post-content">{content}</div>
 
-        <Files files={files} />
+        {files?.length > 0 && <Files files={files} />}
 
         <div className="post-footer">
           <div onClick={onClickComment} className="btn-comment"> 
               <CommentsIcon />
               <span> Comments </span>
           </div>
-          <div className="post-actions">
-            <DownloadDocumentIcon />
-            <span> Download </span>
-          </div>
+
+          {/* TODO: Fix On Click Only Download Stay on Post Page */}
+          {files?.length > 0 &&
+            <div className="post-actions" onClick={onDownloadAllFiles}>
+              <DownloadDocumentIcon />
+              <span> Download All </span>
+            </div>
+          }
+
           <div className="post-actions">
             <BookmarkIcon />
             <span> Bookmark </span>

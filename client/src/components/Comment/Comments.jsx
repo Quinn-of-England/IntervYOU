@@ -29,18 +29,6 @@ const Comments = () => {
         },
     ];
 
-
-    const allPosts = [
-        {
-          id: 0,
-          title: "Something Fake",
-          user: "u/fake_user",
-          description:
-            "We have a big presentation coming up on Tuesday discussing the progress we have made on the project thus far. Who else doesn't have any work to demonstrate to the professor and the whole class? Good thing we have a speedy programmer hehe ...",
-          voteCount: 140,
-          currentUserVote: 1,
-        },
-    ];
     // const comments = useSelector((state) => state.comments);
     const dispatch = useDispatch();
 
@@ -49,15 +37,16 @@ const Comments = () => {
       }, [dispatch]);
 
     return (
-    <>
-        {allPosts.map(({ id, ...post }) => (
-        <Post key={id} {...post} />
-        ))}
-        {allComments.map(({ id, ...comment}) => (
-          <Comment key={id} {...comment} />
-        ))}
-    </>
+        <>
+            {/* TODO: Add Styles Here for Comments Title */}
+            <div>
+                Comments
+            </div>
+            {allComments.map(({ id, ...comment}) => (
+                <Comment key={id} {...comment} />
+            ))}
+        </>
     )
 }
 
-export default Comments
+export default Comments;

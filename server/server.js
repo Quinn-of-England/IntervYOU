@@ -80,7 +80,7 @@ app.get("/", (_, res) => {
 
 //Api route
 app.get("/api/", (_, res) => {
-  res.send("You have reached the api of this server");
+  res.send("You have reached the api of this server!");
 });
 
 app.post("/api/refreshToken/", (req, res) => {

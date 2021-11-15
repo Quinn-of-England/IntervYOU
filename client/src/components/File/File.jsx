@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import styled from "styled-components";
 
 import {
@@ -13,7 +14,10 @@ import {
   ZipFile,
 } from "../../utils/imgs";
 
-const File = ({ fileName, fileSize, fileType }) => {
+import { IP, SERVER_PORT  } from '../../utils/types.js'; 
+const filePath = `${IP}:${SERVER_PORT}/api/files/`;
+
+const File = ({ fileId, fileName, fileSize, fileType }) => {
   const generateFileIcon = () => {
     switch (fileType) {
       case "Word Document":
@@ -41,8 +45,32 @@ const File = ({ fileName, fileSize, fileType }) => {
     }
   };
 
+  const onDownloadFile = () => {
+    // Download File By File Key
+    axios.get(filePath + "download/" + fileId,  {
+        responseType: "blob"
+      })
+      .then((res) => { 
+          // Define Blob for the File
+          const blob = new Blob([res.data], { type: res.headers["content-type"] });
+
+          // Create Link for File Download
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = fileName;
+
+          // Click to Download File + Add and Remove Link After Download Complete
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
-    <StyledFile>
+    <StyledFile onClick={onDownloadFile}>
       {generateFileIcon()}
       <div className="file-info">
         <div className="file-name"> {fileName} </div>

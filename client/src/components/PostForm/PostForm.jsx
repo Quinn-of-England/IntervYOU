@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import dotenv from "dotenv";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
@@ -26,8 +25,8 @@ const PostForm = () => {
 
   const onDroppedFiles = (droppedFiles) => {
     setFiles((prevFiles) => { 
-      // Format File Type and File Size
-      //const formattedFiles = 
+      // TODO: Format File Type and File Size
+
       if(prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(df => !prevFiles.some(pf => pf.path === df.path));
@@ -79,14 +78,19 @@ const PostForm = () => {
         'Content-Type': 'multipart/form-data'
       }
     }).then((res) => {
+      // Log Res
       console.log(res);
       console.log(files);
 
+      //Push
       history.push("/");
     }).catch((err) => {
+      // Log JWT Items
       console.log(token);
       console.log(userId);
       console.log(name);
+
+      // Log Error 
       console.log(err);
     });
   }
@@ -135,15 +139,6 @@ const PostForm = () => {
 
   const getFileExtension = (fileType) => 
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
-
-
-  // const onDroppedFile = () => {
-  //   // Get Input By Id to Access Dropped File
-  //   const fileInput = document.getElementById("file_input");
-    
-  //   setFiles(() => fileInput.files);
-  //   console.log(fileInput.files);
-  // };
 
   return (
     <StyledPostForm>

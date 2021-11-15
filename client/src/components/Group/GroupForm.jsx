@@ -1,15 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
+import axios from "axios";
 import { useHistory } from "react-router";
 import styled from "styled-components";
-
+import jwt from 'jwt-decode';
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
 
 const GroupForm = () => {
-  //   const [groupContent, setGroupContent] = useState([
-  //     { title: "", description: "" },
-  //   ]);
+    const [groupContent, setGroupContent] = useState([
+      { title: "", description: "" }
+    ]);
 
   //   const onCreateGroup = (e) => {
   //     e.preventDefault();
@@ -19,6 +20,25 @@ const GroupForm = () => {
   //   };
 
   const history = useHistory();
+
+  const onCreateGroup = (e) => {
+    e.preventDefault();
+
+    let token = "";
+    if (localStorage.getItem("Authorization")) {
+      token = jwt(localStorage.getItem("Authorization"));
+    }
+
+
+    axios.post(groupContent)
+      .then((res) => {
+        console.log(res);
+        history.push("/");
+      })
+      .catch((err) =>  {
+        console.log(err);
+      });
+  }
 
   return (
     <StyledGroupForm>
@@ -30,7 +50,7 @@ const GroupForm = () => {
 
       <div className="group-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
-        <AddButton btnText="POST" handleClick={() => console.log("nice")} />
+        <AddButton btnText="POST" handleClick={onCreateGroup} />
       </div>
     </StyledGroupForm>
   );
