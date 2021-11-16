@@ -12,10 +12,12 @@ const UpdatePostPage = () => {
 
 const StyledUpdatePostScreen = styled.div`
   width: 100vw;
-  height: 100vh;
+  width: 100vw;
+  height: 100%;
+  min-height: 100vh;
   background: #eaf3f3;
 
-  padding: 80px 0 0 0;
+  padding: 80px 0 60px 0;
 `;
 
 export default UpdatePostPage;

@@ -238,6 +238,11 @@ const StyledPostForm = styled.div`
   }
 
   .dropzone-container {
+    display: flex;
+    justify-content: center;
+
+    font-family: "Noto Sans JP", sans-serif;
+
     border-radius: 10px;
     border: 1px dashed #d3d3d3;
 

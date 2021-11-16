@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
-import { useHistory } from "react-router";
+import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 
 import AddButton from "../Buttons/AddButton";
@@ -11,7 +11,7 @@ import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
 
-//import { IP, SERVER_PORT } from "../../utils/types.js";
+import { IP, SERVER_PORT } from "../../utils/types.js";
 
 //const baseUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
 
@@ -26,7 +26,32 @@ const UpdatePostForm = () => {
 
   const [updatedFiles, setUpdatedFiles] = useState([]);
 
+  const [postId, setPostId] = useState("");
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setPostId(() => pathname.split(/[//]/)[1]);
+  }, [pathname]);
+
   //TODO: Initialize Post Content with Get Request
+  useEffect(() => {
+    if (postId !== "") {
+      axios
+        .get(`${IP}:${SERVER_PORT}/api/posts/${postId}`)
+        .then((res) => {
+          const { title, content, group, files } = res.data;
+          setPostContent({
+            title,
+            content,
+            group,
+          });
+          setUpdatedFiles(files);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [postId]);
 
   const onDroppedFiles = (droppedFiles) => {
     setUpdatedFiles((prevFiles) => {
@@ -60,8 +85,6 @@ const UpdatePostForm = () => {
 
     const userId = token._id;
     const name = token.name;
-
-    console.log(files);
 
     const formData = new FormData();
     formData.append("userName", name);
@@ -155,27 +178,28 @@ const UpdatePostForm = () => {
         label="Title"
         errMessage="Required *"
         defaultText={postContent.title}
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, title: e.target.value })
-        }
       />
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, title: e.target.value })
+        } */}
       <InputField
         label="Community"
         errMessage="Required *"
         defaultText={postContent.group}
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        }
       />
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, group: e.target.value })
+        } */}
       {/* TODO: Search for a community to post to */}
       <InputField
         label="Content"
         errMessage=""
         defaultText={postContent.content}
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, content: e.target.value })
-        }
       />
+
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, content: e.target.value })
+        } */}
 
       {/* File Drag and Drop Section */}
       <div className="dropzone-container">
@@ -190,12 +214,12 @@ const UpdatePostForm = () => {
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
-            {files.map((file) => (
+            {updatedFiles.map((file) => (
               <File
-                key={file.path}
-                fileName={file.path}
-                fileSize={formatFileSize(file.size)}
-                fileType={formatFileType(file.type)}
+                key={file.name}
+                fileName={file.name}
+                fileSize={file.size}
+                fileType={file.file_type}
               />
             ))}
           </div>
@@ -232,6 +256,11 @@ const StyledPostForm = styled.div`
   }
 
   .dropzone-container {
+    display: flex;
+    justify-content: center;
+
+    font-family: "Noto Sans JP", sans-serif;
+
     border-radius: 10px;
     border: 1px dashed #d3d3d3;
 
