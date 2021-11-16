@@ -1,23 +1,17 @@
-import React, {useState} from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
+import axios from "axios";
+import jwt from "jwt-decode";
 import styled from "styled-components";
-import jwt from 'jwt-decode';
+
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
 
 const GroupForm = () => {
-    const [groupContent, setGroupContent] = useState([
-      { title: "", description: "" }
-    ]);
-
-  //   const onCreateGroup = (e) => {
-  //     e.preventDefault();
-
-  //     history.push(location.pathname + "/home");
-  //     selectedPostId = null;
-  //   };
+  const [groupContent, setGroupContent] = useState([
+    { title: "", description: "" },
+  ]);
 
   const history = useHistory();
 
@@ -29,16 +23,17 @@ const GroupForm = () => {
       token = jwt(localStorage.getItem("Authorization"));
     }
 
-
-    axios.post(groupContent)
+    //TODO: Add Path to Axios
+    axios
+      .post(groupContent)
       .then((res) => {
         console.log(res);
         history.push("/");
       })
-      .catch((err) =>  {
+      .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   return (
     <StyledGroupForm>

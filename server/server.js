@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-import userRouter from './routes/users.js'
-import postRouter from './routes/posts.js'
-import groupRouter from './routes/groups.js'
-import fileRouter from './routes/files.js'
+import userRouter from "./routes/users.js";
+import postRouter from "./routes/posts.js";
+import groupRouter from "./routes/groups.js";
+import fileRouter from "./routes/files.js";
 
-import { verifyAuth, verifyRefresh } from "./auth.js";
+import { verifyRefresh } from "./auth.js";
 
 //Load Environment Variables
 dotenv.config();
@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //Connect to MongoDB
@@ -66,12 +66,10 @@ if (process.env.NODE_ENV == "production") {
 }
 
 //Define Endpoints/Routes for Requests
-app.use('/api/users/', userRouter)
-//app.use('/api/posts/', verifyAuth, postRouter)
-//app.use('/api/groups/', verifyAuth, groupRouter)
-app.use('/api/posts/', postRouter)
-app.use('/api/groups/', groupRouter)
-app.use('/api/files/', fileRouter)
+app.use("/api/users/", userRouter);
+app.use("/api/posts/", postRouter);
+app.use("/api/groups/", groupRouter);
+app.use("/api/files/", fileRouter);
 
 //Main route of server
 app.get("/", (_, res) => {
@@ -84,5 +82,5 @@ app.get("/api/", (_, res) => {
 });
 
 app.post("/api/refreshToken/", (req, res) => {
-   verifyRefresh(req, res);
+  verifyRefresh(req, res);
 });

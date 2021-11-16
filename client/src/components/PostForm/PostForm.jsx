@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useHistory } from "react-router";
-import { useDropzone } from "react-dropzone";
+import axios from "axios";
+import jwt from "jwt-decode";
 import styled from "styled-components";
-import jwt from 'jwt-decode';
+import { useHistory } from "react-router";
+import { useDropzone } from "react-dropzone";
 
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
-import axios from 'axios';
-import FormData from 'form-data'
+import FormData from "form-data";
 import File from "../File/File";
-import { IP, SERVER_PORT  } from '../../utils/types.js'; 
+
+import { IP, SERVER_PORT } from "../../utils/types.js";
 
 const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
@@ -18,28 +19,34 @@ const PostForm = () => {
   const history = useHistory();
 
   const [postContent, setPostContent] = useState({
-    title: '', content: '', group: ''
+    title: "",
+    content: "",
+    group: "",
   });
 
   const [files, setFiles] = useState();
 
   const onDroppedFiles = (droppedFiles) => {
-    setFiles((prevFiles) => { 
+    setFiles((prevFiles) => {
       // TODO: Format File Type and File Size
 
-      if(prevFiles?.length > 0) {
+      if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
-        const filteredDroppedFiles = droppedFiles.filter(df => !prevFiles.some(pf => pf.path === df.path));
+        const filteredDroppedFiles = droppedFiles.filter(
+          (df) => !prevFiles.some((pf) => pf.path === df.path)
+        );
         return [...prevFiles, ...filteredDroppedFiles];
-      }  else { 
+      } else {
         return droppedFiles;
       }
     });
-  }
+  };
 
   //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop: onDroppedFiles});
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: onDroppedFiles,
+  });
 
   useEffect(() => {
     console.log(postContent);
@@ -63,37 +70,41 @@ const PostForm = () => {
     console.log(files);
 
     const formData = new FormData();
-    formData.append('userName', name);
-    formData.append('title', postContent.title);
-    formData.append('group', postContent.group);
-    formData.append('content', postContent.content);
+    formData.append("userName", name);
+    formData.append("title", postContent.title);
+    formData.append("group", postContent.group);
+    formData.append("content", postContent.content);
 
     //Add Files to Form Data
-    files?.forEach((file) => {
-      formData.append('files', file);
-    });
+    if (files)
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
 
-    axios.post(baseUrl, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((res) => {
-      // Log Res
-      console.log(res);
-      console.log(files);
+    axios
+      .post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        // Log Res
+        console.log(res);
+        console.log(files);
 
-      //Push
-      history.push("/");
-    }).catch((err) => {
-      // Log JWT Items
-      console.log(token);
-      console.log(userId);
-      console.log(name);
+        //Push
+        history.push("/");
+      })
+      .catch((err) => {
+        // Log JWT Items
+        console.log(token);
+        console.log(userId);
+        console.log(name);
 
-      // Log Error 
-      console.log(err);
-    });
-  }
+        // Log Error
+        console.log(err);
+      });
+  };
 
   const formatFileSize = (fileBytes) => {
     let currSizeIndex = 0;
@@ -137,7 +148,7 @@ const PostForm = () => {
     }
   };
 
-  const getFileExtension = (fileType) => 
+  const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
   return (
@@ -145,10 +156,29 @@ const PostForm = () => {
       <div className="create-form-title"> Create a post </div>
 
       {/* Title, Community, Content, Files */}
-      <InputField name="title" label="Title" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, title: e.target.value })} />
-      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) => setPostContent({ ...postContent, group: e.target.value })} />
+      <InputField
+        name="title"
+        label="Title"
+        errMessage="Required *"
+        setPostAttribute={(e) =>
+          setPostContent({ ...postContent, title: e.target.value })
+        }
+      />
+      <InputField
+        label="Community"
+        errMessage="Required *"
+        setPostAttribute={(e) =>
+          setPostContent({ ...postContent, group: e.target.value })
+        }
+      />
       {/* TODO: Search for a community to post to */}
-      <InputField label="Content" errMessage="" setPostAttribute={(e) => setPostContent({ ...postContent, content: e.target.value })} />
+      <InputField
+        label="Content"
+        errMessage=""
+        setPostAttribute={(e) =>
+          setPostContent({ ...postContent, content: e.target.value })
+        }
+      />
 
       {/* File Drag and Drop Section */}
       {/* <input type="file" id="file_input" onChange={onDroppedFile} />

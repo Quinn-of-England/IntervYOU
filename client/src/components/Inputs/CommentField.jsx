@@ -21,7 +21,6 @@ const CommentField = ({ label, errMessage }) => {
           className="styled-input"
           onChange={({ target: { value } }) => setInput(value)}
         />
-        
       </div>
     </StyledInput>
   );
@@ -78,8 +77,6 @@ const StyledInput = styled.div`
     border: none;
     background: none;
   }
-
-
 `;
 
 export default CommentField;

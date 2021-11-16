@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+
+import axios from "axios";
+import jwt from "jwt-decode";
 import styled from "styled-components";
-import axios from 'axios';
-import jwt from 'jwt-decode';
+
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
+  CommentsIcon,
 } from "../../utils/icons";
-import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
-import { IP, SERVER_PORT  } from '../../utils/types.js'; 
-import CommentForm from "../Comment/CommentForm";
-import { CommentsIcon } from "../../utils/icons";
-import {useHistory} from "react-router-dom";
 
+import Files from "../File/Files";
+import CommentForm from "../Comment/CommentForm";
+
+import { IP, SERVER_PORT } from "../../utils/types.js";
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
@@ -25,7 +28,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [onLoad, setOnLoad] = useState(true);
   const [commentState, setCommentState] = useState(false);
-  
+
   const history = useHistory();
 
   let userId = "";
@@ -33,37 +36,48 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
   useEffect(() => {
-    axios.get(userPath + "id/" + userId).then((res) => {
-      //TODO: Access Hashmap of Liked Posts
-      // setVoteState(res.data.likes.get("null") ??  0);
-    }).catch((err) => {
-      console.log(err);
-    });
+    axios
+      .get(userPath + "id/" + userId)
+      .then((res) => {
+        //TODO: Access Hashmap of Liked Posts
+        // setVoteState(res.data.likes.get("null") ??  0);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
     if (!onLoad) {
       // Updated the User Liked Map Status
-      axios.get(userPath + "id/" + userId).then((res) => {         
-        console.log(res); 
-        if (voteState === -1) {
-          axios.patch(postPath + postId + "/downVote").then((res) => {  
-            //    
-          }).catch((err) => {
-            console.log(err);
-          });
-
-        } else {
-        axios.patch(postPath + postId + "/upVote").then((res) => {      
-            //
-          }).catch((err) => {
-            console.log(err);
-          });
-        }
-      }).catch((err) => {
-        console.log(err);
-      })
-    }  else {
+      axios
+        .get(userPath + "id/" + userId)
+        .then((res) => {
+          console.log(res);
+          if (voteState === -1) {
+            axios
+              .patch(postPath + postId + "/downVote")
+              .then((res) => {
+                //
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            axios
+              .patch(postPath + postId + "/upVote")
+              .then((res) => {
+                //
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
       setOnLoad(false);
     }
   }, [voteState]);
@@ -94,10 +108,9 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const currentDownColor =
     voteState === -1 ? COLORS.burgundyRed : COLORS.fadedGrey;
 
-
   const onClickComment = () => {
-      setCommentState((prevState) => !prevState);
-  }
+    setCommentState((prevState) => !prevState);
+  };
 
   const onClickPost = () => {
     // Pass Post Id to Comments Page
@@ -107,15 +120,18 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const onDownloadAllFiles = () => {
     // Download Files On At a Time
     files.forEach((file) => {
-      axios.get(filePath + "download/" + file.key, {
-        responseType: "blob"
-      })
-        .then((res) => { 
+      axios
+        .get(filePath + "download/" + file.key, {
+          responseType: "blob",
+        })
+        .then((res) => {
           // Define Blob for the File
-          const blob = new Blob([res.data], { type: res.headers["content-type"] });
+          const blob = new Blob([res.data], {
+            type: res.headers["content-type"],
+          });
 
           // Create Link for File Download
-          const link = document.createElement('a');
+          const link = document.createElement("a");
           link.href = window.URL.createObjectURL(blob);
           link.download = file.name;
 
@@ -131,7 +147,6 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   };
 
   return (
-    
     <StyledPost voteState={currentColor} onClick={onClickPost}>
       <div className="voting-buttons">
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
@@ -148,18 +163,18 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
         {files?.length > 0 && <Files files={files} />}
 
         <div className="post-footer">
-          <div onClick={onClickComment} className="btn-comment"> 
-              <CommentsIcon />
-              <span> Comments </span>
+          <div onClick={onClickComment} className="btn-comment">
+            <CommentsIcon />
+            <span> Comments </span>
           </div>
 
           {/* TODO: Fix On Click Only Download Stay on Post Page */}
-          {files?.length > 0 &&
+          {files?.length > 0 && (
             <div className="post-actions" onClick={onDownloadAllFiles}>
               <DownloadDocumentIcon />
               <span> Download All </span>
             </div>
-          }
+          )}
 
           <div className="post-actions">
             <BookmarkIcon />
@@ -170,13 +185,9 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
             <span> Share </span>
           </div>
         </div>
-        {
-          commentState && <CommentForm/>
-        }
+        {commentState && <CommentForm />}
       </div>
-      
     </StyledPost>
-    
   );
 };
 
@@ -257,16 +268,16 @@ const StyledPost = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
-    
+
         padding: 5px 10px;
         border-radius: 18px;
         font-weight: 150;
         color: #a9a9a9;
-    
+
         span {
           padding-left: 8px;
         }
-    
+
         &:hover {
           cursor: pointer;
           background: #e8e8e8;

@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { IP, SERVER_PORT  } from '../../utils/types.js'; 
-import { useDispatch, useSelector } from "react-redux";
-import axios from 'axios';
+import axios from "axios";
+
 import Post from "./Post";
-import { getPosts } from "../../actions/posts.js";
+import { IP, SERVER_PORT } from "../../utils/types.js";
 
 const Posts = () => {
   const [allPosts, setAllPosts] = useState([]);
 
   useEffect(() => {
-    axios.get(`${IP}:${SERVER_PORT}/api/posts/`).then((res) => {
-      setAllPosts(() => res.data);
-      console.log(allPosts);
-    }).catch((err) => {
-      console.log(err);
-    });
+    axios
+      .get(`${IP}:${SERVER_PORT}/api/posts/`)
+      .then((res) => {
+        setAllPosts(() => res.data);
+        console.log(allPosts);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
