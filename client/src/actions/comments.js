@@ -2,7 +2,7 @@ import axios from "axios";
 // import dotenv from "dotenv";
 import { IP, SERVER_PORT   } from '../utils/types.js'; 
 
-const baseUrl = `${IP}:${SERVER_PORT }/`;
+const baseUrl = `${IP}:${SERVER_PORT}/`;
 
 const usersRoute = baseUrl + "users/";
 const commentsRoute = baseUrl + "comments/";

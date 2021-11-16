@@ -157,7 +157,7 @@ const Registration = () => {
         // setErrorMsgs([]);
       })
       .catch((error) => {
-        console.log("Registration error", error.response.data)});
+        console.log("Registration error", error)});
     } else {
       toast.warn("Errors in Registration", { 
         position: "top-right",
@@ -235,7 +235,7 @@ const Registration = () => {
           />
         </div>
 
-        <Link to="/home">
+        <Link to="/">
           <button type="submit" className="btn-login" onClick={onPost}>
             Sign Up
           </button>

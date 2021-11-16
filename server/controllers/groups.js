@@ -14,7 +14,6 @@ import Group from '../models/Group.js'
 export const create_group = async (req, res) => {
     try{
         const oldGroup = await Group.findOne({ name: req.body.name })
-        console.log(oldGroup);
         if(oldGroup){
             return res.status(409).json({ message: `Group with name ${req.body.name} already exists!`})
         }

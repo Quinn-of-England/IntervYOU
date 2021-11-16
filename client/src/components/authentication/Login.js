@@ -106,7 +106,7 @@ const Login = () => {
           // setErrorMsgs([]);
         })
         .catch((error) => {
-          console.log("Registration error", error.response.data);
+          console.log("Registration error", error);
         });
     } else {
       toast.warn("Errors in Login", {

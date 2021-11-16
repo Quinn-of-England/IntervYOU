@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import axios from "axios";
-import jwt from "jwt-decode";
 import styled from "styled-components";
 
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
+
+import { IP, SERVER_PORT } from "../../utils/types";
+
+const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
+const createGroupUrl = `${groupsUrl}/create`;
 
 const GroupForm = () => {
   const [groupContent, setGroupContent] = useState([
@@ -17,18 +21,14 @@ const GroupForm = () => {
 
   const onCreateGroup = (e) => {
     e.preventDefault();
-
-    let token = "";
-    if (localStorage.getItem("Authorization")) {
-      token = jwt(localStorage.getItem("Authorization"));
-    }
-
-    //TODO: Add Path to Axios
+    
     axios
-      .post(groupContent)
+      .post(createGroupUrl, groupContent)
       .then((res) => {
         console.log(res);
-        history.push("/");
+
+        // Return to Groups Page After Successful Post
+        history.push("/groups");
       })
       .catch((err) => {
         console.log(err);
@@ -40,9 +40,12 @@ const GroupForm = () => {
       <div className="create-form-title"> Create a group </div>
 
       {/* Community Title and Description */}
-      <InputField label="Community" errMessage="Required *" />
-      <InputField label="Description" errMessage="Required *" />
-
+      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) =>
+          setGroupContent({...groupContent, title: e.target.value })
+        }/>
+      <InputField label="Description" errMessage="Required *" setPostAttribute={(e) =>
+          setGroupContent({...groupContent, description: e.target.value })
+        }/>
       <div className="group-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
         <AddButton btnText="POST" handleClick={onCreateGroup} />

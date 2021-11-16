@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+
 import Group from "./Group";
 import { IP, SERVER_PORT } from "../../utils/types";
 
 const Groups = () => {
   const [allGroups, setAllGroups] = useState([]);
 
+  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
+
   useEffect(() => {
     axios
-      .get(`${IP}:${SERVER_PORT}/api/groups/`)
+      .get(groupsUrl)
       .then((res) => {
         setAllGroups(() => res.data);
       })

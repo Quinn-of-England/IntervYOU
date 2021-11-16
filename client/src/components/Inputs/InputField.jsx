@@ -1,16 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import "../../utils/global.css";
 
 const InputField = ({ label, errMessage, setPostAttribute }) => {
-  const [input, setInput] = useState("");
-  // const [isValidInput, setIsValidInput] = useState(true);
-
-  // TODO; Set up Logic, Added this line to avoid warnings
-  //setIsValidInput(false);
-  console.log(input);
-
   return (
     <StyledInput>
       <div className="title-validation">

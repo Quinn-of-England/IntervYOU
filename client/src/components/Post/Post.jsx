@@ -35,6 +35,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   if (localStorage.getItem("Authorization")) {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
+
   useEffect(() => {
     axios
       .get(userPath + "id/" + userId)
@@ -45,7 +46,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!onLoad) {
@@ -80,7 +81,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     } else {
       setOnLoad(false);
     }
-  }, [voteState]);
+  }, [onLoad, userId, postId, voteState]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);

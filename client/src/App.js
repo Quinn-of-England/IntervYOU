@@ -5,18 +5,16 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import Home from "./pages/Home";
 
 import "./App.css";
 import Signup from "./components/authentication/Signup";
 import Login from "./components/authentication/Login";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
-import NavBar from "./components/NavBar";
 import CommentPage from "./pages/CommentPage";
-// import dotenv from "dotenv";
-import { IP, SERVER_PORT   } from './utils/types.js'; 
 
 const App = () => {
   const [loginStatus, setLoginStatus] = useState({
