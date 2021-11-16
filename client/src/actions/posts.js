@@ -1,7 +1,6 @@
 import { CREATE_POST, GET_USERS, GET_POSTS, EDIT_POST, IP, SERVER_PORT   } from '../utils/types.js'; 
 import * as api from '../api/index.js';
 import axios from 'axios';
-// import dotenv from "dotenv";
 
 
 const baseUrl = `${IP}:${SERVER_PORT }/api/posts`;

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from "react-redux"; //add useSelector when uncomment below
-import Post from "../Post/Post";
 import { getComments } from "../../actions/comments.js";
 import Comment from "../Comment/Comment";
 

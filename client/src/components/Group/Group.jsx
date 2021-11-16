@@ -22,24 +22,19 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
-  useEffect(() => {
-    axios
-      .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`) 
-      .then((res) => {
-        setGroupList(() => [res.data])
-        //Get List of Groups of User
-        // Set Grouplist to grouplist from response
-        console.log(groupList);
-
-        if(groupList{community}){
-          setFollowState = true;
-        }
-        //Set Following state true if community is in list of groups of that user
-      })
-      .catch((err) => {
-        console.log(err);
-      });   
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`) 
+  //     .then((res) => {
+  //       setGroupList(() => [res.data]);
+  //       //Get List of Groups of User
+  //       // Set Grouplist to grouplist from response
+  //       //Set Following state true if community is in list of groups of that user
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });   
+  // }, [userId]);
 
   // On Click function
   // -> setFollowCount() +1 if !isfollowing and on Click else if isFollowing then -1 to unfollow
