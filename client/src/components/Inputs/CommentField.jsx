@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import "../../utils/global.css";
 
-const CommentField = ({ label, errMessage }) => {
+const CommentField = ({ label, placeholderText, errMessage }) => {
   const [input, setInput] = useState("");
 
   console.log(input);
@@ -19,6 +19,7 @@ const CommentField = ({ label, errMessage }) => {
         <input
           type="text"
           className="styled-input"
+          placeholder={placeholderText ?? ""}
           onChange={({ target: { value } }) => setInput(value)}
         />
       </div>

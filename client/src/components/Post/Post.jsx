@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import axios from "axios";
@@ -12,6 +12,8 @@ import {
   BookmarkIcon,
   ShareLinkedinIcon,
   CommentsIcon,
+  EditIcon,
+  DeleteIcon,
 } from "../../utils/icons";
 import { COLORS } from "../../utils/customStyles";
 
@@ -28,6 +30,21 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [onLoad, setOnLoad] = useState(true);
   const [commentState, setCommentState] = useState(false);
+
+  const restrictedRef = useRef([]);
+
+  const setRestrictedRef = (el) => {
+    if (el) {
+      //Get Number Specified As Last Character of Ref Id
+      const refId = el.id;
+      const refNum = refId.charAt(refId.length - 1);
+
+      // Set At Ref Num in Restricted Ref Current Array
+      return (restrictedRef.current[refNum] = el);
+    }
+
+    return 0;
+  };
 
   const history = useHistory();
 
@@ -113,9 +130,21 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     setCommentState((prevState) => !prevState);
   };
 
-  const onClickPost = () => {
-    // Pass Post Id to Comments Page
-    history.push("/" + postId + "/comments");
+  const onClickPost = (e) => {
+    e.preventDefault();
+
+    // Check if Click Happened Over Restricted Areas
+    let visitCommentsPage = true;
+    for (let ref of restrictedRef.current) {
+      if (ref && ref.contains(e.target)) {
+        visitCommentsPage = false;
+      }
+    }
+
+    if (visitCommentsPage) {
+      // Pass Post Id to Comments Page
+      history.push("/" + postId + "/comments");
+    }
   };
 
   const onDownloadAllFiles = () => {
@@ -147,23 +176,48 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     });
   };
 
+  const editPost = () => {
+    history.push("/" + postId + "/update-post");
+  };
+
   return (
     <StyledPost voteState={currentColor} onClick={onClickPost}>
-      <div className="voting-buttons">
+      <div id="ref-0" className="voting-buttons" ref={setRestrictedRef}>
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
         <div className="vote-total">{voteTotal}</div>
         <DownVoteArrowIcon color={currentDownColor} onDownVote={downVoted} />
       </div>
 
       <div className="post-content">
-        <div className="post-title"> {title} </div>
-        <div className="post-userId"> {`u/${userName}`} </div>
-        <div className="post-group"> {`g/${group}`} </div>
-        <div className="post-content">{content}</div>
+        <div className="post-title-crud">
+          <div className="post-title"> {title} </div>
 
-        {files?.length > 0 && <Files files={files} />}
+          {/* Display Only for Post Creator */}
+          {userName !== userId && (
+            <div
+              id="ref-1"
+              className="post-crud-actions"
+              ref={setRestrictedRef}
+            >
+              <EditIcon color={"#a9a9a9"} editPost={editPost} />
+              <DeleteIcon color={COLORS.burgundyRed} />
+            </div>
+          )}
+        </div>
 
-        <div className="post-footer">
+        <div className="post-user-group">
+          <div className="post-userName">{`u/${userName}`}</div>
+          <div className="user-group-seperator">•</div>
+          <div className="post-group"> {`g/${group}`} </div>
+        </div>
+
+        <div className="post-description">{content}</div>
+
+        <div id="ref-2" ref={setRestrictedRef}>
+          {files?.length > 0 && <Files files={files} />}
+        </div>
+
+        <div id="ref-3" className="post-footer" ref={setRestrictedRef}>
           <div onClick={onClickComment} className="btn-comment">
             <CommentsIcon />
             <span> Comments </span>
@@ -186,7 +240,10 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
             <span> Share </span>
           </div>
         </div>
-        {commentState && <CommentForm />}
+
+        <div id="ref-4" ref={setRestrictedRef}>
+          {commentState && <CommentForm postId={postId} />}
+        </div>
       </div>
     </StyledPost>
   );
@@ -240,18 +297,45 @@ const StyledPost = styled.div`
       padding-top: 8px;
     }
 
-    &-userName {
-      color: ${COLORS.fadedGrey};
-      font-size: 14px;
-      padding-bottom: 8px;
+    &-title-crud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding-right: 20px;
+
+      .post-crud-actions {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        width: 70px;
+        cursor: pointer;
+      }
+    }
+
+    &-user-group {
+      display: flex;
+
+      .post-group,
+      .post-userName {
+        font-size: 16px;
+        color: ${COLORS.fadedGrey};
+        padding-bottom: 8px;
+      }
+
+      .user-group-seperator {
+        font-size: 14px;
+        color: ${COLORS.fadedGrey};
+        padding: 0 8px;
+      }
     }
 
     &-content {
       width: 100%;
       font-size: 16px;
       font-weight: 200;
-      padding-bottom: 8px;
-      padding-left: 20px;
+      padding: 0 20px 8px 10px;
     }
 
     &-footer {
@@ -289,6 +373,8 @@ const StyledPost = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        white-space: nowrap;
 
         padding: 5px 10px;
         border-radius: 18px;

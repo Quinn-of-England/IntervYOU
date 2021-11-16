@@ -19,15 +19,18 @@ const CommentPage = () => {
   }, [pathname]);
 
   useEffect(() => {
-    axios
-      .get(`${baseUrl}/api/posts/${postId}`)
-      .then((res) => {
-        console.log(res);
-        setSelectedPost(() => res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    //Ensure Post Id is Defined Before Making Axios Request to Get Post
+    if (postId !== "") {
+      axios
+        .get(`${baseUrl}/api/posts/${postId}`)
+        .then((res) => {
+          console.log(res);
+          setSelectedPost(() => res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [postId]);
 
   return (
