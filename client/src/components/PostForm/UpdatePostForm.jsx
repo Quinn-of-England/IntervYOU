@@ -25,6 +25,9 @@ const UpdatePostForm = () => {
   });
 
   const [updatedFiles, setUpdatedFiles] = useState([]);
+  // TODO: Use These two States to Delete Deleted Files from S3 and Add new Files to S3
+  //   const [deletedFiles, setDeletedFiles] = useState([]);
+  //   const [addedFiles, setAddedFiles] = useState([]);
 
   const [postId, setPostId] = useState("");
   const { pathname } = useLocation();
@@ -56,7 +59,7 @@ const UpdatePostForm = () => {
   const onDroppedFiles = (droppedFiles) => {
     setUpdatedFiles((prevFiles) => {
       // TODO: Format File Type and File Size
-
+      console.log(droppedFiles);
       if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(
@@ -168,6 +171,13 @@ const UpdatePostForm = () => {
   const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
+  const onDeleteFile = (fileName) => {
+    setUpdatedFiles((prevFiles) =>
+      prevFiles.filter((f) => f.name !== fileName)
+    );
+    console.log(fileName);
+  };
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Update your post </div>
@@ -214,14 +224,28 @@ const UpdatePostForm = () => {
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
-            {updatedFiles.map((file) => (
-              <File
-                key={file.name}
-                fileName={file.name}
-                fileSize={file.size}
-                fileType={file.file_type}
-              />
-            ))}
+            {updatedFiles.map((file) => {
+              // If File Contains .file_type, it is already stored in the db, else it is a new file
+              return file.file_type != null ? (
+                <File
+                  key={file.name}
+                  fileName={file.name}
+                  fileSize={file.size}
+                  fileType={file.file_type}
+                  canDelete={true}
+                  onDeleteFile={() => onDeleteFile(file.name)}
+                />
+              ) : (
+                <File
+                  key={file.path}
+                  fileName={file.path}
+                  fileSize={formatFileSize(file.size)}
+                  fileType={formatFileType(file.type)}
+                  canDelete={true}
+                  onDeleteFile={() => onDeleteFile(file.name)}
+                />
+              );
+            })}
           </div>
         </div>
       ) : (
@@ -295,6 +319,8 @@ const StyledPostForm = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+
+    margin-bottom: 30px;
   }
 
   .post-actions {
