@@ -42,6 +42,8 @@ const PostSchema = new mongoose.Schema({
   ],
 });
 
-PostSchema.plugin(mongoosePaginate)
+//Plug in for Pagination
+PostSchema.plugin(mongoosePaginate);
+
 const Post = mongoose.model("Post", PostSchema);
 export default Post;
