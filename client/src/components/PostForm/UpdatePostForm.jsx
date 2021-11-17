@@ -13,7 +13,7 @@ import File from "../File/File";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
-const updatePostUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
+const postUrl = `${IP}:${SERVER_PORT}/api/posts`;
 
 const UpdatePostForm = () => {
   const history = useHistory();
@@ -68,13 +68,16 @@ const UpdatePostForm = () => {
 
         //If File is Not Stored in S3, Then Add to Add Array
         if (
-          filteredDroppedFiles.length > 0 &&
-          filteredDroppedFiles[0].file_type == null
+          filteredDroppedFiles.length > 0
         ) {
-          setAddedFiles((prevAddedFiles) => [
-            ...prevAddedFiles,
-            ...filteredDroppedFiles,
-          ]);
+          console.log("Filtered: ", filteredDroppedFiles);
+          console.log("Added: ", addedFiles);
+
+          //setAddedFiles((prevAddedFiles) => ([...prevAddedFiles, ...filteredDroppedFiles]));
+          if(addedFiles.length > 0)
+            setAddedFiles([...addedFiles, ...filteredDroppedFiles]);
+          else
+            setAddedFiles([...filteredDroppedFiles]);
         }
 
         return [...prevFiles, ...filteredDroppedFiles];
@@ -106,39 +109,35 @@ const UpdatePostForm = () => {
     formData.append("content", postContent.content);
 
     //Add Files to Form Data
-    if (updatedFiles)
-      updatedFiles.forEach((file) => {
+    if (addedFiles)
+      addedFiles.forEach((file) => {
         formData.append("files", file);
       });
 
-    console.log(addedFiles);
-    console.log(deletedFiles);
-    console.log(updatedFiles);
+    // Add Deleted File Keys to Form Data
+    if (deletedFiles) {
+      deletedFiles.forEach((file) => {
+        formData.append("keys", file.key);
+      });
+    }
 
-    axios.put(updatePostUrl);
-    // axios
-    //   .post(baseUrl, formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((res) => {
-    //     // Log Res
-    //     console.log(res);
-    //     console.log(files);
+    // Update Post With New Content and Added/Deleted Files
+    axios.patch(`${postUrl}/${postId}`, formData, { headers: { "Content-Type": "multipart/form-data"} })
+    .then((res) => {
+      console.log(res.data);
 
-    //     //Push
-    //     history.push("/");
-    //   })
-    //   .catch((err) => {
-    //     // Log JWT Items
-    //     console.log(token);
-    //     console.log(userId);
-    //     console.log(name);
+      // On Successful Upload, Clear Added Files Array
+      setAddedFiles([]);
 
-    //     // Log Error
-    //     console.log(err);
-    //   });
+      // On Successful Delete, Clear Deleted Files Array
+      setDeletedFiles([]);
+
+      // Return Home
+      history.push("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const formatFileSize = (fileBytes) => {
@@ -192,10 +191,16 @@ const UpdatePostForm = () => {
       setDeletedFiles((prevDeletedFiles) => [...prevDeletedFiles, deletedFile]);
     }
 
-    // Filter Out Deleted File
+    // Filter Out Deleted File from File List
     setUpdatedFiles((prevFiles) =>
       prevFiles.filter((f) => f.name !== deletedFile.name)
     );
+
+    // Filter Out Deleted File from Added Files
+    if(addedFiles.length > 0)
+      setAddedFiles((prevAddedFiles) =>
+        prevAddedFiles.filter((f) => f.name !== deletedFile.name)
+      );
   };
 
   const updateInputState = (e) => {
