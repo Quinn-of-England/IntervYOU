@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
-import { useHistory } from "react-router";
+import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
 
 import AddButton from "../Buttons/AddButton";
@@ -13,9 +13,9 @@ import File from "../File/File";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
-const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
+//const baseUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
 
-const PostForm = () => {
+const UpdatePostForm = () => {
   const history = useHistory();
 
   const [postContent, setPostContent] = useState({
@@ -24,10 +24,37 @@ const PostForm = () => {
     group: "",
   });
 
-  const [files, setFiles] = useState();
+  const [updatedFiles, setUpdatedFiles] = useState([]);
+
+  const [postId, setPostId] = useState("");
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setPostId(() => pathname.split(/[//]/)[1]);
+  }, [pathname]);
+
+  //TODO: Initialize Post Content with Get Request
+  useEffect(() => {
+    if (postId !== "") {
+      axios
+        .get(`${IP}:${SERVER_PORT}/api/posts/${postId}`)
+        .then((res) => {
+          const { title, content, group, files } = res.data;
+          setPostContent({
+            title,
+            content,
+            group,
+          });
+          setUpdatedFiles(files);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [postId]);
 
   const onDroppedFiles = (droppedFiles) => {
-    setFiles((prevFiles) => {
+    setUpdatedFiles((prevFiles) => {
       // TODO: Format File Type and File Size
 
       if (prevFiles?.length > 0) {
@@ -48,15 +75,7 @@ const PostForm = () => {
     onDrop: onDroppedFiles,
   });
 
-  useEffect(() => {
-    console.log(postContent);
-  }, [postContent]);
-
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
-
-  const onCreatePost = (e) => {
+  const onUpdatePost = (e) => {
     e.preventDefault();
 
     let token = "";
@@ -67,8 +86,6 @@ const PostForm = () => {
     const userId = token._id;
     const name = token.name;
 
-    console.log(files);
-
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);
@@ -76,34 +93,34 @@ const PostForm = () => {
     formData.append("content", postContent.content);
 
     //Add Files to Form Data
-    if (files)
-      files.forEach((file) => {
+    if (updatedFiles)
+      updatedFiles.forEach((file) => {
         formData.append("files", file);
       });
 
-    axios
-      .post(baseUrl, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        // Log Res
-        console.log(res);
-        console.log(files);
+    // axios
+    //   .post(baseUrl, formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   .then((res) => {
+    //     // Log Res
+    //     console.log(res);
+    //     console.log(files);
 
-        //Push
-        history.push("/");
-      })
-      .catch((err) => {
-        // Log JWT Items
-        console.log(token);
-        console.log(userId);
-        console.log(name);
+    //     //Push
+    //     history.push("/");
+    //   })
+    //   .catch((err) => {
+    //     // Log JWT Items
+    //     console.log(token);
+    //     console.log(userId);
+    //     console.log(name);
 
-        // Log Error
-        console.log(err);
-      });
+    //     // Log Error
+    //     console.log(err);
+    //   });
   };
 
   const formatFileSize = (fileBytes) => {
@@ -153,37 +170,38 @@ const PostForm = () => {
 
   return (
     <StyledPostForm>
-      <div className="create-form-title"> Create a post </div>
+      <div className="create-form-title"> Update your post </div>
 
       {/* Title, Community, Content, Files */}
       <InputField
         name="title"
         label="Title"
         errMessage="Required *"
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, title: e.target.value })
-        }
+        defaultText={postContent.title}
       />
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, title: e.target.value })
+        } */}
       <InputField
         label="Community"
         errMessage="Required *"
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        }
+        defaultText={postContent.group}
       />
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, group: e.target.value })
+        } */}
       {/* TODO: Search for a community to post to */}
       <InputField
         label="Content"
         errMessage=""
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, content: e.target.value })
-        }
+        defaultText={postContent.content}
       />
 
-      {/* File Drag and Drop Section */}
-      {/* <input type="file" id="file_input" onChange={onDroppedFile} />
-      <label for="file_input"> Click to Add Files </label>  */}
+      {/*         setPostAttribute={(e) =>
+          setPostContent({ ...postContent, content: e.target.value })
+        } */}
 
+      {/* File Drag and Drop Section */}
       <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
@@ -192,16 +210,16 @@ const PostForm = () => {
         </div>
       </div>
 
-      {files?.length > 0 ? (
+      {updatedFiles?.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
-            {files.map((file) => (
+            {updatedFiles.map((file) => (
               <File
-                key={file.path}
-                fileName={file.path}
-                fileSize={formatFileSize(file.size)}
-                fileType={formatFileType(file.type)}
+                key={file.name}
+                fileName={file.name}
+                fileSize={file.size}
+                fileType={file.file_type}
               />
             ))}
           </div>
@@ -212,7 +230,7 @@ const PostForm = () => {
 
       <div className="post-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
-        <AddButton btnText="POST" handleClick={onCreatePost} />
+        <AddButton btnText="UPDATE" handleClick={onUpdatePost} />
       </div>
     </StyledPostForm>
   );
@@ -304,4 +322,4 @@ const StyledPostForm = styled.div`
   }
 `;
 
-export default PostForm;
+export default UpdatePostForm;
