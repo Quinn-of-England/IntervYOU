@@ -56,7 +56,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     axios
       .get(userPath + "id/" + userId)
       .then((res) => {
-        setVoteState(res.data.likes[postId]);
+        setVoteState(res.data.likes[postId] ?? 0);
       })
       .catch((err) => {
         console.log(err);
