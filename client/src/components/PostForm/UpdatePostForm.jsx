@@ -13,7 +13,7 @@ import File from "../File/File";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
-//const baseUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
+const updatePostUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
 
 const UpdatePostForm = () => {
   const history = useHistory();
@@ -24,10 +24,10 @@ const UpdatePostForm = () => {
     group: "",
   });
 
+  //Use These States to Update Files Displayed, Delete Deleted Files from S3 and Add New Files to S3
   const [updatedFiles, setUpdatedFiles] = useState([]);
-  // TODO: Use These two States to Delete Deleted Files from S3 and Add new Files to S3
-  //   const [deletedFiles, setDeletedFiles] = useState([]);
-  //   const [addedFiles, setAddedFiles] = useState([]);
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [addedFiles, setAddedFiles] = useState([]);
 
   const [postId, setPostId] = useState("");
   const { pathname } = useLocation();
@@ -63,16 +63,26 @@ const UpdatePostForm = () => {
       if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(
-          (df) => !prevFiles.some((pf) => pf.path === df.path)
+          (df) => !prevFiles.some((pf) => pf.name === df.name)
         );
+
+        //If File is Not Stored in S3, Then Add to Add Array
+        if (
+          filteredDroppedFiles.length > 0 &&
+          filteredDroppedFiles[0].file_type == null
+        ) {
+          setAddedFiles((prevAddedFiles) => [
+            ...prevAddedFiles,
+            ...filteredDroppedFiles,
+          ]);
+        }
+
         return [...prevFiles, ...filteredDroppedFiles];
       } else {
         return droppedFiles;
       }
     });
   };
-
-  //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDroppedFiles,
@@ -101,6 +111,11 @@ const UpdatePostForm = () => {
         formData.append("files", file);
       });
 
+    console.log(addedFiles);
+    console.log(deletedFiles);
+    console.log(updatedFiles);
+
+    axios.put(updatePostUrl);
     // axios
     //   .post(baseUrl, formData, {
     //     headers: {
@@ -171,11 +186,16 @@ const UpdatePostForm = () => {
   const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
-  const onDeleteFile = (fileName) => {
+  const onDeleteFile = (deletedFile) => {
+    //If File is Stored in S3, Then Add to Delete Array
+    if (deletedFile.file_type != null) {
+      setDeletedFiles((prevDeletedFiles) => [...prevDeletedFiles, deletedFile]);
+    }
+
+    // Filter Out Deleted File
     setUpdatedFiles((prevFiles) =>
-      prevFiles.filter((f) => f.name !== fileName)
+      prevFiles.filter((f) => f.name !== deletedFile.name)
     );
-    console.log(fileName);
   };
 
   const updateInputState = (e) => {
@@ -235,7 +255,7 @@ const UpdatePostForm = () => {
                   fileSize={file.size}
                   fileType={file.file_type}
                   canDelete={true}
-                  onDeleteFile={() => onDeleteFile(file.name)}
+                  onDeleteFile={() => onDeleteFile(file)}
                 />
               ) : (
                 <File
@@ -244,7 +264,7 @@ const UpdatePostForm = () => {
                   fileSize={formatFileSize(file.size)}
                   fileType={formatFileType(file.type)}
                   canDelete={true}
-                  onDeleteFile={() => onDeleteFile(file.name)}
+                  onDeleteFile={() => onDeleteFile(file)}
                 />
               );
             })}
