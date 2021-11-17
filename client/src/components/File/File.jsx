@@ -59,7 +59,7 @@ const File = ({
 
   const onDownloadFile = (e) => {
     // Download File By File Key
-    if (closeRef && !closeRef.current.contains(e.target)) {
+    if (fileId && closeRef.current && !closeRef.current.contains(e.target)) {
       axios
         .get(filePath + "download/" + fileId, {
           responseType: "blob",
