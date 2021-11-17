@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon --legacy-watch server.js"
+    "start": "nodemon -L server.js",
+    "start:prod": "node server.js"
   },
   "keywords": [],
   "author": "Nicholas Kawwas",

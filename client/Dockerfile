@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 #install dependencies
-RUN npm install --silent
+RUN npm install --production
 
 #Copy current directory contents into the container
 COPY . /usr/src/app/
