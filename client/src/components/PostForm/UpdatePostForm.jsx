@@ -86,7 +86,7 @@ const UpdatePostForm = () => {
       token = jwt(localStorage.getItem("Authorization"));
     }
 
-    const userId = token._id;
+    //const userId = token._id;
     const name = token.name;
 
     const formData = new FormData();
@@ -178,38 +178,40 @@ const UpdatePostForm = () => {
     console.log(fileName);
   };
 
+  const updateInputState = (e) => {
+    console.log(postContent);
+    setPostContent({ ...postContent, [e.target.id]: e.target.value });
+  };
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Update your post </div>
 
       {/* Title, Community, Content, Files */}
       <InputField
-        name="title"
+        inputId="title"
         label="Title"
         errMessage="Required *"
         defaultText={postContent.title}
+        setPostAttribute={updateInputState}
       />
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, title: e.target.value })
-        } */}
+
       <InputField
+        inputId="group"
         label="Community"
         errMessage="Required *"
         defaultText={postContent.group}
+        setPostAttribute={updateInputState}
       />
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        } */}
+
       {/* TODO: Search for a community to post to */}
       <InputField
+        inputId="content"
         label="Content"
         errMessage=""
         defaultText={postContent.content}
+        setPostAttribute={updateInputState}
       />
-
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, content: e.target.value })
-        } */}
 
       {/* File Drag and Drop Section */}
       <div className="dropzone-container">

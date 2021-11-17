@@ -3,7 +3,13 @@ import styled from "styled-components";
 
 import "../../utils/global.css";
 
-const InputField = ({ label, errMessage, defaultText, setPostAttribute }) => {
+const InputField = ({
+  inputId,
+  label,
+  errMessage,
+  defaultText,
+  setPostAttribute,
+}) => {
   // const [isValidInput, setIsValidInput] = useState(true);
 
   // TODO; Set up Logic, Added this line to avoid warnings
@@ -20,6 +26,7 @@ const InputField = ({ label, errMessage, defaultText, setPostAttribute }) => {
 
       <div className="input-validation">
         <input
+          id={inputId ?? ""}
           type="text"
           className="styled-input"
           defaultValue={defaultText ?? ""}
