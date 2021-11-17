@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -14,10 +14,22 @@ import {
   ZipFile,
 } from "../../utils/imgs";
 
-import { IP, SERVER_PORT  } from '../../utils/types.js'; 
+import { CloseIcon } from "../../utils/icons";
+
+import { IP, SERVER_PORT } from "../../utils/types.js";
+
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 
-const File = ({ fileId, fileName, fileSize, fileType }) => {
+const File = ({
+  fileId,
+  fileName,
+  fileSize,
+  fileType,
+  canDelete,
+  onDeleteFile,
+}) => {
+  const closeRef = useRef("");
+
   const generateFileIcon = () => {
     switch (fileType) {
       case "Word Document":
@@ -45,17 +57,21 @@ const File = ({ fileId, fileName, fileSize, fileType }) => {
     }
   };
 
-  const onDownloadFile = () => {
+  const onDownloadFile = (e) => {
     // Download File By File Key
-    axios.get(filePath + "download/" + fileId,  {
-        responseType: "blob"
-      })
-      .then((res) => { 
+    if (closeRef && !closeRef.current.contains(e.target)) {
+      axios
+        .get(filePath + "download/" + fileId, {
+          responseType: "blob",
+        })
+        .then((res) => {
           // Define Blob for the File
-          const blob = new Blob([res.data], { type: res.headers["content-type"] });
+          const blob = new Blob([res.data], {
+            type: res.headers["content-type"],
+          });
 
           // Create Link for File Download
-          const link = document.createElement('a');
+          const link = document.createElement("a");
           link.href = window.URL.createObjectURL(blob);
           link.download = fileName;
 
@@ -63,10 +79,11 @@ const File = ({ fileId, fileName, fileSize, fileType }) => {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -79,6 +96,11 @@ const File = ({ fileId, fileName, fileSize, fileType }) => {
           <div className="file-type"> {fileType} </div>
         </div>
       </div>
+      {canDelete && (
+        <span ref={(el) => (closeRef.current = el)} onClick={onDeleteFile}>
+          <CloseIcon color={"#949494"} />
+        </span>
+      )}
     </StyledFile>
   );
 };
@@ -88,7 +110,7 @@ const StyledFile = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  width: 300px;
+  //width: 300px;
 
   padding: 5px 15px;
 
@@ -146,6 +168,10 @@ const StyledFile = styled.div`
     object-fit: cover;
     height: 40px;
     border-radius: 5px;
+  }
+
+  .close-icon {
+    background: blue;
   }
 `;
 

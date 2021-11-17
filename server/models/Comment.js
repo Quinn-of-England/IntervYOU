@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const CommentSchema = new mongoose.Schema({
     user: {
@@ -17,5 +18,6 @@ const CommentSchema = new mongoose.Schema({
     },
 })
 
+CommentSchema.plugin(mongoosePaginate)
 const Comment = mongoose.model("Comment", CommentSchema)
 export default Comment

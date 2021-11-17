@@ -39,14 +39,21 @@ export const create_comment = async (req, res) => {
 }
 
 /**
- * * This function will get all the comments from the database
+ * * This function will get all the comments from the database paginated
  * * A 200(Ok) will be sent after success 
- * TODO: Check Whether User Has to Access All Comments
+ * Query params: {
+ *  size: max number of comments to return
+ *  page: page number
+ * }
  */
-export const get_all_comments = async (_, res) => {
+export const get_all_comments = async (req, res) => {
     try {
-        const comments = await Comment.find()
-        res.status(200).json(comments)
+        const options = {
+            page: parseInt(req.query.page),
+            limit: parseInt(req.query.size)
+        }
+        const comments = await Comment.paginate({}, options)
+        res.status(200).json(comments.docs)
     } catch (err) {
         res.status(500).json({
             message: "Server error in get_all_comments",

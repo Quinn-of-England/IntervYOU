@@ -13,7 +13,7 @@ import File from "../File/File";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
-//const baseUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
+const updatePostUrl = `${IP}:${SERVER_PORT}/api/posts/update-post`;
 
 const UpdatePostForm = () => {
   const history = useHistory();
@@ -24,7 +24,10 @@ const UpdatePostForm = () => {
     group: "",
   });
 
+  //Use These States to Update Files Displayed, Delete Deleted Files from S3 and Add New Files to S3
   const [updatedFiles, setUpdatedFiles] = useState([]);
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [addedFiles, setAddedFiles] = useState([]);
 
   const [postId, setPostId] = useState("");
   const { pathname } = useLocation();
@@ -56,20 +59,30 @@ const UpdatePostForm = () => {
   const onDroppedFiles = (droppedFiles) => {
     setUpdatedFiles((prevFiles) => {
       // TODO: Format File Type and File Size
-
+      console.log(droppedFiles);
       if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(
-          (df) => !prevFiles.some((pf) => pf.path === df.path)
+          (df) => !prevFiles.some((pf) => pf.name === df.name)
         );
+
+        //If File is Not Stored in S3, Then Add to Add Array
+        if (
+          filteredDroppedFiles.length > 0 &&
+          filteredDroppedFiles[0].file_type == null
+        ) {
+          setAddedFiles((prevAddedFiles) => [
+            ...prevAddedFiles,
+            ...filteredDroppedFiles,
+          ]);
+        }
+
         return [...prevFiles, ...filteredDroppedFiles];
       } else {
         return droppedFiles;
       }
     });
   };
-
-  //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDroppedFiles,
@@ -83,7 +96,7 @@ const UpdatePostForm = () => {
       token = jwt(localStorage.getItem("Authorization"));
     }
 
-    const userId = token._id;
+    //const userId = token._id;
     const name = token.name;
 
     const formData = new FormData();
@@ -98,6 +111,11 @@ const UpdatePostForm = () => {
         formData.append("files", file);
       });
 
+    console.log(addedFiles);
+    console.log(deletedFiles);
+    console.log(updatedFiles);
+
+    axios.put(updatePostUrl);
     // axios
     //   .post(baseUrl, formData, {
     //     headers: {
@@ -168,38 +186,52 @@ const UpdatePostForm = () => {
   const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
+  const onDeleteFile = (deletedFile) => {
+    //If File is Stored in S3, Then Add to Delete Array
+    if (deletedFile.file_type != null) {
+      setDeletedFiles((prevDeletedFiles) => [...prevDeletedFiles, deletedFile]);
+    }
+
+    // Filter Out Deleted File
+    setUpdatedFiles((prevFiles) =>
+      prevFiles.filter((f) => f.name !== deletedFile.name)
+    );
+  };
+
+  const updateInputState = (e) => {
+    console.log(postContent);
+    setPostContent({ ...postContent, [e.target.id]: e.target.value });
+  };
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Update your post </div>
 
       {/* Title, Community, Content, Files */}
       <InputField
-        name="title"
+        inputId="title"
         label="Title"
         errMessage="Required *"
         defaultText={postContent.title}
+        setPostAttribute={updateInputState}
       />
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, title: e.target.value })
-        } */}
+
       <InputField
+        inputId="group"
         label="Community"
         errMessage="Required *"
         defaultText={postContent.group}
+        setPostAttribute={updateInputState}
       />
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        } */}
+
       {/* TODO: Search for a community to post to */}
       <InputField
+        inputId="content"
         label="Content"
         errMessage=""
         defaultText={postContent.content}
+        setPostAttribute={updateInputState}
       />
-
-      {/*         setPostAttribute={(e) =>
-          setPostContent({ ...postContent, content: e.target.value })
-        } */}
 
       {/* File Drag and Drop Section */}
       <div className="dropzone-container">
@@ -214,14 +246,28 @@ const UpdatePostForm = () => {
         <div className="dropped-files">
           <div className="has-files">Files</div>
           <div className="file-list">
-            {updatedFiles.map((file) => (
-              <File
-                key={file.name}
-                fileName={file.name}
-                fileSize={file.size}
-                fileType={file.file_type}
-              />
-            ))}
+            {updatedFiles.map((file) => {
+              // If File Contains .file_type, it is already stored in the db, else it is a new file
+              return file.file_type != null ? (
+                <File
+                  key={file.name}
+                  fileName={file.name}
+                  fileSize={file.size}
+                  fileType={file.file_type}
+                  canDelete={true}
+                  onDeleteFile={() => onDeleteFile(file)}
+                />
+              ) : (
+                <File
+                  key={file.path}
+                  fileName={file.path}
+                  fileSize={formatFileSize(file.size)}
+                  fileType={formatFileType(file.type)}
+                  canDelete={true}
+                  onDeleteFile={() => onDeleteFile(file)}
+                />
+              );
+            })}
           </div>
         </div>
       ) : (
@@ -295,6 +341,8 @@ const StyledPostForm = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+
+    margin-bottom: 30px;
   }
 
   .post-actions {
