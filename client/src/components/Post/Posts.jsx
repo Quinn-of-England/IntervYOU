@@ -9,7 +9,7 @@ const Posts = () => {
 
   useEffect(() => {
     axios
-      .get(`${IP}:${SERVER_PORT}/api/posts/`)
+      .get(`${IP}:${SERVER_PORT}/api/posts/`, { params: { sortBy: 'date', page: 1, size: 10 } })
       .then((res) => {
         setAllPosts(() => res.data);
         console.log(allPosts);
