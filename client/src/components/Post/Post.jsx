@@ -58,12 +58,13 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
       .get(userPath + "id/" + userId)
       .then((res) => {
         const likesMap = res.data.likes;
-        console.log(likesMap)
         if (postId in likesMap) {
           if(likesMap[postId] === 1) {
-            upVoted();
+            setVoteState(1);
           } else if (likesMap[postId] === -1) {
-            downVoted()
+            setVoteState(-1);
+          } else {
+            setVoteState(0);
           }
         }
       })
@@ -73,39 +74,26 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   }, [userId]);
 
   useEffect(() => {
-    if (!onLoad) {
-      if (voteState === -1) {
-        console.log("here")
-        axios
-          .patch(postPath + postId + "/downVote")
-          .then((res) => {
-            axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
-              console.log(res)
-            }).catch((err) => {
-              console.log(err);                  
-            }); 
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        axios
-          .patch(postPath + postId + "/upVote")
-          .then((res) => {
-            axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
-              console.log(res)
-            }).catch((err) => {
-              console.log(err);                  
-            }); 
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    } else {
-      setOnLoad(false);
+    let vote = "/upVote"
+    if (voteState === -1) {
+      vote = "/downVote"
     }
-  }, [onLoad, userId, postId, voteState]);
+    if (voteState !== 0) {
+      axios
+      .patch(postPath + postId + vote)
+      .then((res) => {
+        axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);                  
+        });
+        console.log(res); 
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  }, [userId, postId, voteState]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
