@@ -1,11 +1,28 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 import Post from "../models/Post.js";
-import { upload } from "../file-upload.js"
+import { upload } from "../file-upload.js";
 
-export const getAllPosts = async (_, res) => {
+/**
+ * * This function will get all the posts from the database paginated
+ * * A 200(Ok) will be sent after success 
+ * Query params: {
+ *  size: max number of posts to return
+ *  page: page number
+ *  sortBy: type date or likes
+ * }
+ */
+export const getAllPosts = async (req, res) => {
   try {
-    const Posts = await Post.find();
-    res.status(200).json(Posts);
+    const sort = {}
+    if(req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort
+    }
+    const Posts = await Post.paginate({}, options)
+    res.status(200).json(Posts.docs);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -13,6 +30,8 @@ export const getAllPosts = async (_, res) => {
 
 export const getPostById = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
+
   try {
     const post = await Post.findById(id);
     res.status(200).json(post);
@@ -23,8 +42,8 @@ export const getPostById = async (req, res) => {
 
 export const getPostsByTitle = async (req, res) => {
   try {
-    const Posts = await Post.find({ Post: req.body.title });
-    res.status(200).json(Posts);
+    const posts = await Post.find({ Post: req.body.title });
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -32,8 +51,8 @@ export const getPostsByTitle = async (req, res) => {
 
 export const getPostsByDate = async (req, res) => {
   try {
-    const Posts = await Post.find({ Post: req.body.date });
-    res.status(200).json(Posts);
+    const posts = await Post.find({ Post: req.body.date });
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -48,28 +67,30 @@ export const createPost = async (req, res) => {
   try {
     //Successful Creation - 201
     upload(req, res, async (err) => {
-      if(err){
+      if (err) {
         res.status(422).json({
-            message: "Unable to create post",
-            error: err.message
-        })
-      }else{
-        let files = []
-        req.files.forEach(file => {
-          const object = {
-            name: file.originalname,
-            key: file.key,
-            size: file.size,
-          }
-          files.push(object)
+          message: "Unable to create post",
+          error: err.message,
         });
-        req.body.files = files
+      } else {
+        let files = [];
+        req.files.forEach((file) => {
+          const newFile = {
+            key: file.key,
+            name: file.originalname,
+            size: formatFileSize(file.size),
+            file_type: formatFileType(file.mimetype),
+          };
+          files.push(newFile);
+        });
+        req.body.files = files;
+
         await Post.create(req.body);
         res.status(201).json({
-            message: "Post created",
-        })
+          message: "Post created",
+        });
       }
-    })
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -77,23 +98,35 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id } = req.params.id;
-  const {userId, postId, group, content, title, files, date, likes} = req.body;
+  const { userId, postId, group, content, title, files, date, likes } =
+    req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No valid post with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No valid post with id: ${id}`);
 
-  const updatedPost = {userId, postId, group, content, title, files, date, likes};
+  const updatedPost = {
+    userId,
+    postId,
+    group,
+    content,
+    title,
+    files,
+    date,
+    likes,
+  };
   try {
-    await Post.findByIdAndUpdate(id, updatedPost, { new: true});
+    await Post.findByIdAndUpdate(id, updatedPost, { new: true });
     res.status(201).json(updatedPost);
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
-}
+};
 
 export const deletePost = async (req, res) => {
   const { id } = req.params.id;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No valid post with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No valid post with id: ${id}`);
 
   try {
     //Successful Deletion by Id - 202
@@ -104,28 +137,82 @@ export const deletePost = async (req, res) => {
   }
 };
 
-export const upVote = async(req, res) => {
+export const upVote = async (req, res) => {
   const { id } = req.params;
-  
-  try {
-    const post = await Post.findById(id);
-    const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes + 1}, { new: true } );
-    res.status(201).json(updatedPost);
-    console.log("upvote")
-  } catch (err) {
-    res.status(401).json({ message: err.message });
-  }
-}
 
-export const downVote = async(req, res) => {
-  const { id } = req.params;
-  
   try {
     const post = await Post.findById(id);
-    const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes - 1}, { new: true } );
-    console.log("downvote")
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { likes: post.likes + 1 },
+      { new: true }
+    );
+    res.status(201).json(updatedPost);
+    console.log("upvote");
+  } catch (err) {
+    res.status(401).json({ message: err.message });
+  }
+};
+
+export const downVote = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await Post.findById(id);
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { likes: post.likes - 1 },
+      { new: true }
+    );
+    console.log("downvote");
     res.status(201).json(updatedPost);
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
-}
+};
+
+// Functions to Convert Post for Upload
+const formatFileSize = (fileBytes) => {
+  let currSizeIndex = 0;
+  const fileSizes = ["Bytes", "KB", "MB", "GB"];
+
+  let bytes = parseInt(fileBytes);
+  while (bytes > 1024) {
+    bytes /= 1024;
+    currSizeIndex++;
+  }
+
+  return Math.round(bytes) + " " + fileSizes[currSizeIndex];
+};
+
+const formatFileType = (fileType) => {
+  switch (fileType) {
+    case "image/png":
+    case "image/jpg":
+    case "image/jpeg":
+    case "image/gif":
+      return "Image (" + getFileExtension(fileType) + ")";
+    case "audio/mp3":
+      return "Audio MP3";
+    case "video/mp4":
+      return "Video MP4";
+    case "application/pdf":
+      return "PDF Document";
+    case "application/zip":
+    case "application/rar":
+      return "Compressed Files (" + getFileExtension(fileType) + ")";
+    default:
+      if (fileType && fileType.includes("presentation")) {
+        return "Powerpoint Slides";
+      } else if (fileType && fileType.includes("sheet")) {
+        return "Excel Spreadsheet";
+      } else if (fileType && fileType.includes("word")) {
+        return "Word Document";
+      } else {
+        return "Undefined File";
+      }
+  }
+};
+
+const getFileExtension = (fileType) =>
+  fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);

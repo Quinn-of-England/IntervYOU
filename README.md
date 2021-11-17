@@ -1,3 +1,3 @@
 # Interv-You
 
-Interview/Mentorship App
+Developed an application for mentorship and interviews

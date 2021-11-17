@@ -8,14 +8,14 @@ services:
         dockerfile: Dockerfile
       image: intervyou-server
       container_name: intervyou-node-server
-      command: /usr/src/app/node_modules/.bin/nodemon server.js
+      command: npm start
       ports: 
         - "5000:5000"
       depends_on:
         - mongo
       volumes:
         - /app/node_modules
-        - ./server:/app
+        - ./server:/usr/src/app/app
       networks:
         - intervyou-network
 
@@ -47,7 +47,7 @@ services:
         - "3000:3000"
       volumes:
         - /app/node_modules
-        - ./client:/app
+        - ./client/src:/usr/src/app/src
       networks:
         - intervyou-network
       stdin_open: true

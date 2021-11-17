@@ -5,18 +5,17 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import Home from "./pages/Home";
 
 import "./App.css";
 import Signup from "./components/authentication/Signup";
 import Login from "./components/authentication/Login";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
-import NavBar from "./components/NavBar";
 import CommentPage from "./pages/CommentPage";
-// import dotenv from "dotenv";
-import { IP, SERVER_PORT   } from './utils/types.js'; 
+import UpdatePostPage from "./pages/UpdatePostPage";
 
 const App = () => {
   const [loginStatus, setLoginStatus] = useState({
@@ -75,7 +74,8 @@ const App = () => {
         <Route path="/" exact component={Home} />
         <Route path="/feed" component={Home} />
         <Route path="/post" component={PostPage} />
-        <Route path="/:id/comments" component={CommentPage} />
+        <Route path="/:postId/update-post" component={UpdatePostPage} />
+        <Route path="/:postId/comments" component={CommentPage} />
         <Route path="/groups" component={GroupPage} />
         <Route path="/group/create" component={CommunityPage} />
         <Route path="/profile" component={Home} />

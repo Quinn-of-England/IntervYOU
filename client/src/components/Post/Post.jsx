@@ -1,68 +1,104 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
+
+import axios from "axios";
+import jwt from "jwt-decode";
 import styled from "styled-components";
-import axios from 'axios';
-import jwt from 'jwt-decode';
+
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
   DownloadDocumentIcon,
   BookmarkIcon,
   ShareLinkedinIcon,
+  CommentsIcon,
+  EditIcon,
+  DeleteIcon,
 } from "../../utils/icons";
-import Files from "../File/Files";
 import { COLORS } from "../../utils/customStyles";
-import { IP, SERVER_PORT  } from '../../utils/types.js'; 
-import CommentForm from "../Comment/CommentForm";
-import { CommentsIcon } from "../../utils/icons";
 
+import Files from "../File/Files";
+import CommentForm from "../Comment/CommentForm";
+
+import { IP, SERVER_PORT } from "../../utils/types.js";
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
+const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 
-const Post = ({ postId, title, userName, group, content, likes }) => {
+const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
-  const [voteTotal, setVoteTotal] = useState(likes);
+  const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [onLoad, setOnLoad] = useState(true);
+  const [commentState, setCommentState] = useState(false);
+
+  const restrictedRef = useRef([]);
+
+  const setRestrictedRef = (el) => {
+    if (el) {
+      //Get Number Specified As Last Character of Ref Id
+      const refId = el.id;
+      const refNum = refId.charAt(refId.length - 1);
+
+      // Set At Ref Num in Restricted Ref Current Array
+      return (restrictedRef.current[refNum] = el);
+    }
+
+    return 0;
+  };
+
+  const history = useHistory();
+
   let userId = "";
   if (localStorage.getItem("Authorization")) {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
-  useEffect(() => {
-    axios.get(userPath + "id/" + userId).then((res) => {
-      //TODO: Access Hashmap of Liked Posts
-      // setVoteState(res.data.likes.get("null") ??  0);
-    }).catch((err) => {
-      console.log(err);
-    });
-  }, []);
 
   useEffect(() => {
+    axios
+      .get(userPath + "id/" + userId)
+      .then((res) => {
+        //TODO: Access Hashmap of Liked Posts
+        // setVoteState(res.data.likes.get("null") ??  0);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [userId]);
 
+  useEffect(() => {
     if (!onLoad) {
       // Updated the User Liked Map Status
-      axios.get(userPath + "id/" + userId).then((res) => {         
-        console.log(res); 
-        if (voteState === -1) {
-          axios.patch(postPath + postId + "/downVote").then((res) => {  
-            //    
-          }).catch((err) => {
-            console.log(err);
-          });
-
-        } else {
-        axios.patch(postPath + postId + "/upVote").then((res) => {      
-            //
-          }).catch((err) => {
-            console.log(err);
-          });
-
-        }
-      }).catch((err) => {
-        console.log(err);
-      })
-    }  else {
+      axios
+        .get(userPath + "id/" + userId)
+        .then((res) => {
+          console.log(res);
+          if (voteState === -1) {
+            axios
+              .patch(postPath + postId + "/downVote")
+              .then((res) => {
+                //
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            axios
+              .patch(postPath + postId + "/upVote")
+              .then((res) => {
+                //
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
       setOnLoad(false);
     }
-  }, [voteState])
+  }, [onLoad, userId, postId, voteState]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
@@ -90,57 +126,111 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
   const currentDownColor =
     voteState === -1 ? COLORS.burgundyRed : COLORS.fadedGrey;
 
-  // Dummy Data to Be Replaced By Axios Call to Get Data
-  const files = [
-    {
-      fileName: "Sample.doc",
-      fileSize: "20 MB",
-      fileType: "Word Document",
-    },
-    {
-      fileName: "Sampleasdfasdfasddsfads.ppt",
-      fileSize: "40 MB",
-      fileType: "Powerpoint Slides",
-    },
-    {
-      fileName: "Samplexl.xl",
-      fileSize: "10 MB",
-      fileType: "Excel Spreadsheet",
-    },
-  ];
+  const onClickComment = () => {
+    setCommentState((prevState) => !prevState);
+  };
 
-  const [commentState, setCommentState] = useState(false);
+  const onClickPost = (e) => {
+    e.preventDefault();
 
-  const onClickComment = (e) => {
-      setCommentState({commentState: (!{commentState})});
-  }
+    // Check if Click Happened Over Restricted Areas
+    let visitCommentsPage = true;
+    for (let ref of restrictedRef.current) {
+      if (ref && ref.contains(e.target)) {
+        visitCommentsPage = false;
+      }
+    }
+
+    if (visitCommentsPage) {
+      // Pass Post Id to Comments Page
+      history.push("/" + postId + "/comments");
+    }
+  };
+
+  const onDownloadAllFiles = () => {
+    // Download Files On At a Time
+    files.forEach((file) => {
+      axios
+        .get(filePath + "download/" + file.key, {
+          responseType: "blob",
+        })
+        .then((res) => {
+          // Define Blob for the File
+          const blob = new Blob([res.data], {
+            type: res.headers["content-type"],
+          });
+
+          // Create Link for File Download
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = file.name;
+
+          // Click to Download File + Add and Remove Link After Download Complete
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  };
+
+  const editPost = () => {
+    history.push("/" + postId + "/update-post");
+  };
 
   return (
-    
-    <StyledPost voteState={currentColor}>
-      <div className="voting-buttons">
+    <StyledPost voteState={currentColor} onClick={onClickPost}>
+      <div id="ref-0" className="voting-buttons" ref={setRestrictedRef}>
         <UpVoteArrowIcon color={currentUpColor} onUpVote={upVoted} />
         <div className="vote-total">{voteTotal}</div>
         <DownVoteArrowIcon color={currentDownColor} onDownVote={downVoted} />
       </div>
 
       <div className="post-content">
-        <div className="post-title"> {title} </div>
-        <div className="post-userId"> {`u/${userName}`} </div>
-        <div className="post-group"> {`g/${group}`} </div>
-        <div className="post-content">{content}</div>
+        <div className="post-title-crud">
+          <div className="post-title"> {title} </div>
 
-        <Files files={files} />
+          {/* Display Only for Post Creator */}
+          {userName !== userId && (
+            <div
+              id="ref-1"
+              className="post-crud-actions"
+              ref={setRestrictedRef}
+            >
+              <EditIcon color={"#a9a9a9"} editPost={editPost} />
+              <DeleteIcon color={COLORS.burgundyRed} />
+            </div>
+          )}
+        </div>
 
-        <div className="post-footer">
-          <div onClick={onClickComment} className="btn-comment"> 
-              <CommentsIcon />
-              <span> Comments </span>
+        <div className="post-user-group">
+          <div className="post-userName">{`u/${userName}`}</div>
+          <div className="user-group-seperator">•</div>
+          <div className="post-group"> {`g/${group}`} </div>
+        </div>
+
+        <div className="post-description">{content}</div>
+
+        <div id="ref-2" ref={setRestrictedRef}>
+          {files?.length > 0 && <Files files={files} />}
+        </div>
+
+        <div id="ref-3" className="post-footer" ref={setRestrictedRef}>
+          <div onClick={onClickComment} className="btn-comment">
+            <CommentsIcon />
+            <span> Comments </span>
           </div>
-          <div className="post-actions">
-            <DownloadDocumentIcon />
-            <span> Download </span>
-          </div>
+
+          {/* TODO: Fix On Click Only Download Stay on Post Page */}
+          {files?.length > 0 && (
+            <div className="post-actions" onClick={onDownloadAllFiles}>
+              <DownloadDocumentIcon />
+              <span> Download All </span>
+            </div>
+          )}
+
           <div className="post-actions">
             <BookmarkIcon />
             <span> Bookmark </span>
@@ -150,13 +240,12 @@ const Post = ({ postId, title, userName, group, content, likes }) => {
             <span> Share </span>
           </div>
         </div>
-        {
-          commentState && <CommentForm/>
-        }
+
+        <div id="ref-4" ref={setRestrictedRef}>
+          {commentState && <CommentForm postId={postId} />}
+        </div>
       </div>
-      
     </StyledPost>
-    
   );
 };
 
@@ -208,18 +297,45 @@ const StyledPost = styled.div`
       padding-top: 8px;
     }
 
-    &-userName {
-      color: ${COLORS.fadedGrey};
-      font-size: 14px;
-      padding-bottom: 8px;
+    &-title-crud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding-right: 20px;
+
+      .post-crud-actions {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        width: 70px;
+        cursor: pointer;
+      }
+    }
+
+    &-user-group {
+      display: flex;
+
+      .post-group,
+      .post-userName {
+        font-size: 16px;
+        color: ${COLORS.fadedGrey};
+        padding-bottom: 8px;
+      }
+
+      .user-group-seperator {
+        font-size: 14px;
+        color: ${COLORS.fadedGrey};
+        padding: 0 8px;
+      }
     }
 
     &-content {
       width: 100%;
       font-size: 16px;
       font-weight: 200;
-      padding-bottom: 8px;
-      padding-left: 20px;
+      padding: 0 20px 8px 10px;
     }
 
     &-footer {
@@ -237,16 +353,16 @@ const StyledPost = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
-    
+
         padding: 5px 10px;
         border-radius: 18px;
         font-weight: 150;
         color: #a9a9a9;
-    
+
         span {
           padding-left: 8px;
         }
-    
+
         &:hover {
           cursor: pointer;
           background: #e8e8e8;
@@ -257,6 +373,8 @@ const StyledPost = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        white-space: nowrap;
 
         padding: 5px 10px;
         border-radius: 18px;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 //Post Schema
 const PostSchema = new mongoose.Schema({
@@ -20,7 +21,7 @@ const PostSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: new Date(),
+    default: Date.now,
   },
   likes: {
     type: Number,
@@ -30,10 +31,17 @@ const PostSchema = new mongoose.Schema({
     {
       name: String,
       key: String,
-      size: Number,
+      size: String,
+      file_type: String,
+    }
+  ],
+  comments: [
+    {
+      comment: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
     }
   ],
 });
 
+PostSchema.plugin(mongoosePaginate)
 const Post = mongoose.model("Post", PostSchema);
 export default Post;
