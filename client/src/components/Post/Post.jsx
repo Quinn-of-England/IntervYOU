@@ -28,12 +28,9 @@ const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
-  const [onLoad, setOnLoad] = useState(true);
   const [commentState, setCommentState] = useState(false);
-  const [likesMap, setLikesMap] = useState(new Map());
-
+  
   const restrictedRef = useRef([]);
-  const skipFirstLoad = useRef(false);
 
   const setRestrictedRef = (el) => {
     if (el) {
@@ -55,12 +52,10 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
-  //let likesMap = new Map();
   useEffect(() => {
     axios
       .get(userPath + "id/" + userId)
       .then((res) => {
-        setLikesMap(res.data.likes);
         setVoteState(res.data.likes[postId]);
       })
       .catch((err) => {
