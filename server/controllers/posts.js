@@ -2,10 +2,27 @@ import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import { upload } from "../file-upload.js";
 
-export const getAllPosts = async (_, res) => {
+/**
+ * * This function will get all the posts from the database paginated
+ * * A 200(Ok) will be sent after success 
+ * Query params: {
+ *  size: max number of posts to return
+ *  page: page number
+ *  sortBy: type date or likes
+ * }
+ */
+export const getAllPosts = async (req, res) => {
   try {
-    const Posts = await Post.find();
-    res.status(200).json(Posts);
+    const sort = {}
+    if(req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort
+    }
+    const Posts = await Post.paginate({}, options)
+    res.status(200).json(Posts.docs);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
