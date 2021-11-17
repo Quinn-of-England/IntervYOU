@@ -57,9 +57,15 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     axios
       .get(userPath + "id/" + userId)
       .then((res) => {
-        //TODO: Access Hashmap of Liked Posts
-        console.log(res)
-        // setVoteState(res.data.likes.get("null") ??  0);
+        const likesMap = res.data.likes;
+        console.log(likesMap)
+        if (postId in likesMap) {
+          if(likesMap[postId] === 1) {
+            upVoted();
+          } else if (likesMap[postId] === -1) {
+            downVoted()
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -68,43 +74,34 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
 
   useEffect(() => {
     if (!onLoad) {
-      // Updated the User Liked Map Status
-      axios
-        .get(userPath + "id/" + userId)
-        .then((res) => {
-          console.log(res);
-          if (voteState === -1) {
-            console.log("here")
-            axios
-              .patch(postPath + postId + "/downVote")
-              .then((res) => {
-                axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
-                  console.log(res)
-                }).catch((err) => {
-                  console.log(err);                  
-                }); 
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          } else {
-            axios
-              .patch(postPath + postId + "/upVote")
-              .then((res) => {
-                axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
-                  console.log(res)
-                }).catch((err) => {
-                  console.log(err);                  
-                }); 
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (voteState === -1) {
+        console.log("here")
+        axios
+          .patch(postPath + postId + "/downVote")
+          .then((res) => {
+            axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
+              console.log(res)
+            }).catch((err) => {
+              console.log(err);                  
+            }); 
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        axios
+          .patch(postPath + postId + "/upVote")
+          .then((res) => {
+            axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
+              console.log(res)
+            }).catch((err) => {
+              console.log(err);                  
+            }); 
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     } else {
       setOnLoad(false);
     }

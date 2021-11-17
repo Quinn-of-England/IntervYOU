@@ -139,58 +139,23 @@ export const registration_post = async (req, res) => {
 
 export const update_user_likes = async (req, res) => {
   const { postId, like } = req.body;
-
-  console.log(req.params)
-  console.log(postId)
-  console.log(like)
-
-  const user = await User.findById(req.params.id);
-  const test = user.likes;
-  console.log(test)
-  test.set(postId, like)
-  console.log(test.get(postId))
   
-  User.findByIdAndUpdate(req.params.id,{ likes: test } , { new: true}, (err, result) => {
+  const user = await User.findById(req.params.id);
+  const likeMap = user.likes;
+  likeMap.set(postId, like);
+
+  User.findByIdAndUpdate(req.params.id,{ likes: likeMap } , { new: true}, (err, result) => {
     if(err) {
       res.status(400).json({
         message: 'Could not update likes',
         error: err.message,
       })
     } else {
-      console.log(result)
-      console.log(test.get(postId))
+      console.log(likeMap.get(postId));
       res.status(201).json(result);
     }
   })
-
-  // user.likes.set(postId, `${like}`)
-  // try {
-  //   const users = await User.find({ $and: [ { _id: { $ne: req.params.id } }, { $or: [ { "username": req.body.username }, { "email": req.body.email } ] }, ], })
-  //   const thisUser = await User.findById(req.params.id)
-  //   if(users.length){
-  //     return res.status(400).json({ message: "fields used"})
-  //   }
-
-  //   User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'likes': 1 }}, (err, result) => {
-  //     if(err){
-  //       res.status(400).json({
-  //         message: 'Could not update user',
-  //         error: err.message,
-  //       })
-  //     }else{
-  //       res.status(200).json({
-  //         message: 'User updated!',
-  //         groups: result,
-  //       })
-  //     }
-  //   })
-
-  //   res.status(201).json()
-  // } catch (err) {
-  //   res.status(401).json({ message: err.message });
-  // }
 }
-
 
 /**
  * * This function will handle the user logout
@@ -233,7 +198,7 @@ export const get_all_users = async (_, res) => {
  */
 export const get_user_by_id = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id, 'role username email')
+    const user = await User.findById(req.params.id, 'role username email likes')
     if (user) {
       res.status(200).json(user)
     } else {
