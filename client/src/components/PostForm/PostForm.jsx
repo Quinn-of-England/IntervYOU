@@ -151,6 +151,11 @@ const PostForm = () => {
   const getFileExtension = (fileType) =>
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
+  const onDeleteFile = (fileName) => {
+    //setUpdatedFiles((prevFiles) => prevFiles.filter((f) => f.path !== path));
+    console.log(fileName);
+  };
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Create a post </div>
@@ -202,6 +207,8 @@ const PostForm = () => {
                 fileName={file.path}
                 fileSize={formatFileSize(file.size)}
                 fileType={formatFileType(file.type)}
+                canDelete={true}
+                onDeleteFile={() => onDeleteFile(file.path)}
               />
             ))}
           </div>
@@ -277,6 +284,8 @@ const StyledPostForm = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+
+    margin-bottom: 30px;
   }
 
   .post-actions {
