@@ -194,35 +194,18 @@ export const deletePost = async (req, res) => {
   }
 }
 
-export const upVote = async (req, res) => {
-  const { id } = req.params
-
+export const updateVote = async (req, res) => {
+  const { id } = req.params;
+  const { voteChange } = req.body;
+  
   try {
     const post = await Post.findById(id)
     const updatedPost = await Post.findByIdAndUpdate(
       id,
-      { likes: post.likes + 1 },
+      { likes: post.likes + voteChange },
       { new: true }
-    )
-    res.status(201).json(updatedPost)
-    console.log('upvote')
-  } catch (err) {
-    res.status(401).json({ message: err.message })
-  }
-}
-
-export const downVote = async (req, res) => {
-  const { id } = req.params
-
-  try {
-    const post = await Post.findById(id)
-    const updatedPost = await Post.findByIdAndUpdate(
-      id,
-      { likes: post.likes - 1 },
-      { new: true }
-    )
-    console.log('downvote')
-    res.status(201).json(updatedPost)
+    );
+    res.status(201).json(updatedPost);
   } catch (err) {
     res.status(401).json({ message: err.message })
   }

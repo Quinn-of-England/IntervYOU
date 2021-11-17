@@ -28,9 +28,8 @@ const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
-  const [onLoad, setOnLoad] = useState(true);
   const [commentState, setCommentState] = useState(false);
-
+  
   const restrictedRef = useRef([]);
 
   const setRestrictedRef = (el) => {
@@ -57,59 +56,54 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     axios
       .get(userPath + "id/" + userId)
       .then((res) => {
-        //TODO: Access Hashmap of Liked Posts
-        // setVoteState(res.data.likes.get("null") ??  0);
+        setVoteState(res.data.likes[postId] ?? 0);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [userId]);
 
-  useEffect(() => {
-    if (!onLoad) {
-      // Updated the User Liked Map Status
-      axios
-        .get(userPath + "id/" + userId)
+  const upVoted = () => onVoteChange(1);
+  const downVoted = () => onVoteChange(-1);
+
+  const setUserVote = (vote) => {
+      // Update Likes in User Likes Map
+      axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": vote }).then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);                  
+      });
+  }
+
+  const setPostVote = (vote, state) => {
+    if (vote !== 0) {
+        let path = "/vote"
+        
+        // Update Post
+        axios
+        .patch(postPath + postId + path, { voteChange: vote - state })
         .then((res) => {
-          console.log(res);
-          if (voteState === -1) {
-            axios
-              .patch(postPath + postId + "/downVote")
-              .then((res) => {
-                //
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          } else {
-            axios
-              .patch(postPath + postId + "/upVote")
-              .then((res) => {
-                //
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
+          console.log(res.data.likes);
         })
         .catch((err) => {
           console.log(err);
         });
-    } else {
-      setOnLoad(false);
-    }
-  }, [onLoad, userId, postId, voteState]);
-
-  const upVoted = () => onVoteChange(1);
-  const downVoted = () => onVoteChange(-1);
+      }
+  }
 
   const onVoteChange = (voteDirection) => {
+    // If the current users vote on the post is the same as the click they just did
+    // then we want to set it to 0 for the user and update total and set state to 0
     if (voteState === voteDirection) {
       setVoteTotal((prevTotal) => prevTotal - voteDirection);
       setVoteState(0);
+      setUserVote(0);
+      setPostVote(-voteDirection, 0);
     } else {
       setVoteTotal((prevTotal) => prevTotal + voteDirection - voteState);
       setVoteState(voteDirection);
+      setUserVote(voteDirection);
+      setPostVote(voteDirection, voteState);
     }
   };
 

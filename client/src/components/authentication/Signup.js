@@ -21,6 +21,7 @@ const Registration = () => {
     email: "",
     password: "",
     confirmPass: "",
+    likes: {},
   });
 
   //Error Messages from Form Validation
