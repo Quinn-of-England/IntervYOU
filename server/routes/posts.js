@@ -7,8 +7,7 @@ import {
   getPostsByDate,
   deletePost,
   updatePost,
-  upVote,
-  downVote,
+  updateVote
 } from "../controllers/posts.js";
 
 const PostRouter = Router();
@@ -34,10 +33,8 @@ PostRouter.patch("/:id", updatePost);
 //Delete User By Id
 PostRouter.delete("/:id", deletePost);
 
-//Upvote post
-PostRouter.patch("/:id/upVote", upVote);
+//Vote post
+PostRouter.patch("/:id/vote", updateVote);
 
-//Downvote post
-PostRouter.patch("/:id/downVote", downVote);
 
 export default PostRouter;

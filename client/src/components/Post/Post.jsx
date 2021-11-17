@@ -30,8 +30,10 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [onLoad, setOnLoad] = useState(true);
   const [commentState, setCommentState] = useState(false);
+  const [likesMap, setLikesMap] = useState(new Map());
 
   const restrictedRef = useRef([]);
+  const skipFirstLoad = useRef(false);
 
   const setRestrictedRef = (el) => {
     if (el) {
@@ -53,58 +55,60 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
+  //let likesMap = new Map();
   useEffect(() => {
     axios
       .get(userPath + "id/" + userId)
       .then((res) => {
-        const likesMap = res.data.likes;
-        if (postId in likesMap) {
-          if(likesMap[postId] === 1) {
-            setVoteState(1);
-          } else if (likesMap[postId] === -1) {
-            setVoteState(-1);
-          } else {
-            setVoteState(0);
-          }
-        }
+        setLikesMap(res.data.likes);
+        setVoteState(res.data.likes[postId]);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [userId]);
 
-  useEffect(() => {
-    let vote = "/upVote"
-    if (voteState === -1) {
-      vote = "/downVote"
-    }
-    if (voteState !== 0) {
-      axios
-      .patch(postPath + postId + vote)
-      .then((res) => {
-        axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": voteState }).then((res) => {
-          console.log(res);
-        }).catch((err) => {
-          console.log(err);                  
-        });
-        console.log(res); 
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  }, [userId, postId, voteState]);
-
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
 
+  const setUserVote = (vote) => {
+      // Update Likes in User Likes Map
+      axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": vote }).then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);                  
+      });
+  }
+
+  const setPostVote = (vote, state) => {
+    if (vote !== 0) {
+        let path = "/vote"
+        
+        // Update Post
+        axios
+        .patch(postPath + postId + path, { voteChange: vote - state })
+        .then((res) => {
+          console.log(res.data.likes);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      }
+  }
+
   const onVoteChange = (voteDirection) => {
+    // If the current users vote on the post is the same as the click they just did
+    // then we want to set it to 0 for the user and update total and set state to 0
     if (voteState === voteDirection) {
       setVoteTotal((prevTotal) => prevTotal - voteDirection);
       setVoteState(0);
+      setUserVote(0);
+      setPostVote(-voteDirection, 0);
     } else {
       setVoteTotal((prevTotal) => prevTotal + voteDirection - voteState);
       setVoteState(voteDirection);
+      setUserVote(voteDirection);
+      setPostVote(voteDirection, voteState);
     }
   };
 
