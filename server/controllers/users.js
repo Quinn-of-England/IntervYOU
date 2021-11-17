@@ -137,9 +137,33 @@ export const registration_post = async (req, res) => {
   }
 }
 
-export const update_user_likes = (req, res) => {
-  const { postId } = req.params;
+export const update_user_likes = async (req, res) => {
+  const { postId, like } = req.body;
 
+  console.log(req.params)
+  console.log(postId)
+  console.log(like)
+
+  const user = await User.findById(req.params.id);
+  const test = user.likes;
+  console.log(test)
+  test.set(postId, like)
+  console.log(test.get(postId))
+  
+  User.findByIdAndUpdate(req.params.id,{ likes: test } , { new: true}, (err, result) => {
+    if(err) {
+      res.status(400).json({
+        message: 'Could not update likes',
+        error: err.message,
+      })
+    } else {
+      console.log(result)
+      console.log(test.get(postId))
+      res.status(201).json(result);
+    }
+  })
+
+  // user.likes.set(postId, `${like}`)
   // try {
   //   const users = await User.find({ $and: [ { _id: { $ne: req.params.id } }, { $or: [ { "username": req.body.username }, { "email": req.body.email } ] }, ], })
   //   const thisUser = await User.findById(req.params.id)

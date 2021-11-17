@@ -24,7 +24,9 @@ const userSchema = new mongoose.Schema({
     }
   ],
   likes: {
-    type: Map
+    type: Map,
+    of: Number,
+    default: {}
   },
   tokenVersion: {
     type: Number,

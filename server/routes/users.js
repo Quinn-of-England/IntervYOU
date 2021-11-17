@@ -31,7 +31,7 @@ userRouter.get("/username/:username", userController.get_user_by_username)
 // userRouter.get("/groups/id/:id", userController.get_groups_by_id)
 
 //Update - Update user likes
-userRouter.put("/username/:username/likes", userController.update_user_likes)
+userRouter.patch("/id/:id/likes", userController.update_user_likes)
 
 // //Update - Update user
 // userRouter.put("/id/:id", userController.update_user_by_id)

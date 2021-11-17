@@ -114,7 +114,7 @@ export const upVote = async(req, res) => {
     const post = await Post.findById(id);
     const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes + 1}, { new: true } );
     res.status(201).json(updatedPost);
-    console.log("upvote")
+    // console.log("upvote")
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
@@ -126,7 +126,7 @@ export const downVote = async(req, res) => {
   try {
     const post = await Post.findById(id);
     const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes - 1}, { new: true } );
-    console.log("downvote")
+    // console.log("downvote")
     res.status(201).json(updatedPost);
   } catch (err) {
     res.status(401).json({ message: err.message });
