@@ -29,7 +29,7 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [commentState, setCommentState] = useState(false);
-  
+
   const restrictedRef = useRef([]);
 
   const setRestrictedRef = (el) => {
@@ -61,35 +61,37 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [userId]);
+  }, [userId, postId]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
 
   const setUserVote = (vote) => {
-      // Update Likes in User Likes Map
-      axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": vote }).then((res) => {
-        console.log(res);
-      }).catch((err) => {
-        console.log(err);                  
+    // Update Likes in User Likes Map
+    axios
+      .patch(userPath + "id/" + userId + "/likes", {
+        postId: postId,
+        like: vote,
+      })
+      .then()
+      .catch((err) => {
+        console.log(err);
       });
-  }
+  };
 
   const setPostVote = (vote, state) => {
     if (vote !== 0) {
-        let path = "/vote"
-        
-        // Update Post
-        axios
+      let path = "/vote";
+
+      // Update Post
+      axios
         .patch(postPath + postId + path, { voteChange: vote - state })
-        .then((res) => {
-          console.log(res.data.likes);
-        })
+        .then()
         .catch((err) => {
           console.log(err);
         });
-      }
-  }
+    }
+  };
 
   const onVoteChange = (voteDirection) => {
     // If the current users vote on the post is the same as the click they just did
@@ -140,6 +142,13 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
       history.push("/" + postId + "/comments");
     }
   };
+
+  // const onDeletePost = (e) => {
+  //   e.preventDefault();
+
+  //   // Delete Axios
+  //   //axios.delete();
+  // };
 
   const onDownloadAllFiles = () => {
     // Download Files On At a Time
@@ -211,13 +220,18 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
           {files?.length > 0 && <Files files={files} />}
         </div>
 
-        <div id="ref-3" className="post-footer" ref={setRestrictedRef}>
+        <div
+          id="ref-3"
+          className={`post-footer ${
+            files?.length > 0 ? "" : "post-buttons-margin"
+          }`}
+          ref={setRestrictedRef}
+        >
           <div onClick={onClickComment} className="btn-comment">
             <CommentsIcon />
             <span> Comments </span>
           </div>
 
-          {/* TODO: Fix On Click Only Download Stay on Post Page */}
           {files?.length > 0 && (
             <div className="post-actions" onClick={onDownloadAllFiles}>
               <DownloadDocumentIcon />
@@ -282,6 +296,10 @@ const StyledPost = styled.div`
   div[class*="post"] {
     font-family: Tahoma, sans-serif;
     cursor: default;
+  }
+
+  .post-buttons-margin {
+    margin-top: 15px;
   }
 
   .post {
