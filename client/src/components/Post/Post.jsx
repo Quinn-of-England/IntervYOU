@@ -153,13 +153,6 @@ const Post = ({
     }
   };
 
-  // const onDeletePost = (e) => {
-  //   e.preventDefault();
-
-  //   // Delete Axios
-  //   //axios.delete();
-  // };
-
   const onDownloadAllFiles = () => {
     // Download Files On At a Time
     files.forEach((file) => {
