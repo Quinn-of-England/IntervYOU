@@ -7,7 +7,8 @@ import {
   getPostsByDate,
   deletePost,
   updatePost,
-  updateVote
+  updateVote,
+  addComment
 } from "../controllers/posts.js";
 
 const PostRouter = Router();
@@ -29,6 +30,9 @@ PostRouter.get("/:date", getPostsByDate);
 
 //Update - Modify Existing Post by Id
 PostRouter.patch("/:id", updatePost);
+
+//Add Comment
+PostRouter.patch("/:id/add-comment", addComment);
 
 //Delete User By Id
 PostRouter.delete("/:id", deletePost);

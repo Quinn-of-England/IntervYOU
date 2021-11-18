@@ -3,7 +3,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 
 const CommentSchema = new mongoose.Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: String,
     },
     content: {
         type: String, 
@@ -11,7 +11,7 @@ const CommentSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     post: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Post'

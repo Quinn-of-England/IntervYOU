@@ -146,7 +146,7 @@ export const update_user_likes = async (req, res) => {
 
   User.findByIdAndUpdate(req.params.id,{ likes: likeMap } , { new: true}, (err, result) => {
     if(err) {
-      res.status(400).json({
+      res.status(401).json({
         message: 'Could not update likes',
         error: err.message,
       })

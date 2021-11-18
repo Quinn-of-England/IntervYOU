@@ -13,9 +13,9 @@ import Post from "../models/Post.js"
  *  content: content of the comment
  * }
  */
-export const create_comment = async (req, res) => {
+export const create_comment = (req, res) => {
     try{
-        await Comment.create({ user: req.body.userId, content: req.body.content, post: req.body.postId }).then(async (result) => {
+        Comment.create({ user: req.body.user, content: req.body.content, post: req.body.post }).then(async (result) => {
             await Post.findByIdAndUpdate(
                 req.body.postId,
                 { $push: { comments: { _id: result._id } } },
@@ -48,12 +48,17 @@ export const create_comment = async (req, res) => {
  */
 export const get_all_comments = async (req, res) => {
     try {
+        const sort = {}
+        if (req.query.sortBy === 'date') sort['date'] = -1
+        else sort['date'] = -1
+
         const options = {
             page: parseInt(req.query.page),
-            limit: parseInt(req.query.size)
+            limit: parseInt(req.query.size),
+            sort,
         }
-        const comments = await Comment.paginate({}, options)
-        res.status(200).json(comments.docs)
+        const { docs, totalPages } = await Comment.paginate({}, options);
+        res.status(200).json({ comments: docs, totalPages: totalPages });
     } catch (err) {
         res.status(500).json({
             message: "Server error in get_all_comments",
@@ -96,7 +101,7 @@ export const get_comments_by_user = async (req, res) => {
  */
  export const get_comments_by_post = async (req, res) => {
     try {
-        const comments = await Comment.find({ post: req.query.postId })
+        const comments = await Comment.find({ post: req.query.postId }, 'user content date');
         if(comments){
             res.status(200).json(comments)
         }else {

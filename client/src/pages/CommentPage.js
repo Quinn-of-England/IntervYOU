@@ -47,7 +47,9 @@ const CommentPage = () => {
         />
       )}
       <div className="comment-container">
-        <Comments />
+        <Comments 
+          postId={postId}
+        />
       </div>
     </StyledCommentScreen>
   );
