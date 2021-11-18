@@ -59,8 +59,11 @@ const Post = ({
   const history = useHistory();
 
   let userId = "";
+  let tokenUserName = "";
   if (localStorage.getItem("Authorization")) {
-    userId = jwt(localStorage.getItem("Authorization"))._id;
+    const token = jwt(localStorage.getItem("Authorization"));
+    userId = token._id;
+    tokenUserName = token.name;
   }
 
   useEffect(() => {
@@ -200,7 +203,7 @@ const Post = ({
           <div className="post-title"> {title} </div>
 
           {/* Display Only for Post Creator */}
-          {userName !== userId && (
+          {userName === tokenUserName && (
             <div
               id="ref-1"
               className="post-crud-actions"
