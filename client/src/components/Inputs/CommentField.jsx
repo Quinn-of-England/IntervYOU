@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import "../../utils/global.css";
 
-const CommentField = ({ label, placeholderText, errMessage }) => {
-  const [input, setInput] = useState("");
-
-  console.log(input);
-
+const CommentField = ({ label, placeholderText, errMessage, setCommentAttribute, }) => {
   return (
     <StyledInput>
       <div className="title-validation">
@@ -20,7 +16,7 @@ const CommentField = ({ label, placeholderText, errMessage }) => {
           type="text"
           className="styled-input"
           placeholder={placeholderText ?? ""}
-          onChange={({ target: { value } }) => setInput(value)}
+          onChange={setCommentAttribute}
         />
       </div>
     </StyledInput>

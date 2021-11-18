@@ -1,13 +1,36 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import jwt from "jwt-decode";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
+import { IP, SERVER_PORT } from "../../utils/types.js";
 
-const Comment = ({ user, description }) => {
+
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
+const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
+
+const Comment = ({ user, content, date }) => {
+  let userId = "";
+  if (localStorage.getItem("Authorization")) {
+    userId = jwt(localStorage.getItem("Authorization"))._id;
+  }
+  
+  const formatDate = () => {
+    return new Date(date).toLocaleDateString();
+  }
+
   return (
     <StyledComment>
       <div className="comment-content">
-        <div className="comment-user"> {user} </div>
-        <div className="comment-description"> {description} </div>
+
+        <div className="comment-user-date">
+          <div className="comment-user">{user}</div>
+          <div className="user-date-seperator">•</div>
+          <div className="comment-date">{formatDate()}</div>
+        </div>
+
+        <div className="comment-description"> {content} </div>
       </div>
     </StyledComment>
   );
@@ -32,11 +55,23 @@ const StyledComment = styled.div`
       margin: 0 20px;
       width: 100%;
     }
-    &-user {
-      color: ${COLORS.fadedGrey};
-      font-size: 14px;
-      padding-bottom: 8px;
+    &-user-date {
+      display: flex;
+      
+      .comment-date,
+      .comment-user {
+        font-size: 14px;
+        color: ${COLORS.fadedGrey};
+        padding-bottom: 8px;
+      }
+      
+      .user-date-seperator {
+        font-size: 14px;
+        color: ${COLORS.fadedGrey};
+        padding: 0 8px;
+      }
     }
+
     &-description {
       font-size: 16px;
       font-weight: 200;
