@@ -7,12 +7,15 @@ import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types";
 import { PlusIcon } from "../../utils/icons";
 
-const Group = ({ community, description, memberCount, followingStatus }) => {
-  const history = useHistory();
+const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+
+const Group = ({ name, description, follower_count, followingStatus }) => {
+  // const history = useHistory();
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
-  const[followCount, setFollowCount] = useState(memberCount);
-  const[followState, setFollowState] = useState(false);
+  const[followCount, setFollowCount] = useState(follower_count ?? 0);
+  const[followState, setFollowState] = useState(0);
   
   //Create State to Store User Groups List
   const [groupList, setGroupList] = useState([]); 
@@ -22,46 +25,70 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`) 
-  //     .then((res) => {
-  //       setGroupList(() => [res.data]);
-  //       //Get List of Groups of User
-  //       // Set Grouplist to grouplist from response
-  //       //Set Following state true if community is in list of groups of that user
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });   
-  // }, [userId]);
+  useEffect(() => {
+    axios
+      .get(userPath + "groups/id/" + userId) 
+      .then((res) => {
+        setGroupList(() => [res.data]);
+        console.log(groupList);
+        //Get List of Groups of User
+        // Set Grouplist to grouplist from response
+        //Set Following state true if community is in list of groups of that user
+      })
+      .catch((err) => {
+        console.log(err);
+      });   
+  }, [userId]);
+  
+  const setGroupFollow = (follow, state) => {
+    //update groups
+    if(follow !== 0){
+      axios.patch(groupPath + "count/" + name,{
+        followChange: follow - state})
+        .then((res) => {
+          console.log(res.data.follower_count);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
 
   // On Click function
   // -> setFollowCount() +1 if !isfollowing and on Click else if isFollowing then -1 to unfollow
 
-  const updateFollowStatus = () =>
+  const updateFollowStatus = (followChoice) => {
     setIsFollowing((prevFollowing) => !prevFollowing);
-
+    if(followState === followChoice) {
+      setFollowCount((prevTotal) => prevTotal - followChoice);
+      setFollowState(0);
+      setGroupFollow(-followChoice, 0);
+    }else{
+      setFollowCount((prevTotal) => prevTotal + followChoice - followState);
+      setFollowState(followChoice);
+      setGroupFollow(followChoice, followState);
+    }
+  }
   return (
     <StyledGroup isFollowing={isFollowing}>
       <div className="group-header">
-        <div className="group-title"> {community} </div>
+        <div className="group-title"> {name} </div>
         <button className="group-following" onClick={updateFollowStatus}>
           {isFollowing ? (
             <>
-              <PlusIcon />
-              <div className="add-follow-text"> Follow </div>
+              <div> Following </div>
             </>
           ) : (
             <>
-              <div> Following </div>
+              <PlusIcon />
+              <div className="add-follow-text"> Follow </div>
             </>
           )}
         </button>
       </div>
       <div className="group-footer">
         <div className="group-description"> {description} </div>
-        <div className="group-count"> {followCount} Members </div>
+        <div className="group-count"> {follower_count} Members </div>
       </div>
     </StyledGroup>
   );
@@ -147,14 +174,14 @@ const StyledGroup = styled.div`
       ${({ isFollowing }) =>
         isFollowing
           ? css`
-              color: #283747;
-              border-color: #007cc7;
-              background: #fff;
-            `
-          : css`
               color: #fff;
               border-color: #004e7c;
               background: #004e7c;
+            `
+          : css`
+              color: #283747;
+              border-color: #007cc7;
+              background: #fff;
             `}
 
       padding: 4px 10px;

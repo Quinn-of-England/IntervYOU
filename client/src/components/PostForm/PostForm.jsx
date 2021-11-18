@@ -56,6 +56,7 @@ const PostForm = () => {
     console.log(files);
   }, [files]);
 
+
   const onCreatePost = (e) => {
     e.preventDefault();
 
@@ -64,11 +65,16 @@ const PostForm = () => {
       token = jwt(localStorage.getItem("Authorization"));
     }
 
+    // axios.get(`${IP}:${SERVER_PORT}/api/groups/name/` + groupName).then((res) => {
+    //   setPostContent((group) => [res.data])
+    //   console.log
+    // })
+
     const userId = token._id;
     const name = token.name;
 
     console.log(files);
-
+   
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);

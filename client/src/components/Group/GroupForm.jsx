@@ -14,14 +14,14 @@ const createGroupUrl = `${groupsUrl}/create`;
 
 const GroupForm = () => {
   const [groupContent, setGroupContent] = useState([
-    { title: "", description: "" },
+    { name: "", description: "" },
   ]);
 
   const history = useHistory();
 
   const onCreateGroup = (e) => {
     e.preventDefault();
-    
+
     axios
       .post(createGroupUrl, groupContent)
       .then((res) => {
@@ -41,7 +41,7 @@ const GroupForm = () => {
 
       {/* Community Title and Description */}
       <InputField label="Community" errMessage="Required *" setPostAttribute={(e) =>
-          setGroupContent({...groupContent, title: e.target.value })
+          setGroupContent({...groupContent, name: e.target.value })
         }/>
       <InputField label="Description" errMessage="Required *" setPostAttribute={(e) =>
           setGroupContent({...groupContent, description: e.target.value })

@@ -8,13 +8,14 @@ import { IP, SERVER_PORT } from "../../utils/types";
 const Groups = () => {
   const [allGroups, setAllGroups] = useState([]);
 
-  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
+  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
 
   useEffect(() => {
     axios
       .get(groupsUrl)
       .then((res) => {
         setAllGroups(() => res.data);
+        console.log(allGroups);
       })
       .catch((err) => {
         console.log(err);
