@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
 import { useHistory } from "react-router";
-import { useDropzone } from "react-dropzone";
 import SubmitCommentButton from "../Buttons/SubmitCommentButton";
 import CommentField from "../Inputs/CommentField";
 import { IP, SERVER_PORT } from "../../utils/types.js";
@@ -21,10 +20,6 @@ const CommentForm = ({ postId }) => {
     date: new Date(Date.now()).toLocaleDateString("en-US"),
   })
 
-  useEffect(() => {
-    console.log(commentContent);
-  }, [commentContent]);
-
   const onCreateComment = (e) => {
     e.preventDefault();
 
@@ -33,8 +28,8 @@ const CommentForm = ({ postId }) => {
       token = jwt(localStorage.getItem("Authorization"));
     }
 
-    const userId = token._id;
     const name = token.name;
+
     axios
       .post(commentPath + "create", { user: name, content: commentContent.content, post: postId }).then((res) => {
         axios

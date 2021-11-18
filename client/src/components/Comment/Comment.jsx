@@ -1,21 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import jwt from "jwt-decode";
+import React from "react";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
-import { IP, SERVER_PORT } from "../../utils/types.js";
-
-
-const userPath = `${IP}:${SERVER_PORT}/api/users/`;
-const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
-const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
 const Comment = ({ user, content, date }) => {
-  let userId = "";
-  if (localStorage.getItem("Authorization")) {
-    userId = jwt(localStorage.getItem("Authorization"))._id;
-  }
-  
   const formatDate = () => {
     return new Date(date).toLocaleDateString();
   }

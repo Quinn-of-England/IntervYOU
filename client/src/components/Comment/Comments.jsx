@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux"; //add useSelector when uncomment below
-import { getComments } from "../../actions/comments.js";
 import Comment from "../Comment/Comment";
 import styled from "styled-components";
 import axios from "axios";
