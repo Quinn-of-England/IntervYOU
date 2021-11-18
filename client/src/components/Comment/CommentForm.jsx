@@ -35,18 +35,17 @@ const CommentForm = ({ postId }) => {
 
     const userId = token._id;
     const name = token.name;
-    console.log(commentContent);
-    console.log(commentContent.content);
     axios
       .post(commentPath + "create", { user: name, content: commentContent.content, post: postId }).then((res) => {
-        console.log(postPath + postId + "/add-comment");
         axios
           .patch(postPath + postId + "/add-comment", { comment: res.data.comment }).then((result) => {
             console.log(result)
           }).catch((err) => {
             console.log(err);
           });
+
         console.log(res);
+        window.location.reload();
       }).catch((err) => {
         console.log(err);
       });
