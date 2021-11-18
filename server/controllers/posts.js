@@ -286,6 +286,19 @@ export const deletePost = (req, res) => {
   }
 }
 
+export const addComment = async (req, res) => {
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id, 
+      { $push: { comments: req.body.comment } }, 
+      { new: true }
+    );
+    res.status(201).json(updatedPost);
+  } catch (err) {
+    res.status(401).json({ message: err.message })
+  } 
+}
+
 export const updateVote = async (req, res) => {
   const { id } = req.params
   const { voteChange } = req.body

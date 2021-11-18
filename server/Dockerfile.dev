@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 5000
 
 #Run the app when container launches
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

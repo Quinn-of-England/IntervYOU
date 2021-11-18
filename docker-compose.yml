@@ -5,7 +5,7 @@ services:
       restart: always
       build:
         context: ./server
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
       image: intervyou-server
       container_name: intervyou-node-server
       command: npm start
@@ -37,7 +37,7 @@ services:
       restart: always
       build:
         context: ./client
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
       image: intervyou-client
       container_name: intervyou-react-client
       command: npm start

@@ -25,6 +25,7 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
+const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
 const Post = ({
   postId,
