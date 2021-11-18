@@ -210,7 +210,7 @@ export const addComment = async (req, res) => {
 export const updateVote = async (req, res) => {
   const { id } = req.params;
   const { voteChange } = req.body;
-
+  
   try {
     const post = await Post.findById(id)
     const updatedPost = await Post.findByIdAndUpdate(
