@@ -21,11 +21,21 @@ import Files from "../File/Files";
 import CommentForm from "../Comment/CommentForm";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
+
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
 
-const Post = ({ postId, title, userName, group, content, likes, files }) => {
+const Post = ({
+  postId,
+  title,
+  userName,
+  group,
+  content,
+  likes,
+  files,
+  handleDelete,
+}) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [commentState, setCommentState] = useState(false);
@@ -203,7 +213,10 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
               ref={setRestrictedRef}
             >
               <EditIcon color={"#a9a9a9"} editPost={editPost} />
-              <DeleteIcon color={COLORS.burgundyRed} />
+              <DeleteIcon
+                color={COLORS.burgundyRed}
+                deletePost={() => handleDelete(postId)}
+              />
             </div>
           )}
         </div>

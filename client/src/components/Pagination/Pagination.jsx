@@ -69,6 +69,7 @@ const StyledPagination = styled.div`
     left: 50%;
     transform: translateX(-50%);
 
+    border: 1px solid #dce1f0;
     border-radius: 20px;
   }
 

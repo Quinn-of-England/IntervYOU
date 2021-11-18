@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Posts from "../components/Post/Posts";
@@ -18,7 +18,12 @@ const Home = () => {
   //   this.props.handleLogin(data);
   // };
 
+  // const [showModal, setShowModal] = useState(false);
 
+  // const updateModalState = () =>
+  //   setShowModal((prevModalState) => !prevModalState);
+
+  // console.log(showModal);
   return (
     <StyledHome>
       {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}
