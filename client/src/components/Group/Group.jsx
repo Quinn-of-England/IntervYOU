@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import jwt from "jwt-decode";
 import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types";
@@ -11,11 +11,11 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
   const history = useHistory();
 
   const [isFollowing, setIsFollowing] = useState(followingStatus);
-  const[followCount, setFollowCount] = useState(memberCount);
-  const[followState, setFollowState] = useState(false);
-  
+  const [followCount, setFollowCount] = useState(memberCount);
+  const [followState, setFollowState] = useState(false);
+
   //Create State to Store User Groups List
-  const [groupList, setGroupList] = useState([]); 
+  const [groupList, setGroupList] = useState([]);
 
   let userId = "";
   if (localStorage.getItem("Authorization")) {
@@ -24,7 +24,7 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
 
   // useEffect(() => {
   //   axios
-  //     .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`) 
+  //     .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
   //     .then((res) => {
   //       setGroupList(() => [res.data]);
   //       //Get List of Groups of User
@@ -33,7 +33,7 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
   //     })
   //     .catch((err) => {
   //       console.log(err);
-  //     });   
+  //     });
   // }, [userId]);
 
   // On Click function

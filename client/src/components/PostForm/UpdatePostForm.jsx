@@ -58,8 +58,6 @@ const UpdatePostForm = () => {
 
   const onDroppedFiles = (droppedFiles) => {
     setUpdatedFiles((prevFiles) => {
-      // TODO: Format File Type and File Size
-      console.log(droppedFiles);
       if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(
@@ -67,21 +65,19 @@ const UpdatePostForm = () => {
         );
 
         //If File is Not Stored in S3, Then Add to Add Array
-        if (
-          filteredDroppedFiles.length > 0
-        ) {
+        if (filteredDroppedFiles.length > 0) {
           console.log("Filtered: ", filteredDroppedFiles);
           console.log("Added: ", addedFiles);
 
           //setAddedFiles((prevAddedFiles) => ([...prevAddedFiles, ...filteredDroppedFiles]));
-          if(addedFiles.length > 0)
+          if (addedFiles.length > 0)
             setAddedFiles([...addedFiles, ...filteredDroppedFiles]);
-          else
-            setAddedFiles([...filteredDroppedFiles]);
+          else setAddedFiles([...filteredDroppedFiles]);
         }
 
         return [...prevFiles, ...filteredDroppedFiles];
       } else {
+        setAddedFiles([...droppedFiles]);
         return droppedFiles;
       }
     });
@@ -122,22 +118,23 @@ const UpdatePostForm = () => {
     }
 
     // Update Post With New Content and Added/Deleted Files
-    axios.patch(`${postUrl}/${postId}`, formData, { headers: { "Content-Type": "multipart/form-data"} })
-    .then((res) => {
-      console.log(res.data);
+    axios
+      .patch(`${postUrl}/${postId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        // On Successful Upload, Clear Added Files Array
+        setAddedFiles([]);
 
-      // On Successful Upload, Clear Added Files Array
-      setAddedFiles([]);
+        // On Successful Delete, Clear Deleted Files Array
+        setDeletedFiles([]);
 
-      // On Successful Delete, Clear Deleted Files Array
-      setDeletedFiles([]);
-
-      // Return Home
-      history.push("/");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+        // Return Home
+        history.push("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const formatFileSize = (fileBytes) => {
@@ -197,14 +194,13 @@ const UpdatePostForm = () => {
     );
 
     // Filter Out Deleted File from Added Files
-    if(addedFiles.length > 0)
+    if (addedFiles.length > 0)
       setAddedFiles((prevAddedFiles) =>
         prevAddedFiles.filter((f) => f.name !== deletedFile.name)
       );
   };
 
   const updateInputState = (e) => {
-    console.log(postContent);
     setPostContent({ ...postContent, [e.target.id]: e.target.value });
   };
 

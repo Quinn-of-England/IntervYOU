@@ -24,7 +24,6 @@ const CommentPage = () => {
       axios
         .get(`${baseUrl}/api/posts/${postId}`)
         .then((res) => {
-          console.log(res);
           setSelectedPost(() => res.data);
         })
         .catch((err) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
@@ -42,19 +42,9 @@ const PostForm = () => {
     });
   };
 
-  //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
-
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDroppedFiles,
   });
-
-  useEffect(() => {
-    console.log(postContent);
-  }, [postContent]);
-
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
 
   const onCreatePost = (e) => {
     e.preventDefault();
@@ -66,8 +56,6 @@ const PostForm = () => {
 
     const userId = token._id;
     const name = token.name;
-
-    console.log(files);
 
     const formData = new FormData();
     formData.append("userName", name);
@@ -88,10 +76,6 @@ const PostForm = () => {
         },
       })
       .then((res) => {
-        // Log Res
-        console.log(res);
-        console.log(files);
-
         //Push
         history.push("/");
       })

@@ -1,4 +1,8 @@
+import dotenv from "dotenv";
 import { upload, s3 } from "../file-upload.js";
+
+dotenv.config();
+
 
 /* *
  * * This function will upload all files to S3 bucket
