@@ -153,6 +153,43 @@ export const update_follower_count_with_name = (req, res) => {
   }
 };
 
+
+/**
+ * This function will update the following status of the group using the name( since all group names are unique)
+ * Will return a 200(Ok) if group updated 
+ * Will return a 400(Bad request) if could not update
+ * body{
+ * following status, true if following, false otherwise
+ * }
+ * Path parameters:
+ *  name
+ */
+export const update_group_status = (req, res) => {
+  const {name} = req.params;
+  try {
+    Group.findByIdAndUpdate(
+      name,
+      {followingStatus: req.body},
+      {new: true},
+      (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: 'Could not update group',
+            error: err.message,
+          })
+        } else {
+          res.status(200).json(result)
+        }
+      }
+    )
+  } catch (err) {
+    res.status(500).json({message: `Server error while updating group`, 
+    error: err.message,
+    })
+
+  }
+}
+
 /**
  * * This function will delete a group from the database using the id
  * * Will return a 200(Ok) if group deleted
