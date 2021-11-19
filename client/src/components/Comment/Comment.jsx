@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
