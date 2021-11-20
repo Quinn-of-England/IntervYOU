@@ -18,11 +18,16 @@ const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
 const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isEdited, setIsEdited] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(content);
 
   useEffect(() => {
     console.log(updatedComment);
   }, [updatedComment]);
+
+  useEffect(() => {
+    console.log(isEdited);
+  }, [isEdited]);
 
   let userId = "";
   let tokenUserName = "";
@@ -45,6 +50,10 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
     }
   };
 
+  const isEditedHanler = (state) => {
+    setIsEdited(state);
+  }
+
   const editComment = () => {
     axios
       .get(postPath + postId).then((res) => {
@@ -52,7 +61,8 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
           axios
           .patch(commentPath + commentId,  { _id: commentId, user: user, content: updatedComment, post: res.data } ).then((res) => {
             console.log(res);
-            window.location.reload();
+            setIsEdited(true);
+            // window.location.reload();
           }).catch((err) => {
             console.log(err);
           });
@@ -72,7 +82,9 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
           <div className="comment-user">u/{user}</div>
           <div className="user-date-seperator">•</div>
           <div className="comment-date">{formatDate()}</div>
-
+          {isEdited === true ? (
+            <div className="comment-edit">Edited</div>
+          ) : (<div className="comment-edit"></div>)}
           {/* Display only for the comment creator */}
           {user === tokenUserName && (
             <div
@@ -129,6 +141,11 @@ const StyledComment = styled.div`
         padding: 0 8px;
       }
 
+      .comment-edit {
+        font-size: 14px;
+        color: ${COLORS.fadedGrey};
+        padding: 0 8px;
+      }
       .comment-crud-actions {
         margin: 0 20px;
         display: flex;
