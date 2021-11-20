@@ -42,8 +42,6 @@ const PostForm = () => {
     });
   };
 
-  //TODO: Allow Delete Files -> Add Delete to Files and Onclick Delete from files array
-
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDroppedFiles,
   });
@@ -73,8 +71,6 @@ const PostForm = () => {
     const userId = token._id;
     const name = token.name;
 
-    console.log(files);
-   
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);
@@ -94,10 +90,6 @@ const PostForm = () => {
         },
       })
       .then((res) => {
-        // Log Res
-        console.log(res);
-        console.log(files);
-
         //Push
         history.push("/");
       })

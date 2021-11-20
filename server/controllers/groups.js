@@ -172,7 +172,8 @@ export const update_follower_count_with_name = (req, res) => {
     const group = await Group.find({ $and: [ { _id: { $ne: req.params.id } }, { name: req.body.name } ] })
     if(group.length){
       return res.status(400).json({
-        message: "Cant update group because new name supplied already in use"
+        message: "Cant update group because new name supplied already in use",
+        error: err.message,
       })
     }
     Group.findByIdAndUpdate(

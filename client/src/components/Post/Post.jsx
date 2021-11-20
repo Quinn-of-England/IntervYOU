@@ -21,15 +21,26 @@ import Files from "../File/Files";
 import CommentForm from "../Comment/CommentForm";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
+
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
+const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
-const Post = ({ postId, title, userName, group, content, likes, files }) => {
+const Post = ({
+  postId,
+  title,
+  userName,
+  group,
+  content,
+  likes,
+  files,
+  handleDelete,
+}) => {
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [commentState, setCommentState] = useState(false);
-  
+
   const restrictedRef = useRef([]);
 
   const setRestrictedRef = (el) => {
@@ -48,8 +59,11 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
   const history = useHistory();
 
   let userId = "";
+  let tokenUserName = "";
   if (localStorage.getItem("Authorization")) {
-    userId = jwt(localStorage.getItem("Authorization"))._id;
+    const token = jwt(localStorage.getItem("Authorization"));
+    userId = token._id;
+    tokenUserName = token.name;
   }
 
   useEffect(() => {
@@ -61,35 +75,37 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [userId]);
+  }, [userId, postId]);
 
   const upVoted = () => onVoteChange(1);
   const downVoted = () => onVoteChange(-1);
 
   const setUserVote = (vote) => {
-      // Update Likes in User Likes Map
-      axios.patch(userPath + "id/" + userId + "/likes", { "postId": postId, "like": vote }).then((res) => {
-        console.log(res);
-      }).catch((err) => {
-        console.log(err);                  
+    // Update Likes in User Likes Map
+    axios
+      .patch(userPath + "id/" + userId + "/likes", {
+        postId: postId,
+        like: vote,
+      })
+      .then()
+      .catch((err) => {
+        console.log(err);
       });
-  }
+  };
 
   const setPostVote = (vote, state) => {
     if (vote !== 0) {
-        let path = "/vote"
-        
-        // Update Post
-        axios
+      let path = "/vote";
+
+      // Update Post
+      axios
         .patch(postPath + postId + path, { voteChange: vote - state })
-        .then((res) => {
-          console.log(res.data.likes);
-        })
+        .then()
         .catch((err) => {
           console.log(err);
         });
-      }
-  }
+    }
+  };
 
   const onVoteChange = (voteDirection) => {
     // If the current users vote on the post is the same as the click they just did
@@ -187,14 +203,17 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
           <div className="post-title"> {title} </div>
 
           {/* Display Only for Post Creator */}
-          {userName !== userId && (
+          {userName === tokenUserName && (
             <div
               id="ref-1"
               className="post-crud-actions"
               ref={setRestrictedRef}
             >
               <EditIcon color={"#a9a9a9"} editPost={editPost} />
-              <DeleteIcon color={COLORS.burgundyRed} />
+              <DeleteIcon
+                color={COLORS.burgundyRed}
+                deletePost={() => handleDelete(postId)}
+              />
             </div>
           )}
         </div>
@@ -211,13 +230,18 @@ const Post = ({ postId, title, userName, group, content, likes, files }) => {
           {files?.length > 0 && <Files files={files} />}
         </div>
 
-        <div id="ref-3" className="post-footer" ref={setRestrictedRef}>
+        <div
+          id="ref-3"
+          className={`post-footer ${
+            files?.length > 0 ? "" : "post-buttons-margin"
+          }`}
+          ref={setRestrictedRef}
+        >
           <div onClick={onClickComment} className="btn-comment">
             <CommentsIcon />
             <span> Comments </span>
           </div>
 
-          {/* TODO: Fix On Click Only Download Stay on Post Page */}
           {files?.length > 0 && (
             <div className="post-actions" onClick={onDownloadAllFiles}>
               <DownloadDocumentIcon />
@@ -282,6 +306,10 @@ const StyledPost = styled.div`
   div[class*="post"] {
     font-family: Tahoma, sans-serif;
     cursor: default;
+  }
+
+  .post-buttons-margin {
+    margin-top: 15px;
   }
 
   .post {

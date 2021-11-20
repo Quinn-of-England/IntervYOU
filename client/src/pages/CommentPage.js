@@ -24,7 +24,6 @@ const CommentPage = () => {
       axios
         .get(`${baseUrl}/api/posts/${postId}`)
         .then((res) => {
-          console.log(res);
           setSelectedPost(() => res.data);
         })
         .catch((err) => {
@@ -47,7 +46,9 @@ const CommentPage = () => {
         />
       )}
       <div className="comment-container">
-        <Comments />
+        <Comments 
+          postId={postId}
+        />
       </div>
     </StyledCommentScreen>
   );

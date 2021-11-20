@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 import Post from '../models/Post.js'
 import { upload, s3 } from '../file-upload.js'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 /**
  * * This function will get all the posts from the database paginated
@@ -23,8 +26,8 @@ export const getAllPosts = async (req, res) => {
       sort,
     }
 
-    const Posts = await Post.paginate({}, options)
-    res.status(200).json(Posts.docs)
+    const { docs, totalPages } = await Post.paginate({}, options)
+    res.status(200).json({ posts: docs, totalPages: totalPages })
   } catch (err) {
     res.status(404).json({ message: err.message })
   }
@@ -98,10 +101,10 @@ export const createPost = async (req, res) => {
   }
 }
 
-export const updatePost = async (req, res) => {
+export const updatePost = (req, res) => {
   try {
     upload(req, res, async (err) => {
-      console.log(req.body);
+      console.log(req.body)
       if (err) {
         res.status(422).json({
           message: 'Unable to update post',
@@ -130,48 +133,102 @@ export const updatePost = async (req, res) => {
         if (req.body.keys && Array.isArray(req.body.keys)) {
           const deletedKeys = []
           req.body.keys.forEach((key) => {
-            console.log("sup");
-            deletedKeys.push({ Key: key });
+            deletedKeys.push({ Key: key })
 
             // Remove File Index
-            const fileIndex = req.body.files.findIndex((file) => file.key === key);
-            if(fileIndex !== -1) {
-              req.body.files.splice(fileIndex, 1);
+            const fileIndex = req.body.files.findIndex(
+              (file) => file.key === key
+            )
+            if (fileIndex !== -1) {
+              req.body.files.splice(fileIndex, 1)
             }
-          })
+          });
 
-          await s3.deleteObjects({
-            Bucket: process.env.BUCKET_NAME,
-            Key: deletedKeys,
-          })
-        }else if(req.body.keys && typeof req.body.keys === 'string'){
+          s3.deleteObjects(
+            {
+              Bucket: process.env.BUCKET_NAME,
+              Delete: { Objects: deletedKeys, Quiet: false },
+            },
+            (err, _) => {
+              if (err) {
+                res.status(400).json({
+                  message: 'Could not delete files!',
+                  error: err.message,
+                })
+              } else {
+                Post.findByIdAndUpdate(
+                  req.params.id,
+                  req.body,
+                  { new: true },
+                  (err, result) => {
+                    if (err) {
+                      res.status(400).json({
+                        message: 'Could not update post',
+                        error: err.message,
+                      })
+                    } else {
+                      res.status(200).json(result)
+                    }
+                  }
+                );
+              }
+            }
+          );
+        } else if (req.body.keys && typeof req.body.keys === 'string') {
           // Remove File Index
-          const fileIndex = req.body.files.findIndex((file) => file.key === req.body.keys);
-          if(fileIndex !== -1) {
+          const fileIndex = req.body.files.findIndex(
+            (file) => file.key === req.body.keys
+          )
+          if (fileIndex !== -1) {
             req.body.files.splice(fileIndex, 1);
           }
-          await s3.deleteObject({
+          console.log('here: ', req.body.keys)
+          s3.deleteObject({
             Bucket: process.env.BUCKET_NAME,
             Key: req.body.keys,
-          })
-        }
-
-        
-        Post.findByIdAndUpdate(
-          req.params.id,
-          req.body,
-          { new: true },
-          (err, result) => {
-            if (err) {
-              res.status(400).json({
-                message: 'Could not update post',
-                error: err.message,
-              })
-            } else {
-              res.status(200).json(result)
+          },
+            (err, _) => {
+              if (err) {
+                res.status(400).json({
+                  message: 'Could not delete files!',
+                  error: err.message,
+                })
+              } else {
+                Post.findByIdAndUpdate(
+                  req.params.id,
+                  req.body,
+                  { new: true },
+                  (err, result) => {
+                    if (err) {
+                      res.status(400).json({
+                        message: 'Could not update post',
+                        error: err.message,
+                      })
+                    } else {
+                      res.status(200).json(result)
+                    }
+                  }
+                );
+              }
             }
-          }
-        )
+          );
+        } else {
+          Post.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true },
+            (err, result) => {
+              if (err) {
+                res.status(400).json({
+                  message: 'Could not update post',
+                  error: err.message,
+                })
+              } else {
+                res.status(200).json(result)
+              }
+            }
+          );
+        }
       }
     })
   } catch (err) {
@@ -179,33 +236,81 @@ export const updatePost = async (req, res) => {
   }
 }
 
-export const deletePost = async (req, res) => {
-  const { id } = req.params.id
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No valid post with id: ${id}`)
-
+export const deletePost = (req, res) => {
   try {
-    //Successful Deletion by Id - 202
-    await Post.findByIdAndDelete(id)
-    res.status(202).json({ message: 'Successfully Deleted Post' })
+    Post.findByIdAndDelete(req.params.id, (err, result) => {
+      if (err) {
+        res.status(400).json({
+          message: 'Could not delete post!',
+          error: err.message,
+        })
+      } else {
+        console.log(result)
+        if (result.files.length) {
+          const deletedKeys = []
+          result.files.forEach((file) => {
+            deletedKeys.push({ Key: file.key })
+          })
+          console.log(deletedKeys)
+
+          s3.deleteObjects(
+            {
+              Bucket: process.env.BUCKET_NAME,
+              Delete: { Objects: deletedKeys, Quiet: false },
+            },
+            (err, _) => {
+              if (err) {
+                res
+                  .status(400)
+                  .json({
+                    message: 'Could not delete files',
+                    error: err.message,
+                  })
+              } else {
+                res.status(200).json({ message: 'Post deleted' })
+              }
+            }
+          )
+        } else {
+          res.status(200).json({
+            message: 'Post deleted!',
+          })
+        }
+      }
+    })
   } catch (err) {
-    res.status(404).json({ message: err.message })
+    res.status(500).json({
+      message: 'Server error while deleting post',
+      error: err.message,
+    })
   }
 }
 
+export const addComment = async (req, res) => {
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id, 
+      { $push: { comments: req.body.comment } }, 
+      { new: true }
+    );
+    res.status(201).json(updatedPost);
+  } catch (err) {
+    res.status(401).json({ message: err.message })
+  } 
+}
+
 export const updateVote = async (req, res) => {
-  const { id } = req.params;
-  const { voteChange } = req.body;
-  
+  const { id } = req.params
+  const { voteChange } = req.body
+
   try {
     const post = await Post.findById(id)
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { likes: post.likes + voteChange },
       { new: true }
-    );
-    res.status(201).json(updatedPost);
+    )
+    res.status(201).json(updatedPost)
   } catch (err) {
     res.status(401).json({ message: err.message })
   }

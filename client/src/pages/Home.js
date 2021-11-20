@@ -18,7 +18,12 @@ const Home = () => {
   //   this.props.handleLogin(data);
   // };
 
+  // const [showModal, setShowModal] = useState(false);
 
+  // const updateModalState = () =>
+  //   setShowModal((prevModalState) => !prevModalState);
+
+  // console.log(showModal);
   return (
     <StyledHome>
       {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}

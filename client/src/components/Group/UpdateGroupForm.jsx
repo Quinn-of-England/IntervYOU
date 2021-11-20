@@ -7,19 +7,21 @@ import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
 import jwt from "jwt-decode";
 import { IP, SERVER_PORT } from "../../utils/types";
-
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
 
 
-const UpdateGroupForm = () => {
+const UpdateGroupForm = ({name, description}) => {
   const [groupContent, setGroupContent] = useState([
-    { name: "", description: "" },
+    { name: name, description: description },
   ]);
 
   const history = useHistory();
 
   const [groupId, setGroupId] = useState("");
   const { pathname } = useLocation();
+  const [errMessage, setErrMessage] = useState("")
 
   useEffect(() => {
     setGroupId(() => pathname.split(/[//]/)[1]);
@@ -54,25 +56,18 @@ const UpdateGroupForm = () => {
     }
 
     axios.patch(groupsUrl + "/" + groupId,{
-      groupContent
+      "name": groupContent.name,
+      "description": groupContent.description,
     })
     .then((res) => {
       console.log(res.data);
-      history.push("/");
+      history.push("/groups");
     })
     .catch((err) => {
       console.log(err);
+      setErrMessage("Group name already exists")
     })
-    // axios
-    //   .patch(updateGroulUrl, groupContent)
-    //   .then((res) => {
-    //     console.log(res);
-    //     // Return to Groups Page After Successful Post
-    //     history.push("/groups");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    
   };
 
   const updateInputState = (e) => {
@@ -82,6 +77,7 @@ const UpdateGroupForm = () => {
 
   return (
     <StyledGroupForm>
+      
       <div className="create-form-title"> Update a group </div>
 
       {/* Community Title and Description */}
@@ -92,6 +88,7 @@ const UpdateGroupForm = () => {
         defaultText={groupContent.name}
         setPostAttribute={updateInputState}  
       />
+      <div className="errorMessage"> {errMessage} </div>
       <InputField 
         inputId="description"
         label="Description"
@@ -124,6 +121,12 @@ const StyledGroupForm = styled.div`
     font-family: "Noto Sans JP", sans-serif;
 
     margin: 5px 10px;
+  }
+  .errorMessage {
+    color: red;
+    font-family: "Noto Sans JP", sans-serif;
+    font-size: 10px;
+    padding-left: 20px;
   }
 
   .group-actions {

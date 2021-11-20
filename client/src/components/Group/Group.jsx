@@ -7,6 +7,7 @@ import { IP, SERVER_PORT } from "../../utils/types";
 import { PlusIcon, EditIcon, DeleteIcon } from "../../utils/icons";
 import { useHistory } from "react-router-dom";
 
+
 const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
@@ -47,32 +48,49 @@ const Group = ({ groupId, name, description, follower_count, followingStatus }) 
     const followChange = isFollowing ? -1 : 1;
     setIsFollowing((prevFollowing) => !prevFollowing);
     setFollowCount((prevTotal) => prevTotal + followChange);
+    const  followState = isFollowing ? false : true;
     
-    //post follow Count decrement
     axios 
       .patch(groupPath + "count/" + name,
       { 
         inc: followChange
       })
-      .then((res) => {
-        //instead get all group list potentially
+      .then((res) => {      
         axios
-        .patch(userPath + "groups/id/" + groupId,{
-            
-        })
-        .then((res)=> {
-          console.log(res);
-        }).catch((err) => {
-          console.log(err);
-        });
-        
+          .patch(groupPath + groupId,{
+
+          })
 
         console.log(res);
       
       }).catch((err) => {
         console.log (err);
       });
+
+      axios
+      .patch(userPath + "groups/id/" + groupId,{
+         
+      })
+      .then((res)=> {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      });
   }
+
+  const deleteGroup = () => {
+    axios
+     .delete(groupPath + "id/" + groupId)
+     .then((res) =>{
+      setTimeout(function(){
+        window.location.reload();
+      },100); 
+      
+       console.log(res);
+     }).catch((err) => {
+       console.log(err);
+     })
+  };
 
   const editPost = () => {
     history.push("/" + groupId + "/update-group");
@@ -102,7 +120,7 @@ const Group = ({ groupId, name, description, follower_count, followingStatus }) 
 
       <div>
         <EditIcon color={"#a9a9a9"} editPost={editPost}/>
-        <DeleteIcon color={COLORS.burgundyRed} />
+        <DeleteIcon color={COLORS.burgundyRed} deletePost={deleteGroup}/>
       </div>
     </StyledGroup>
   );
