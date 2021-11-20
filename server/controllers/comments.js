@@ -129,9 +129,7 @@ export const get_comments_by_user = async (req, res) => {
  * Path parameters:
  *  id: comment id
  */
-export const update_comment = async (req, res) => {
-    console.log(req.body)
-   
+export const update_comment = async (req, res) => {   
     try {
 
         Comment.findByIdAndUpdate(req.params.id, { user: req.body.user, content: req.body.content, date: Date.now(), post: req.body.post }, { new: true }, (err, result) => {
@@ -155,7 +153,7 @@ export const update_comment = async (req, res) => {
     }
 }
 
-export const delete_comment = async (req, res) => {
+export const deleteComment = async (req, res) => {
     try {
         const comment = await Comment.findByIdAndDelete(req.params.id)
         if(comment){

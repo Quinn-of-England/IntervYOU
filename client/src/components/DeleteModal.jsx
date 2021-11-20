@@ -10,6 +10,7 @@ const DeleteModal = ({
   showModal,
   updateModalState,
   deletePostById,
+  deleteCommentById,
 }) => {
   const modalRef = useRef();
   const waitRef = useRef(false);
@@ -52,7 +53,7 @@ const DeleteModal = ({
             </span>
             <div className="delete-actions">
               <CancelButton btnText="CANCEL" handleClick={updateModalState} />
-              <DeleteButton btnText="DELETE" handleClick={deletePostById} />
+              <DeleteButton btnText="DELETE" handleClick={deleteCommentById} />
             </div>
           </div>
         </StyledModal>
