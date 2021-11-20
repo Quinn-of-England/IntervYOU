@@ -8,6 +8,7 @@ const GroupSchema = new mongoose.Schema({
     description: {
         type: String, 
         required: true,
+    
     },
     follower_count: {
         type: Number,

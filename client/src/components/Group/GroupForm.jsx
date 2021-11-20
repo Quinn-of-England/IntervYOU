@@ -47,7 +47,7 @@ const GroupForm = () => {
           setGroupContent({...groupContent, description: e.target.value })
         }/>
       <div className="group-actions">
-        <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
+        <CancelButton btnText="CANCEL" handleClick={() => history.push("/groups")} />
         <AddButton btnText="POST" handleClick={onCreateGroup} />
       </div>
     </StyledGroupForm>

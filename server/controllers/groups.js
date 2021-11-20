@@ -127,6 +127,8 @@ export const get_group_by_name = async (req, res) => {
  */
 export const update_follower_count_with_name = (req, res) => {
   try {
+    // Pass user id to request (req.body.... or req.params....)
+    // Get User By Id
     Group.findOneAndUpdate(
       { name: req.params.name },
       { $inc: { follower_count: req.body.inc } },
@@ -153,6 +155,35 @@ export const update_follower_count_with_name = (req, res) => {
   }
 };
 
+/**
+ * This function will update the group using groupId
+ * Will return a 200(Ok) if group updated 
+ * Will return a 400(Bad request) if could not update
+ * Path parameters:
+ *  id
+ */
+ export const update_group_with_id = (req, res) => {
+  try {
+    Group.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+      (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: 'Could not update post',
+            error: err.message,
+          })
+        } else {
+          res.status(200).json(result)
+        }
+      }
+    )
+  } catch (err) {
+    res.status(401).json({ message: err.message })
+  }
+}
+
 
 /**
  * This function will update the following status of the group using the name( since all group names are unique)
@@ -162,7 +193,7 @@ export const update_follower_count_with_name = (req, res) => {
  * following status, true if following, false otherwise
  * }
  * Path parameters:
- *  name
+ *  .id
  */
 export const update_group_status = (req, res) => {
   const {name} = req.params;

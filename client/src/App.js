@@ -16,6 +16,7 @@ import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
 import CommentPage from "./pages/CommentPage";
 import UpdatePostPage from "./pages/UpdatePostPage";
+import UpdateGroupPage from "./pages/UpdateGroupPage"
 
 const App = () => {
   const [loginStatus, setLoginStatus] = useState({
@@ -78,6 +79,7 @@ const App = () => {
         <Route path="/:postId/comments" component={CommentPage} />
         <Route path="/groups" component={GroupPage} />
         <Route path="/group/create" component={CommunityPage} />
+        <Route path="/:groupId/update-group" component={UpdateGroupPage} />
         <Route path="/profile" component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />

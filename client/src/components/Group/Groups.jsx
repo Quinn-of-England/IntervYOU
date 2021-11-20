@@ -1,31 +1,49 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-
+import jwt from "jwt-decode";
 import Group from "./Group";
 import { IP, SERVER_PORT } from "../../utils/types";
 
 const Groups = () => {
   const [allGroups, setAllGroups] = useState([]);
+  const [followedGroups, setFollowedGroups] = useState([]);
 
   const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
+  const usersUrl = `${IP}:${SERVER_PORT}/api/users/`;
+
+  let userId = "";
+  if (localStorage.getItem("Authorization")) {
+    userId = jwt(localStorage.getItem("Authorization"))._id;
+  }
 
   useEffect(() => {
-    axios
-      .get(groupsUrl)
+    if(userId) {
+      axios.get(usersUrl + "groups/id/"  + userId).then((res) => {
+        setFollowedGroups(res.data.groups);
+        console.log(res.data.groups);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    axios.get(groupsUrl)
       .then((res) => {
         setAllGroups(() => res.data);
         console.log(allGroups);
       })
       .catch((err) => {
         console.log(err);
-      });
+      });    
   }, []);
 
   return (
     <StyledGroups>
       {allGroups.map(({ _id, ...group }) => (
-        <Group key={_id} groupId={_id} {...group} />
+        <Group key={_id} groupId={_id} {...group}/>
       ))}
     </StyledGroups>
   );
@@ -42,37 +60,3 @@ const StyledGroups = styled.div`
 `;
 
 export default Groups;
-
-// Dummy Data
-// const groupData = [
-////   {
-//     id: 1,
-//     community: "Computer Engineering",
-//     description: "Losers hehe",
-//     memberCount: 99,
-//     followingStatus: false,
-//   },
-//   {
-//     id: 2,
-//     community: "Liberal Arts",
-//     description: "lorem ipsum",
-//     memberCount: 5,
-//     followingStatus: true,
-//   },
-//   {
-//     id: 2,
-//     community: "Liberal Arts",
-//     description:
-//       "Some long description of this amazing society and im not sure why i have to write such a long description to check whether the overflow works.",
-//     memberCount: 1000,
-//     followingStatus: false,
-//   },
-// ];
-//   return (
-//     <StyledGroups>
-//       {groupData.map((group) => (
-//         <Group key={group.id} {...group} />
-//       ))}
-//     </StyledGroups>
-//   );
-// };

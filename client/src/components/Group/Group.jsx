@@ -1,111 +1,82 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
-// import {useHistory} from "react-router-dom";
 import jwt from "jwt-decode";
 import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types";
-import { PlusIcon } from "../../utils/icons";
+import { PlusIcon, EditIcon, DeleteIcon } from "../../utils/icons";
+import { useHistory } from "react-router-dom";
 
 const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
-// const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
-const Group = ({ name, description, follower_count, followingStatus }) => {
-  // const history = useHistory();
-
+const Group = ({ groupId, name, description, follower_count, followingStatus }) => {
   const [isFollowing, setIsFollowing] = useState(followingStatus);
   const[followCount, setFollowCount] = useState(follower_count ?? 0);
-  const[followState, setFollowState] = useState(false);
-  
-  //Create State to Store User Groups List
-  const [groupList, setGroupList] = useState([]); 
 
   let userId = "";
   if (localStorage.getItem("Authorization")) {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
-  useEffect(() => {
-    follower_count = followCount;  
-  }, [followCount]);
+  const history = useHistory();
 
-  useEffect(() => {
-    //update following status
-    axios
-    .patch(`${groupPath} + ${name}`,{
-        followingStatus: isFollowing
-    })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }, [followState])
+
 
   useEffect(() =>{
     //update followCount
-    axios
-    .get(groupPath)
-    .then((res) =>{
-      setGroupList(() => [res.data]);
-      console.log(groupList);
-      //Get List of Groups of User
-      //Set Grouplist to grouplist from response
-      //Set Following state true if community is in list of groups of that user
 
-      // const followerCount = Object.values(res.data).map(({follower_count}) => follower_count);
-
-      // setFollowCount(({follower_count}) => follower_count);
-      console.log(followCount);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  },[followState]); //update when follow state changes
+    //Get Group By Id
+    if(groupId) {
+      // Check if User has Current Group Id
+        // Axios Get Request to an Endpoint, Pass user id and group id and check in user if group id exists
+        // If it exists then setIsFollowing(true); otherwise, setIsFollowing(false);
+      console.log(groupId);
+      // axios.get(`${groupPath}id/${groupId}`)
+      // .then((res) =>{
+      //   setFollowCount(res.data.follower_count);
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // })
+    }
+  },[]); //update when follow state changes
 
 
   const followChange = () => {
+    const followChange = isFollowing ? -1 : 1;
     setIsFollowing((prevFollowing) => !prevFollowing);
+    setFollowCount((prevTotal) => prevTotal + followChange);
     
-    switch(followState){
-      case true:
-        setFollowState((prevState) => !prevState);
-        setFollowCount((prevTotal) => prevTotal - 1);
-        // axios //post follow Count decrement
-        //   .patch(`${groupPath} + "count/" + ${name}`,
-        //   { 
-        //     inc: -1
-        //   })
-        //   .then((res) => {
-        //     console.log(res);
-          
-        //   }).catch((err) => {
-        //     console.log (err);
-        //   });
+    //post follow Count decrement
+    axios 
+      .patch(groupPath + "count/" + name,
+      { 
+        inc: followChange
+      })
+      .then((res) => {
+        //instead get all group list potentially
+        axios
+        .patch(userPath + "groups/id/" + groupId,{
+            
+        })
+        .then((res)=> {
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);
+        });
         
-        break;
-      case false:
-        setFollowState((prevState) => !prevState);
-        setFollowCount((prevTotal) => prevTotal + 1);
 
-        // axios //post follow Count increment
-        //   .patch(`${groupPath} + "count/" + ${name}`,
-        //   { 
-        //     inc: 1
-        //   })
-        //   .then((res) => {
-        //     console.log(res);
-          
-        //   }).catch((err) => {
-        //     console.log (err);
-        //   });
-        
-        break;
-      default:
-        break;
-    }  
+        console.log(res);
+      
+      }).catch((err) => {
+        console.log (err);
+      });
   }
+
+  const editPost = () => {
+    history.push("/" + groupId + "/update-group");
+  };
 
   return (
     <StyledGroup isFollowing={isFollowing}>
@@ -128,9 +99,16 @@ const Group = ({ name, description, follower_count, followingStatus }) => {
         <div className="group-description"> {description} </div>
         <div className="group-count"> {followCount} Members </div>
       </div>
+
+      <div>
+        <EditIcon color={"#a9a9a9"} editPost={editPost}/>
+        <DeleteIcon color={COLORS.burgundyRed} />
+      </div>
     </StyledGroup>
   );
 };
+
+//Edit -> Pass current group content to new page 
 
 const StyledGroup = styled.div`
   display: flex;
