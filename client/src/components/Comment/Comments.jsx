@@ -4,7 +4,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
-const Comments = ( { postId} ) => {
+const Comments = ( { postId } ) => {
   const [allComments, setAllComments] = useState([]);
   useEffect(() => {
     console.log(postId);
@@ -25,7 +25,7 @@ const Comments = ( { postId} ) => {
     <StyledComments>
       <div className="comments-header">Comments</div>
       {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
-        <Comment key={_id} commentId={_id} {...comment} />
+        <Comment key={_id} commentId={_id} postId={postId} {...comment} />
       ))}
     </StyledComments>
   );

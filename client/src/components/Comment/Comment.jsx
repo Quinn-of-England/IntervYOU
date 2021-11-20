@@ -2,20 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
+import axios from "axios";
 import jwt from "jwt-decode";
+import { IP, SERVER_PORT } from "../../utils/types.js";
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
-  DownloadDocumentIcon,
-  BookmarkIcon,
-  ShareLinkedinIcon,
-  CommentsIcon,
   EditIcon,
   DeleteIcon,
 } from "../../utils/icons";
 
 
-const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
+const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
+const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
+
+const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(content);
 
@@ -52,11 +53,29 @@ const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
 
   const onClickComment = () => {
     setIsEditing((prevState) => !prevState);
+
+    if (isEditing) {
+      editComment();
+    }
   };
 
   const editComment = () => {
-    // call update comment
-    history.push("/" + commentId);
+    axios
+      .get(postPath + postId).then((res) => {
+        if (res.data) {
+          axios
+          .patch(commentPath + commentId,  { _id: commentId, user: user, content: updatedComment, post: res.data } ).then((res) => {
+            console.log(res);
+            window.location.reload();
+          }).catch((err) => {
+            console.log(err);
+          });
+        } else {
+          console.log("Error");
+        }
+      }).catch((err) => {
+        console.log(err);        
+      });
   };
 
   return (
@@ -129,6 +148,7 @@ const StyledComment = styled.div`
       }
 
       .comment-crud-actions {
+        margin: 0 20px;
         display: flex;
         align-items: flex-end;
         justify-content: space-between;

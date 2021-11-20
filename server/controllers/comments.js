@@ -129,19 +129,22 @@ export const get_comments_by_user = async (req, res) => {
  * Path parameters:
  *  id: comment id
  */
-export const update_comment = (req, res) => {
+export const update_comment = async (req, res) => {
+    console.log(req.body)
+   
     try {
-        Comment.findByIdAndUpdate(req.params._id, { user: req.body.user, content: req.body.content, date: Date.now() }, { new: true }, (err, result) => {
-            if(err){
+
+        Comment.findByIdAndUpdate(req.params.id, { user: req.body.user, content: req.body.content, date: Date.now(), post: req.body.post }, { new: true }, (err, result) => {
+            if (err) {
                 res.status(400).json({
                     message: "Could not update comment",
                     error: err.message
-                })
-            }else{
+                });
+            } else {
                 res.status(200).json({ 
                     message: "Comment updated!",
                     comment: result
-                })
+                });
             }
         })
     } catch (err) {
