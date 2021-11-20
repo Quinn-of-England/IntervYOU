@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import styled from "styled-components";
-
 import axios from "axios";
+import styled from "styled-components";
+import { Link, useHistory } from "react-router-dom";
+
+import Toast from "../Toast/Toast";
 
 import { COLORS } from "../../utils/customStyles";
 
-// import dotenv from "dotenv";
-import { IP, SERVER_PORT } from '../../utils/types.js'; 
+import { IP, SERVER_PORT } from "../../utils/types.js";
 
 const Registration = () => {
   //Update Current Link & User Profile
@@ -21,122 +19,10 @@ const Registration = () => {
     email: "",
     password: "",
     confirmPass: "",
-    likes: {},
   });
 
-  //Error Messages from Form Validation
-  // const [errMsgs, setErrorMsgs] = useState([]);
-
-  //validate registration
-  function validateForm() {
-    let registrationIsValid = true;
-    
-    //username
-    if (!details["username"]) {
-      registrationIsValid = false;
-      toast.warn("Username cannot be blank", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
-    }
-
-    if (details["username"].length<3){
-      registrationIsValid = false;
-      toast.warn("Username must be longer than 3 characters", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
-    }
-
-    //Email
-    if (!details["email"]) {
-      registrationIsValid = false;
-      toast.warn("Email cannot be blank", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
-    }
-
-    if (typeof details["email"] !== "undefined") {
-      let addressPosition = details["email"].lastIndexOf("@");
-      let dotPosition = details["email"].lastIndexOf(".");
-      if (
-        !(
-          addressPosition < dotPosition && //basically format has to be something@something.som
-          addressPosition > 0 &&
-          details["email"].indexOf("@") !== -1 &&
-          dotPosition > 2 &&
-          details["email"].length - dotPosition > 2
-        )
-      ) {
-        registrationIsValid = false;
-        toast.warn("Email is not valid", { 
-          position: "top-right",
-          autoClose: SERVER_PORT,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          });
-      }
-    }
-
-    //password
-    if (!details["password"]) {
-      registrationIsValid = false;
-      toast.warn("Password cannot be blank", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-    });
-    }
-    if (details["password"].length<3){
-      registrationIsValid = false;
-      toast.warn("Password must be longer than 3 characters", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
-    }
-
-    if(details["password"] !== details["confirmPass"]){
-      registrationIsValid = false;
-      toast.warn("Password and confirm password must match", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        });
-    }
-    return registrationIsValid;
-  }
+  // Success & Error Messages from Form Validation
+  const [toastMsg, setToastMsg] = useState({ type: "", msg: "", count: 0 });
 
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
@@ -144,62 +30,46 @@ const Registration = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
-    if (validateForm()) {
-      toast("Form submitted");
-      axios
-      .post(`${IP}:${SERVER_PORT}/api/users/registration`,
-      details,
-      {withCredentials: true})
-      .then((res) => {
-        history.push("/");
-        localStorage.setItem("Authorization", res.headers.authorization);
-        console.log("User Successfully Created!");
-        
-        // setErrorMsgs([]);
+
+    axios
+      .post(`${IP}:${SERVER_PORT}/api/users/registration`, details, {
+        withCredentials: true,
       })
-      .catch((error) => {
-        console.log("Registration error", error)});
-    } else {
-      toast.warn("Errors in Registration", { 
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      .then((res) => {
+        localStorage.setItem("Authorization", res.headers.authorization);
+
+        setToastMsg({
+          type: "SUCCESS",
+          msg: res.data.message,
+          count: toastMsg.count + 1,
         });
-    }
-    
+
+        // Display Success Message Before Changing Pages
+        setTimeout(() => history.push("/"), 1000);
+      })
+      .catch((err) => {
+        console.log("Registration error", err);
+        setToastMsg({
+          type: "ERROR",
+          msg: err.response.data.message,
+          count: toastMsg.count + 1,
+        });
+      });
   };
 
   return (
     <StyledSignup>
-      <ToastContainer
-        position="top-right"
-        autoClose={SERVER_PORT}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        />
-        {}
-      <ToastContainer />
       <div className="signup-container">
         <p className="title"> Create an Account </p>
 
-        {
-          /* ERROR MESSAGES */
-          // errMsgs.length !== 0 &&
-          //   errMsgs.map((i) => (
-          //     <p className="missingInForm" key={i}>
-          //       {i}
-          //     </p>
-          //   ))
-        }
+        {/* Toast Messages */}
+        {toastMsg && toastMsg.msg !== "" && (
+          <Toast
+            toastType={toastMsg.type}
+            toastMsg={toastMsg.msg}
+            toastCount={toastMsg.count}
+          />
+        )}
 
         <div className="login-details">
           <input

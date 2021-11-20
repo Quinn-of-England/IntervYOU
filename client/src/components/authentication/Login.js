@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import styled from "styled-components";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import styled from "styled-components";
 
 import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types.js";
+
+import Toast from "../Toast/Toast";
 
 const Login = () => {
   //Update Current Link & User Profile
@@ -18,72 +18,8 @@ const Login = () => {
     password: "",
   });
 
-  // Error Messages from Form Validation
-  // const [errMsgs, setErrorMsgs] = useState({
-  //   username: "",
-  //   password:"",
-  // });
-
-  //validate registration
-  function validateForm() {
-    let loginIsValid = true;
-    // let errMsgs = {};
-    //username
-    if (!details["username"]) {
-      loginIsValid = false;
-      // errMsgs["username"] = "Username cannot be blank";
-      toast.warn("Username cannot be blank", {
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    if (details["username"].length < 3) {
-      loginIsValid = false;
-      toast.warn("Username must be longer than 3 characters", {
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-
-    //password
-    if (!details["password"]) {
-      loginIsValid = false;
-      toast.warn("Password cannot be blank", {
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    if (details["password"].length < 3) {
-      loginIsValid = false;
-      toast.warn("Password must be longer than 3 characters", {
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    // setErrorMsgs({ errMsgs: errMsgs });
-
-    return loginIsValid;
-  }
+  // Success & Error Messages from Form Validation
+  const [toastMsg, setToastMsg] = useState({ type: "", msg: "", count: 0 });
 
   const updateDetails = ({ target: { id, value } }) =>
     setDetails({ ...details, [id]: value });
@@ -91,61 +27,45 @@ const Login = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
-    console.log(`${IP}, ${SERVER_PORT}`);
-    if (validateForm()) {
-      toast("Form submitted");
-      axios
-        .post(`${IP}:${SERVER_PORT}/api/users/login`, details)
-        .then((res) => {
-          history.push("/");
-          localStorage.setItem("Authorization", res.headers.authorization);
-          console.log("User Successfully Logged In!");
-          // setErrorMsgs([]);
-        })
-        .catch((error) => {
-          console.log("Registration error", error);
+
+    axios
+      .post(`${IP}:${SERVER_PORT}/api/users/login`, details)
+      .then((res) => {
+        localStorage.setItem("Authorization", res.headers.authorization);
+
+        setToastMsg({
+          type: "SUCCESS",
+          msg: res.data.message,
+          count: toastMsg.count + 1,
         });
-    } else {
-      toast.warn("Errors in Login", {
-        //TODO send array of errMsgs to toast to print out
-        position: "top-right",
-        autoClose: SERVER_PORT,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+
+        // Display Success Message Before Changing Pages
+        setTimeout(() => history.push("/"), 1000);
+      })
+      .catch((err) => {
+        console.log(err.message);
+
+        setToastMsg({
+          type: "ERROR",
+          msg: err.response.data.message,
+          count: toastMsg.count + 1,
+        });
       });
-    }
   };
 
   return (
     <StyledLogin>
-      <ToastContainer
-        position="top-right"
-        autoClose={SERVER_PORT}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      {}
-      <ToastContainer />
       <div className="login-container">
         <p className="title"> Login </p>
 
-        {
-          /* ERROR MESSAGES */
-          // errMsgs.length !== 0 &&
-          //   errMsgs.map((i) => (
-          //     <p className="missingInForm" key={i}>
-          //       {i}
-          //     </p>
-          //   ))
-        }
+        {/* Toast Messages */}
+        {toastMsg && toastMsg.msg !== "" && (
+          <Toast
+            toastType={toastMsg.type}
+            toastMsg={toastMsg.msg}
+            toastCount={toastMsg.count}
+          />
+        )}
 
         <div className="login-details">
           <input
@@ -318,16 +238,47 @@ const StyledLogin = styled.div`
   }
 
   .missingInForm {
-    color: black;
-    background: rgba(255, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #8d021f;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.6);
     border-radius: 10px;
 
     font-size: 0.9rem;
-    font-weight: 650;
+    font-weight: 450;
     font-family: "Antonio", sans-serif;
 
-    padding: 0.75rem 2.5rem;
+    padding: 0.5rem 2rem;
     margin-bottom: 0.3rem;
+
+    svg {
+      width: 18px;
+    }
+  }
+
+  .successInForm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #0b6623;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #0b6623;
+    border-radius: 10px;
+
+    font-size: 0.9rem;
+    font-weight: 450;
+    font-family: "Antonio", sans-serif;
+
+    padding: 0.5rem 2rem;
+    margin-bottom: 0.3rem;
+
+    svg {
+      width: 18px;
+    }
   }
 `;
 
