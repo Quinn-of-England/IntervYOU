@@ -81,7 +81,6 @@ const Comment = ({ commentId, user, postId, content, date, edit, handleDelete, }
           <div className="comment-user">u/{user}</div>
           <div className="user-date-seperator">•</div>
           <div className="comment-date">{formatDate()}</div>
-          <div className="comment-edit">{edit}</div>
           {isEdited === true ? (
             <div className="comment-edit">Edited</div>
           ) : (<div className="comment-edit"></div>)}
