@@ -101,7 +101,7 @@ export const get_comments_by_user = async (req, res) => {
  */
  export const get_comments_by_post = async (req, res) => {
     try {
-        const comments = await Comment.find({ post: req.query.postId }, 'user content date');
+        const comments = await Comment.find({ post: req.query.postId }, 'user content date edit');
         if(comments){
             res.status(200).json(comments)
         }else {
@@ -129,7 +129,7 @@ export const get_comments_by_user = async (req, res) => {
  */
 export const update_comment = async (req, res) => {   
     try {
-        Comment.findByIdAndUpdate(req.params.id, { user: req.body.user, content: req.body.content, date: Date.now(), post: req.body.post }, { new: true }, (err, result) => {
+        Comment.findByIdAndUpdate(req.params.id, { user: req.body.user, content: req.body.content, date: Date.now(), post: req.body.post, edit: true }, { new: true }, (err, result) => {
             if (err) {
                 res.status(400).json({
                     message: "Could not update comment",

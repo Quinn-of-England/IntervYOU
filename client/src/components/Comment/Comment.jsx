@@ -16,9 +16,9 @@ import {
 const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
+const Comment = ({ commentId, user, postId, content, date, edit, handleDelete, }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isEdited, setIsEdited] = useState(false);
+  const [isEdited, setIsEdited] = useState(edit);
   const [updatedComment, setUpdatedComment] = useState(content);
 
   useEffect(() => {
@@ -59,10 +59,9 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
       .get(postPath + postId).then((res) => {
         if (res.data) {
           axios
-          .patch(commentPath + commentId,  { _id: commentId, user: user, content: updatedComment, post: res.data } ).then((res) => {
-            console.log(res);
-            setIsEdited(true);
-            // window.location.reload();
+          .patch(commentPath + commentId, { _id: commentId, user: user, content: updatedComment, post: res.data, edit: true } ).then((res) => {
+            isEditedHanler(res.data.comment.edit);
+            window.location.reload();
           }).catch((err) => {
             console.log(err);
           });
@@ -82,6 +81,7 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
           <div className="comment-user">u/{user}</div>
           <div className="user-date-seperator">•</div>
           <div className="comment-date">{formatDate()}</div>
+          <div className="comment-edit">{edit}</div>
           {isEdited === true ? (
             <div className="comment-edit">Edited</div>
           ) : (<div className="comment-edit"></div>)}

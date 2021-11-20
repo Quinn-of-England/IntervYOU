@@ -17,7 +17,6 @@ const Comments = ( { postId } ) => {
         params: {page: 1, limit: 10, sortBy: 'date', postId: postId}
       })
       .then((res) => {
-        console.log(res);
         setAllComments(() => res.data);
       }).catch((err) => {
         console.log(err);
@@ -50,6 +49,7 @@ const Comments = ( { postId } ) => {
       }).catch((err) => {
         console.log(err);
       });
+    window.location.reload();
   }
 
   return (
@@ -63,7 +63,7 @@ const Comments = ( { postId } ) => {
       />
       {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
         <Comment key={_id}
-         commentId={_id}
+          commentId={_id}
           postId={postId}
           {...comment}
           handleDelete={handleDeleteCommentClick}
