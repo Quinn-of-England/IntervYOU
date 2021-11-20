@@ -371,7 +371,7 @@ export const update_user_by_id = async (req, res) => {
       }else{
         res.status(200).json({
           message: 'User updated!',
-          groups: result,
+          user: result,
         })
       }
     })

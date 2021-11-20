@@ -13,7 +13,10 @@ const GroupSchema = new mongoose.Schema({
     follower_count: {
         type: Number,
         default: 0,
-    }
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+    },
 })
 
 const Group = mongoose.model("Group", GroupSchema)

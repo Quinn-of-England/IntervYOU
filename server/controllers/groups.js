@@ -9,6 +9,7 @@ import Group from "../models/Group.js";
  * body: {
  *  name: name of the group
  *  description: description of the group
+ *  owner: id of the user who created group
  * }
  */
 export const create_group = async (req, res) => {
@@ -21,7 +22,7 @@ export const create_group = async (req, res) => {
         .json({ message: `Group with name ${req.body.name} already exists!` });
     }
 
-    await Group.create(req.body)
+    Group.create(req.body)
       .then((result) => {
         res.status(201).json({
           message: `${result.name} group created!`,
@@ -159,11 +160,21 @@ export const update_follower_count_with_name = (req, res) => {
  * This function will update the group using groupId
  * Will return a 200(Ok) if group updated 
  * Will return a 400(Bad request) if could not update
+ * body: {
+ *  name
+ *  description
+ * }
  * Path parameters:
- *  id
+ *  id: group id
  */
- export const update_group_with_id = (req, res) => {
+ export const update_group_with_id = async (req, res) => {
   try {
+    const group = await Group.find({ $and: [ { _id: { $ne: req.params.id } }, { name: req.body.name } ] })
+    if(group.length){
+      return res.status(400).json({
+        message: "Cant update group because new name supplied already in use"
+      })
+    }
     Group.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -171,16 +182,22 @@ export const update_follower_count_with_name = (req, res) => {
       (err, result) => {
         if (err) {
           res.status(400).json({
-            message: 'Could not update post',
+            message: 'Could not update group',
             error: err.message,
           })
         } else {
-          res.status(200).json(result)
+          res.status(200).json({
+            message: 'Group updated!',
+            group: result
+          })
         }
       }
     )
   } catch (err) {
-    res.status(401).json({ message: err.message })
+    res.status(500).json({
+      message: 'Server error while updating group',
+      error: err.message
+    })
   }
 }
 
