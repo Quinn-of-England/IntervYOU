@@ -62,7 +62,7 @@ const Posts = () => {
         deleteType="Post"
         showModal={showModal}
         updateModalState={updateModalState}
-        deletePostById={deletePostById}
+        deleteById={deletePostById}
       />
       {allPosts.length > 0 &&
         allPosts.map(({ _id, ...post }) => (

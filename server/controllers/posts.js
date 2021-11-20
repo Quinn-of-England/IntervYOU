@@ -246,7 +246,7 @@ export const deletePost = (req, res) => {
         })
       } else {
         console.log(result)
-        if (result.files.length) {
+        if (result.files && result.files.length) {
           const deletedKeys = []
           result.files.forEach((file) => {
             deletedKeys.push({ Key: file.key })

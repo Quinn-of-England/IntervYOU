@@ -59,7 +59,7 @@ const Comments = ( { postId } ) => {
         deleteType="Comment"
         showModal={showModal}
         updateModalState={updateModalState}
-        deleteCommentById={deleteCommentById}
+        deleteById={deleteCommentById}
       />
       {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
         <Comment key={_id}
