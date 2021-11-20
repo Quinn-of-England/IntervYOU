@@ -14,14 +14,12 @@ import Post from "../models/Post.js"
  * }
  */
 export const create_comment = (req, res) => {
-    console.log(req.body);
     try{
         Comment.create({ user: req.body.user, content: req.body.content, post: req.body.post }).then(async (result) => {
             await Post.findByIdAndUpdate(
                 req.body.postId,
                 { $push: { comments: { _id: result._id } } },
             )
-            // console.log(result.body);
             res.status(201).json({
                 message: "Comment created!",
                 comment: result,
@@ -131,7 +129,6 @@ export const get_comments_by_user = async (req, res) => {
  */
 export const update_comment = async (req, res) => {   
     try {
-
         Comment.findByIdAndUpdate(req.params.id, { user: req.body.user, content: req.body.content, date: Date.now(), post: req.body.post }, { new: true }, (err, result) => {
             if (err) {
                 res.status(400).json({

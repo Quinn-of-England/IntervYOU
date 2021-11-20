@@ -27,7 +27,7 @@ const Comments = ( { postId } ) => {
 
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
-  const [deleteCommentId, setDeletedCommentId] = useState({ commentId: "" });
+  const [deletedCommentId, setDeletedCommentId] = useState({ commentId: "" });
 
   const updateModalState = () => {
     setShowModal((prevModalState) => !prevModalState);
@@ -45,7 +45,7 @@ const Comments = ( { postId } ) => {
     setShowModal((prevModalState) => !prevModalState);
 
     axios
-      .delete(commentPath + deleteCommentId).then((res) => {
+      .delete(commentPath + deletedCommentId.commentId).then((res) => {
         console.log(res);
       }).catch((err) => {
         console.log(err);
@@ -62,7 +62,12 @@ const Comments = ( { postId } ) => {
         deleteCommentById={deleteCommentById}
       />
       {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
-        <Comment key={_id} commentId={_id} postId={postId} {...comment} handleDelete={handleDeleteCommentClick} />
+        <Comment key={_id}
+         commentId={_id}
+          postId={postId}
+          {...comment}
+          handleDelete={handleDeleteCommentClick}
+        />
       ))}
     </StyledComments>
   );

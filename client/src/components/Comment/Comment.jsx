@@ -33,20 +33,6 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
   }
 
   const history = useHistory();
-
-  // const setRestrictedRef = (el) => {
-  //   if (el) {
-  //     //Get Number Specified As Last Character of Ref Id
-  //     const refId = el.id;
-  //     const refNum = refId.charAt(refId.length - 1);
-
-  //     // Set At Ref Num in Restricted Ref Current Array
-  //     return (restrictedRef.current[refNum] = el);
-  //   }
-
-  //   return 0;
-  // };
-
   const formatDate = () => {
     return new Date(date).toLocaleDateString();
   }
@@ -96,17 +82,13 @@ const Comment = ({ commentId, user, postId, content, date, handleDelete, }) => {
               <EditIcon color={"#a9a9a9"} editPost={onClickComment} />
               <DeleteIcon
                 color={COLORS.burgundyRed}
-                deleteComment={() => handleDelete(commentId)}
+                deletePost={() => handleDelete(commentId)}
               />
             </div>
           )}
         </div>
 
         {isEditing ? <input defaultValue={content} onChange={(e) => setUpdatedComment(e.target.value)}/> : <div className="comment-description"> {content} </div> }
-
-        {/* <div id="ref-4" ref={setRestrictedRef}>
-          {commentState && <CommentForm postId={post} />}
-        </div> */}
       </div>
     </StyledComment>
   );
