@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
@@ -16,8 +16,13 @@ import {
 
 
 const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
-  const [commentState, setCommentState] = useState(false);
-  console.log(post);
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedComment, setUpdatedComment] = useState(content);
+
+  useEffect(() => {
+    console.log(updatedComment);
+  }, [updatedComment]);
+
   let userId = "";
   let tokenUserName = "";
   if (localStorage.getItem("Authorization")) {
@@ -25,29 +30,28 @@ const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
     userId = token._id;
     tokenUserName = token.name;
   }
-  
-  const restrictedRef = useRef([]);
+
   const history = useHistory();
 
-  const setRestrictedRef = (el) => {
-    if (el) {
-      //Get Number Specified As Last Character of Ref Id
-      const refId = el.id;
-      const refNum = refId.charAt(refId.length - 1);
+  // const setRestrictedRef = (el) => {
+  //   if (el) {
+  //     //Get Number Specified As Last Character of Ref Id
+  //     const refId = el.id;
+  //     const refNum = refId.charAt(refId.length - 1);
 
-      // Set At Ref Num in Restricted Ref Current Array
-      return (restrictedRef.current[refNum] = el);
-    }
+  //     // Set At Ref Num in Restricted Ref Current Array
+  //     return (restrictedRef.current[refNum] = el);
+  //   }
 
-    return 0;
-  };
+  //   return 0;
+  // };
 
   const formatDate = () => {
     return new Date(date).toLocaleDateString();
   }
 
   const onClickComment = () => {
-    setCommentState((prevState) => !prevState);
+    setIsEditing((prevState) => !prevState);
   };
 
   const editComment = () => {
@@ -69,7 +73,6 @@ const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
             <div
               id="ref-1"
               className="comment-crud-actions"
-              ref={setRestrictedRef}
             >
               <EditIcon color={"#a9a9a9"} editPost={onClickComment} />
               <DeleteIcon
@@ -80,11 +83,11 @@ const Comment = ({ commentId, post, user, content, date, handleDelete, }) => {
           )}
         </div>
 
-        <div className="comment-description"> {content} </div>
+        {isEditing ? <input defaultValue={content} onChange={(e) => setUpdatedComment(e.target.value)}/> : <div className="comment-description"> {content} </div> }
 
-        <div id="ref-4" ref={setRestrictedRef}>
+        {/* <div id="ref-4" ref={setRestrictedRef}>
           {commentState && <CommentForm postId={post} />}
-        </div>
+        </div> */}
       </div>
     </StyledComment>
   );
