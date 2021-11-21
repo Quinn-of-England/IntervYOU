@@ -76,17 +76,20 @@ export const get_all_comments = async (req, res) => {
  */
 export const get_comments_by_user = async (req, res) => {
     try {
-        const comments = await Comment.find({ user: req.query.userId })
-        if(comments){
-            res.status(200).json(comments)
-        }else {
-            res.status(400).json({
-                message: `Cant find comments with userId ${req.query.userId}`,
-            })
+        const sort = {}
+        if (req.query.sortBy === 'date') sort['date'] = -1
+        else sort['date'] = -1
+
+        const options = {
+            page: parseInt(req.query.page),
+            limit: parseInt(req.query.size),
+            sort,
         }
-    }catch(err){
+        const { docs, totalPages } = await Comment.paginate({ user: req.query.userId }, options);
+        res.status(200).json({ comments: docs, totalPages: totalPages });
+    } catch (err) {
         res.status(500).json({
-            message: "Server error in get_comments_by_user",
+            message: "Server error in get_all_comments_by_user",
             error: err.message
         })
     }

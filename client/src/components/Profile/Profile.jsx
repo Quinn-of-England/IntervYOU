@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import Post from "../Post/Post";
+import Comment from "../Comment/Comment";
 import Pagination from "../Pagination/Pagination";
 import { IP, SERVER_PORT } from "../../utils/types.js";
 import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
+const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
 const Profile = () => {
   const [allPosts, setAllPosts] = useState([]);
+  const [allComments, setAllComments] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
   const [hasDeleted, setHasDeleted] = useState(false);
@@ -17,6 +20,7 @@ const Profile = () => {
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
   const [deletedPostId, setDeletedPostId] = useState({ postId: "" });
+  const [deletedCommentId, setDeletedCommentId] = useState({ commentId: "" });
 
   let userId = "";
   let tokenUserName = "";
@@ -54,6 +58,36 @@ const Profile = () => {
       .catch((err) => console.log(err.response));
   };
 
+  const handleDeleteCommentClick = (deleteCommentId) => {
+    // Show Modal
+    updateModalState();
+
+    // Save Comment Id to Delete
+    setDeletedCommentId({ commentId: deleteCommentId });
+  };
+
+  const deleteCommentById = () => {
+    setShowModal((prevModalState) => !prevModalState);
+
+    axios
+      .delete(commentPath + deletedCommentId.commentId).then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      });
+    window.location.reload();
+  }
+
+  useEffect(() => {
+    axios
+      .get(commentPath + "user", { params: { page: 1, size:10, userId: userId } }).then((res) => {
+        console.log(res);
+        setAllComments(() => res.data);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, [userId]);
+
   useEffect(() => {
     axios
       .get(postUrl + "user", { params: { page: 1, size: 10, userName: tokenUserName } }).then((res) => {
@@ -68,6 +102,7 @@ const Profile = () => {
 
   return (
     <div>
+      <div>Posts</div>
       <DeleteModal
         deleteType="Post"
         showModal={showModal}
@@ -89,6 +124,22 @@ const Profile = () => {
           setCurrPage={setCurrPage}
         />
       )}
+
+      <div>Comments</div>
+      <DeleteModal
+        deleteType="Comment"
+        showModal={showModal}
+        updateModalState={updateModalState}
+        deleteById={deleteCommentById}
+      />
+      {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
+        <Comment key={_id}
+          commentId={_id}
+          postId={comment.post._id}
+          {...comment}
+          handleDelete={handleDeleteCommentClick}
+        />
+      ))}
 
       <div>Profile</div>
 
