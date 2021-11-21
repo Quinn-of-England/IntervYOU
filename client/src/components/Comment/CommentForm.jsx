@@ -40,7 +40,9 @@ const CommentForm = ({ postId }) => {
           });
 
         console.log(res);
-        window.location.reload();
+        setTimeout(function(){
+          window.location.reload();
+        },100); 
       }).catch((err) => {
         console.log(err);
       });

@@ -15,7 +15,7 @@ import Group from "../models/Group.js";
 export const create_group = async (req, res) => {
   try {
     const oldGroup = await Group.findOne({ name: req.body.name });
-    console.log(oldGroup);
+    console.log(req.body);
     if (oldGroup) {
       return res
         .status(409)
@@ -50,7 +50,7 @@ export const create_group = async (req, res) => {
  */
 export const get_all_groups = async (_, res) => {
   try {
-    const groups = await Group.find({}, "name description follower_count");
+    const groups = await Group.find();
     res.status(200).json(groups);
   } catch (err) {
     res.status(500).json({

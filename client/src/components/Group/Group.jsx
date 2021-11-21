@@ -11,7 +11,7 @@ import { useHistory } from "react-router-dom";
 const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
-const Group = ({ groupId, name, description, follower_count, followingStatus }) => {
+const Group = ({ groupId, name, description, follower_count, followingStatus, handleDelete, owner }) => {
   const [isFollowing, setIsFollowing] = useState(followingStatus);
   const[followCount, setFollowCount] = useState(follower_count ?? 0);
 
@@ -26,20 +26,11 @@ const Group = ({ groupId, name, description, follower_count, followingStatus }) 
 
   useEffect(() =>{
     //update followCount
-
+    
     //Get Group By Id
     if(groupId) {
-      // Check if User has Current Group Id
-        // Axios Get Request to an Endpoint, Pass user id and group id and check in user if group id exists
-        // If it exists then setIsFollowing(true); otherwise, setIsFollowing(false);
+      console.log(owner);
       console.log(groupId);
-      // axios.get(`${groupPath}id/${groupId}`)
-      // .then((res) =>{
-      //   setFollowCount(res.data.follower_count);
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // })
     }
   },[]); //update when follow state changes
 
@@ -57,40 +48,21 @@ const Group = ({ groupId, name, description, follower_count, followingStatus }) 
       })
       .then((res) => {      
         axios
-          .patch(groupPath + groupId,{
-
-          })
-
+        .patch(userPath + "groups/id/" + userId,{
+          name: name, 
+          add: followState,
+        })
+        .then((res)=> {
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);
+        });
         console.log(res);
       
       }).catch((err) => {
         console.log (err);
       });
-
-      axios
-      .patch(userPath + "groups/id/" + groupId,{
-         
-      })
-      .then((res)=> {
-        console.log(res);
-      }).catch((err) => {
-        console.log(err);
-      });
   }
-
-  const deleteGroup = () => {
-    axios
-     .delete(groupPath + "id/" + groupId)
-     .then((res) =>{
-      setTimeout(function(){
-        window.location.reload();
-      },100); 
-      
-       console.log(res);
-     }).catch((err) => {
-       console.log(err);
-     })
-  };
 
   const editPost = () => {
     history.push("/" + groupId + "/update-group");
@@ -117,11 +89,12 @@ const Group = ({ groupId, name, description, follower_count, followingStatus }) 
         <div className="group-description"> {description} </div>
         <div className="group-count"> {followCount} Members </div>
       </div>
-
+      {  owner === userId && 
       <div>
         <EditIcon color={"#a9a9a9"} editPost={editPost}/>
-        <DeleteIcon color={COLORS.burgundyRed} deletePost={deleteGroup}/>
+        <DeleteIcon color={COLORS.burgundyRed} deletePost={() => handleDelete(groupId)}/>
       </div>
+      }
     </StyledGroup>
   );
 };

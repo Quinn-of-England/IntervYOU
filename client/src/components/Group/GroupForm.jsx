@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router";
 import axios from "axios";
 import styled from "styled-components";
-
+import jwt from "jwt-decode";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
@@ -13,17 +13,22 @@ const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
 const createGroupUrl = `${groupsUrl}/create`;
 
 const GroupForm = () => {
-  const [groupContent, setGroupContent] = useState([
-    { name: "", description: "" },
-  ]);
+  const [groupContent, setGroupContent] = useState(
+    {name: "", description: ""}
+  );
 
   const history = useHistory();
 
   const onCreateGroup = (e) => {
     e.preventDefault();
 
+    let userId = "";
+    if (localStorage.getItem("Authorization")) {
+      userId = jwt(localStorage.getItem("Authorization"))._id;
+    }
+
     axios
-      .post(createGroupUrl, groupContent)
+      .post(createGroupUrl, {...groupContent, owner: userId})
       .then((res) => {
         console.log(res);
 
