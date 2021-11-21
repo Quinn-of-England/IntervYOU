@@ -150,11 +150,30 @@ export const update_comment = async (req, res) => {
     }
 }
 
-export const deleteComment = async (req, res) => {
+/**
+ * * This function will delete the comment and also delete from the post list of comments
+ * * Will return a 200(Ok) if deleted
+ * * Will return a 400(Bad request) if could not delete
+ * body {
+ *  postId: id of post
+ * }
+ * Path parameters:
+ *  id: comment id
+ */
+export const delete_comment = async (req, res) => {
     try {
         const comment = await Comment.findByIdAndDelete(req.params.id)
         if(comment){
-            res.status(200).json({ message: `Comment ${comment._id} deleted!`})
+            Post.findByIdAndUpdate(req.body.postId, { $pull: { comments: { _id: req.params.id } } }, { new: true }, (err, result) => {
+                if(err){
+                    res.status(400).json({
+                        message: "Could not remove comment from posts list of comments",
+                        error: err.message
+                    })
+                }else{
+                    res.status(200).json({ message: `Comment ${comment._id} deleted!`})
+                }
+            })
         } else {
             res.status(400).json({ message: `Not deleting comment ${req.params.id} since id does not exist!`})
         }

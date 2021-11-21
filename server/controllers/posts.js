@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
 import Post from '../models/Post.js'
+import Comment from '../models/Comment.js'
 import { upload, s3 } from '../file-upload.js'
 import dotenv from 'dotenv'
 
@@ -238,14 +238,14 @@ export const updatePost = (req, res) => {
 
 export const deletePost = (req, res) => {
   try {
-    Post.findByIdAndDelete(req.params.id, (err, result) => {
+    Post.findByIdAndDelete(req.params.id, async (err, result) => {
       if (err) {
         res.status(400).json({
           message: 'Could not delete post!',
           error: err.message,
         })
       } else {
-        console.log(result)
+        await Comment.deleteMany({ _id: result.comments})
         if (result.files && result.files.length) {
           const deletedKeys = []
           result.files.forEach((file) => {

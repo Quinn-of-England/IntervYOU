@@ -19,6 +19,6 @@ commentRouter.get("/post/", commentController.get_comments_by_post)
 commentRouter.patch("/:id", commentController.update_comment)
 
 //Delete - Delete comment
-commentRouter.delete("/:id", commentController.deleteComment)
+commentRouter.delete("/:id", commentController.delete_comment)
 
 export default commentRouter

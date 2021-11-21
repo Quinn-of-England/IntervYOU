@@ -46,7 +46,7 @@ const Comments = ({ postId, hasNewComments }) => {
     setShowModal((prevModalState) => !prevModalState);
 
     axios
-      .delete(commentPath + deletedCommentId.commentId).then((res) => {
+      .delete(commentPath + deletedCommentId.commentId, { postId: postId }).then((res) => {
         console.log(res);
       }).catch((err) => {
         console.log(err);
