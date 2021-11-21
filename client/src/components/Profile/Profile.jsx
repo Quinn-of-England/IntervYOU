@@ -90,7 +90,7 @@ const Profile = () => {
 
   useEffect(() => {
     axios
-      .get(postUrl + "user", { params: { page: 1, size: 10, userName: tokenUserName } }).then((res) => {
+      .get(postUrl + "user", { params: { sortBy: 'date', page: currPage, size: 10, userName: tokenUserName } }).then((res) => {
         setAllPosts(res.data.posts);
         setNumPages(res.data.totalPages);
         console.log(tokenUserName);
@@ -98,7 +98,7 @@ const Profile = () => {
       }).catch((err) => {
         console.log(err);
       });
-  }, [tokenUserName, hasDeleted]);
+  }, [tokenUserName, currPage, hasDeleted]);
 
   return (
     <div>
