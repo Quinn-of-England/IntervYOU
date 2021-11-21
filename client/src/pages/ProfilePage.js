@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+
+import Posts from "../components/Post/Posts";
 import Profile from "../components/Profile/Profile";
+import Dropdown from "../components/Dropdown";
 
 const ProfilePage = () => {
   return (
     <StyledProfilePage>
-      <Profile />
+      <Profile
+      />
     </StyledProfilePage>
   );
 };

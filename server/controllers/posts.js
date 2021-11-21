@@ -33,6 +33,26 @@ export const getAllPosts = async (req, res) => {
   }
 }
 
+export const getAllPostsByUser = async (req, res) => {
+  try {
+    const sort = {}
+    if (req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    }
+
+    const { docs, totalPages } = await Post.paginate({userName: req.query.userName}, options)
+    console.log(docs);
+    res.status(200).json({ posts: docs, totalPages: totalPages })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
+  }
+}
+
 export const getPostById = async (req, res) => {
   const { id } = req.params
   console.log(id)
