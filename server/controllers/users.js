@@ -54,7 +54,11 @@ export const login_post = async (req, res) => {
     res.cookie("refreshToken", refreshToken, { httpOnly: true });
     refreshTokens[refreshToken] = user._id;
 
-    res.status(200).send({ message: "Success! Logging In..." });
+    res.status(200).send({
+      userId: user._id,
+      userName: user.username,
+      message: "Success! Logging In...",
+    });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -119,6 +123,8 @@ export const registration_post = async (req, res) => {
         refreshTokens[refreshToken] = result._id;
 
         res.status(201).json({
+          userId: result._id,
+          userName: result.username,
           message: "User successfully created!",
         });
       })

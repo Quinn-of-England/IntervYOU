@@ -8,6 +8,9 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 
 import Toast from "../Toast/Toast";
 
+import { useDispatch } from "react-redux";
+import { addAuthState } from "../../actions/auth";
+
 const Login = () => {
   //Update Current Link & User Profile
   const history = useHistory();
@@ -17,6 +20,8 @@ const Login = () => {
     username: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
 
   // Success & Error Messages from Form Validation
   const [toastMsg, setToastMsg] = useState({ type: "", msg: "", count: 0 });
@@ -38,6 +43,11 @@ const Login = () => {
           msg: res.data.message,
           count: toastMsg.count + 1,
         });
+
+        // Dispatch Action to Update Auth State
+        const { userId, userName } = res.data;
+        console.log(res.data);
+        dispatch(addAuthState(userId, userName));
 
         // Display Success Message Before Changing Pages
         setTimeout(() => history.push("/"), 1000);

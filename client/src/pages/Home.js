@@ -1,42 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Posts from "../components/Post/Posts";
 
 import SearchBar from "../components/Inputs/SearchBar";
 import CreateButton from "../components/PostForm/CreateButton";
+import Dropdown from "../components/Dropdown";
 
 const Home = () => {
   // const [filteredInput, setFilteredInput] = useState("");
-  // const [isAuth, setIsAuth] = useState(false);
 
-  // useEffect(() => {
-  //   if (!isAuth) history.push("/login");
-  // }, []);
+  // Storing Sorting State and Dropdown Options
+  const [postSortType, setPostSortType] = useState("date");
+  const dropdownOptions = [
+    { id: "date", value: "Newest" },
+    { id: "likes", value: "Hottest" },
+  ];
 
-  // handleSuccessfulAuth(data){
-  //   this.props.handleLogin(data);
-  // };
-
-  // const [showModal, setShowModal] = useState(false);
-
-  // const updateModalState = () =>
-  //   setShowModal((prevModalState) => !prevModalState);
-
-  // console.log(showModal);
   return (
     <StyledHome>
-      {/* <Registration handleSuccessfulAuth = {this.handleSuccessfulAuth}/> */}
       <div className="home-actions">
-        {/* Implement isAuth as Toast */}
-        {/* <h3>Status: {isAuth} </h3> */}
         <SearchBar
           placeHolder="Search for posts"
           // applyFilter={setFilteredInput}
         />
+        <Dropdown
+          dropdownOptions={dropdownOptions}
+          setPostSortType={setPostSortType}
+        />
+
         <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
-      <Posts />
+      <Posts postSortType={postSortType} />
     </StyledHome>
   );
 };
@@ -53,6 +48,7 @@ const StyledHome = styled.div`
   .home-actions {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
   }
 `;

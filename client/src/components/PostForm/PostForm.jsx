@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import jwt from "jwt-decode";
 import styled from "styled-components";
 import { useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
@@ -10,6 +9,7 @@ import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
+import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
@@ -17,6 +17,8 @@ const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
 const PostForm = () => {
   const history = useHistory();
+
+  const { userName: name, userId } = useSelector((state) => state.auth);
 
   const [postContent, setPostContent] = useState({
     title: "",
@@ -28,8 +30,6 @@ const PostForm = () => {
 
   const onDroppedFiles = (droppedFiles) => {
     setFiles((prevFiles) => {
-      // TODO: Format File Type and File Size
-
       if (prevFiles?.length > 0) {
         // Remove Duplicate Files from Upload
         const filteredDroppedFiles = droppedFiles.filter(
@@ -48,14 +48,6 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-
-    let token = "";
-    if (localStorage.getItem("Authorization")) {
-      token = jwt(localStorage.getItem("Authorization"));
-    }
-
-    const userId = token._id;
-    const name = token.name;
 
     const formData = new FormData();
     formData.append("userName", name);
@@ -81,9 +73,8 @@ const PostForm = () => {
       })
       .catch((err) => {
         // Log JWT Items
-        console.log(token);
-        console.log(userId);
         console.log(name);
+        console.log(userId);
 
         // Log Error
         console.log(err);
@@ -136,8 +127,7 @@ const PostForm = () => {
     fileType.slice(fileType.lastIndexOf("/") + 1, fileType.length);
 
   const onDeleteFile = (fileName) => {
-    //setUpdatedFiles((prevFiles) => prevFiles.filter((f) => f.path !== path));
-    console.log(fileName);
+    setFiles((prevFiles) => prevFiles.filter((f) => f.path !== fileName));
   };
 
   return (
@@ -170,9 +160,6 @@ const PostForm = () => {
       />
 
       {/* File Drag and Drop Section */}
-      {/* <input type="file" id="file_input" onChange={onDroppedFile} />
-      <label for="file_input"> Click to Add Files </label>  */}
-
       <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
@@ -242,6 +229,7 @@ const StyledPostForm = styled.div`
 
     &:hover {
       border-color: #2196f3;
+      background-color: #2196f305;
       cursor: pointer;
     }
   }
@@ -257,6 +245,7 @@ const StyledPostForm = styled.div`
 
   .no-files {
     color: #d3d3d3;
+    margin-bottom: 5px;
   }
 
   .has-files {

@@ -8,24 +8,12 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
-const Posts = () => {
+
+const Posts = ({ postSortType }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
-
-  useEffect(() => {
-    axios
-      .get(postUrl, {
-        params: { sortBy: "date", page: currPage, size: 2 },
-      })
-      .then((res) => {
-        setAllPosts(res.data.posts);
-        setNumPages(res.data.totalPages);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currPage]);
+  const [hasDeleted, setHasDeleted] = useState(false);
 
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
@@ -51,10 +39,24 @@ const Posts = () => {
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
         console.log(res.data);
+        setHasDeleted(true);
       })
       .catch((err) => console.log(err.response));
-      //.catch((err) => console.log(err.message));
   };
+
+  useEffect(() => {
+    axios
+      .get(postUrl, {
+        params: { sortBy: postSortType, page: currPage, size: 2 },
+      })
+      .then((res) => {
+        setAllPosts(res.data.posts);
+        setNumPages(res.data.totalPages);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [currPage, postSortType, hasDeleted]);
 
   return (
     <>

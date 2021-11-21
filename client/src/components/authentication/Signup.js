@@ -9,6 +9,9 @@ import { COLORS } from "../../utils/customStyles";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
+import { useDispatch } from "react-redux";
+import { addAuthState } from "../../actions/auth";
+
 const Registration = () => {
   //Update Current Link & User Profile
   const history = useHistory();
@@ -21,6 +24,8 @@ const Registration = () => {
     confirmPass: "",
   });
 
+  const dispatch = useDispatch();
+
   // Success & Error Messages from Form Validation
   const [toastMsg, setToastMsg] = useState({ type: "", msg: "", count: 0 });
 
@@ -30,6 +35,15 @@ const Registration = () => {
   //Sends Form Details to Backend + Prevent Refresh on Submittion
   const onPost = (event) => {
     event.preventDefault();
+
+    // Validation: Password and Confirm Pass Must Match
+    if (details.password !== details.confirmPass) {
+      return setToastMsg({
+        type: "ERROR",
+        msg: "Passwords must match!",
+        count: toastMsg.count + 1,
+      });
+    }
 
     axios
       .post(`${IP}:${SERVER_PORT}/api/users/registration`, details, {
@@ -43,6 +57,10 @@ const Registration = () => {
           msg: res.data.message,
           count: toastMsg.count + 1,
         });
+
+        // Dispatch Action to Update Auth State
+        const { userId, userName } = res.data;
+        dispatch(addAuthState(userId, userName));
 
         // Display Success Message Before Changing Pages
         setTimeout(() => history.push("/"), 1000);
