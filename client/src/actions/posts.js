@@ -1,9 +1,15 @@
-import { CREATE_POST, GET_USERS, GET_POSTS, EDIT_POST, IP, SERVER_PORT   } from '../utils/types.js'; 
-import * as api from '../api/index.js';
-import axios from 'axios';
+import {
+  CREATE_POST,
+  GET_USERS,
+  GET_POSTS,
+  EDIT_POST,
+  IP,
+  SERVER_PORT,
+} from "../utils/types.js";
+import * as api from "../api/index.js";
+import axios from "axios";
 
-
-const baseUrl = `${IP}:${SERVER_PORT }/api/posts`;
+const baseUrl = `${IP}:${SERVER_PORT}/api/posts`;
 
 //Redux Thunk Uses to Specify Asynchronous Action for Asynchronous Calls
 // export const getPosts = () => async (dispatch) => {

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import axios from "axios";
-import jwt from "jwt-decode";
 import styled from "styled-components";
   
 import {
@@ -19,6 +18,7 @@ import { COLORS } from "../../utils/customStyles";
 
 import Files from "../File/Files";
 import CommentForm from "../Comment/CommentForm";
+import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
@@ -36,7 +36,13 @@ const Post = ({
   likes,
   files,
   handleDelete,
+  setHasNewComments,
 }) => {
+  // Get User Name and User Id from Redux Store
+  const { userName: tokenUserName, userId } = useSelector(
+    (state) => state.auth
+  );
+
   const [voteState, setVoteState] = useState(0);
   const [voteTotal, setVoteTotal] = useState(likes ?? 0);
   const [commentState, setCommentState] = useState(false);
@@ -58,23 +64,16 @@ const Post = ({
 
   const history = useHistory();
 
-  let userId = "";
-  let tokenUserName = "";
-  if (localStorage.getItem("Authorization")) {
-    const token = jwt(localStorage.getItem("Authorization"));
-    userId = token._id;
-    tokenUserName = token.name;
-  }
-
   useEffect(() => {
-    axios
-      .get(userPath + "id/" + userId)
-      .then((res) => {
-        setVoteState(res.data.likes[postId] ?? 0);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (userId && postId)
+      axios
+        .get(userPath + "id/" + userId)
+        .then((res) => {
+          setVoteState(res.data.likes[postId] ?? 0);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   }, [userId, postId]);
 
   const upVoted = () => onVoteChange(1);
@@ -190,6 +189,11 @@ const Post = ({
     history.push("/" + postId + "/update-post");
   };
 
+  const reloadComments = () => {
+    console.log("going to post page...");
+    //window.location.reload();
+  };
+
   return (
     <StyledPost voteState={currentColor} onClick={onClickPost}>
       <div id="ref-0" className="voting-buttons" ref={setRestrictedRef}>
@@ -260,7 +264,12 @@ const Post = ({
         </div>
 
         <div id="ref-4" ref={setRestrictedRef}>
-          {commentState && <CommentForm postId={postId} />}
+          {commentState && (
+            <CommentForm
+              postId={postId}
+              setHasNewComments={setHasNewComments ?? reloadComments}
+            />
+          )}
         </div>
       </div>
     </StyledPost>

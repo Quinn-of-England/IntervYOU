@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import jwt from "jwt-decode";
 import styled from "styled-components";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
@@ -10,6 +9,7 @@ import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
+import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
@@ -17,6 +17,8 @@ const postUrl = `${IP}:${SERVER_PORT}/api/posts`;
 
 const UpdatePostForm = () => {
   const history = useHistory();
+
+  const { userName: name } = useSelector((state) => state.auth);
 
   const [postContent, setPostContent] = useState({
     title: "",
@@ -89,14 +91,6 @@ const UpdatePostForm = () => {
 
   const onUpdatePost = (e) => {
     e.preventDefault();
-
-    let token = "";
-    if (localStorage.getItem("Authorization")) {
-      token = jwt(localStorage.getItem("Authorization"));
-    }
-
-    //const userId = token._id;
-    const name = token.name;
 
     const formData = new FormData();
     formData.append("userName", name);
@@ -331,10 +325,12 @@ const StyledPostForm = styled.div`
 
   .no-files {
     color: #d3d3d3;
+    margin-bottom: 5px;
   }
 
   .has-files {
     color: #878787;
+    background-color: #2196f305;
     margin-bottom: 5px;
   }
 

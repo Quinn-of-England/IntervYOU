@@ -14,6 +14,7 @@ const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
 const CommentPage = () => {
   const [postId, setPostId] = useState("");
   const [selectedPost, setSelectedPost] = useState(null);
+  const [hasNewComments, setHasNewComments] = useState(false);
 
   const { pathname } = useLocation();
 
@@ -56,7 +57,7 @@ const CommentPage = () => {
 
   useEffect(() => {
     //Ensure Post Id is Defined Before Making Axios Request to Get Post
-    if (postId !== "") {
+    if (postId) {
       axios
         .get(`${baseUrl}/api/posts/${postId}`)
         .then((res) => {
@@ -86,12 +87,11 @@ const CommentPage = () => {
           likes={selectedPost.likes}
           files={selectedPost.files}
           handleDelete={handleDeletePostClick}
+          setHasNewComments={setHasNewComments}
         />
       )}
       <div className="comment-container">
-        <Comments 
-          postId={postId}
-        />
+        <Comments postId={postId} hasNewComments={hasNewComments} />
       </div>
     </StyledCommentScreen>
   );

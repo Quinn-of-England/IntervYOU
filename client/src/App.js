@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -7,9 +7,11 @@ import {
 } from "react-router-dom";
 
 import "./App.css";
+
 import Signup from "./components/authentication/Signup";
 import Login from "./components/authentication/Login";
 import NavBar from "./components/NavBar";
+
 import Home from "./pages/Home";
 import PostPage from "./pages/PostPage";
 import GroupPage from "./pages/GroupPage";
@@ -19,61 +21,25 @@ import UpdatePostPage from "./pages/UpdatePostPage";
 import UpdateGroupPage from "./pages/UpdateGroupPage"
 import ProfilePage from "./pages/ProfilePage";
 import LinkedinPage from "./pages/LinkedinPage";
+import LogoutPage from "./pages/LogoutPage";
+
+import { useDispatch } from "react-redux";
+import { getAuthState } from "./actions/auth";
 
 const App = () => {
-  const [loginStatus, setLoginStatus] = useState({
-    isLoggedIn: false,
-    userId: null,
-  });
-
+  // Update Auth State to Ensure Authorized Access
+  const dispatch = useDispatch();
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      setLoginStatus(true);
-    } else {
-      setLoginStatus(false);
-    }
+    dispatch(getAuthState());
+    console.log("dispatching...");
+    // eslint-disable-next-line
   }, []);
-
-  // console.log(loginStatus);
-  // setLoginStatus((prevStatus) => ({ isLoggedIn: false, userId: null }));
-
-  // const checkLoginStatus = () => {
-  //   axios
-  //     .get(`${IP}:${SERVER_PORT }/api/logged_in`)
-  //     .then((res) => {
-  //       console.log("logged in?", res);
-  //       //TODO add the follwoing comment in replace above console out logged in?
-  //       // if (response.data.logged_in &&  this.state.loggedInStatus === "NOT_LOGGED_IN"){
-  //       //   this.setState({
-  //       //     loggedInStatus: "LOGGED_IN",
-  //       //     user: response.data.user //verify that its actually response.data.user and not like config.data
-  //       //   })
-  //       // }else if(!response.data.logged_in && this.state.loggedInStatus === "LOGGED_IN"){
-  //       //     this.setState({
-  //       //     loggedInStatus: "NOT_LOGGED_IN", //if at any point user is no longer authenticated then trigger and set state to not logged in
-  //       //     user: {}
-  //       // }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.message);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   checkLoginStatus();
-  // }, []);
-
-  // const handleLogin = (data) => {
-  //   setLoginStatus({
-  //     loginStatus: true,
-  //     userId: data,
-  //   });
-  // };
 
   return (
     <Router>
       <NavBar />
       <Switch>
+        {/* Routing Main Pages */}
         <Route path="/" exact component={Home} />
         <Route path="/feed" component={LinkedinPage} />
         <Route path="/post" component={PostPage} />
@@ -83,8 +49,13 @@ const App = () => {
         <Route path="/group/create" component={CommunityPage} />
         <Route path="/:groupId/update-group" component={UpdateGroupPage} />
         <Route path="/profile" component={ProfilePage} />
+
+        {/* Auth Pages */}
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
+        <Route path="/logout" component={LogoutPage} />
+
+        {/* Undefined Route, Redirect to Login Page */}
         <Route path="*">
           <Redirect to="/login" />
         </Route>

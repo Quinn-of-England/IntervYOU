@@ -8,21 +8,23 @@ import DeleteModal from "../DeleteModal";
 
 const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
-const Comments = ( { postId } ) => {
+const Comments = ({ postId, hasNewComments }) => {
   const [allComments, setAllComments] = useState([]);
+  
   useEffect(() => {
-    console.log(postId);
     if (postId) {
-      axios.get(`${IP}:${SERVER_PORT}/api/comments/post/`, {
-        params: {page: 1, limit: 10, sortBy: 'date', postId: postId}
-      })
-      .then((res) => {
-        setAllComments(() => res.data);
-      }).catch((err) => {
-        console.log(err);
-      });
+      axios
+        .get(`${IP}:${SERVER_PORT}/api/comments/post/`, {
+          params: { page: 1, limit: 10, sortBy: "date", postId: postId },
+        })
+        .then((res) => {
+          setAllComments(() => res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }, [postId]);
+  }, [postId, hasNewComments]);
 
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
@@ -44,7 +46,7 @@ const Comments = ( { postId } ) => {
     setShowModal((prevModalState) => !prevModalState);
 
     axios
-      .delete(commentPath + deletedCommentId.commentId).then((res) => {
+      .delete(commentPath + deletedCommentId.commentId, { postId: postId }).then((res) => {
         console.log(res);
       }).catch((err) => {
         console.log(err);

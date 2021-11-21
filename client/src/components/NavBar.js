@@ -1,17 +1,76 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import "../utils/global.css";
 
+import { useSelector } from "react-redux";
+//import { getAuthState } from "../actions/auth";
+
 const NavBar = () => {
-  const [isAuth, setIsAuth] = useState(true);
+  // Get Path in Url
+  const location = useLocation();
+  const { pathname } = location;
+  const history = useHistory();
 
-  // To Remove Warning in Console for Now
-  if (!isAuth) {
-    setIsAuth((prevAuth) => !prevAuth);
-  }
+  // Check if User is Authenticated
+  const [isAuth, setIsAuth] = useState(false);
+  const authState = useSelector((state) => state.auth);
 
+  const isWaiting = useRef(true);
+
+  // Update Auth State When Location Changes to Ensure Authorized Access
+  // useEffect(() => {
+  //   const updateState = async () => {
+  //     await dispatch(getAuthState());
+  //     setIsWaiting(false);
+  //   };
+
+  //   updateState();
+  // }, [location.pathname]);
+
+  useEffect(() => {
+    // Wait for Dispatch Action to Finish
+    if (isWaiting.current) {
+      isWaiting.current = false;
+      return;
+    }
+
+    // If Unauthorized, Redirect to Login
+    if (!authState.isAuth) {
+      history.push("/login");
+    }
+
+    // Update Auth State
+    setIsAuth(authState.isAuth);
+  }, [authState]);
+
+  // useEffect(async () => {
+  //   console.log("update auth");
+  //   await dispatch(getAuthState());
+
+  //   console.log(authState);
+
+  //   setIsAuth(authState.isAuth);
+  //   console.log(authState.isAuth);
+  //   // setIsAuth(authState.isAuth);
+  // }, [location.pathname]);
+
+  // Default Nav Items When Not Authenticated
+  const defaultNavItems = [
+    {
+      id: "nav-0",
+      item: "Sign Up",
+      path: "/signup",
+    },
+    {
+      id: "nav-1",
+      item: "Login",
+      path: "/login",
+    },
+  ];
+
+  // Nav Items When Authenticated
   const navItems = [
     {
       id: "nav-0",
@@ -40,22 +99,6 @@ const NavBar = () => {
     },
   ];
 
-  // Default Nav Items When Not Authenticated, To Be Implemented
-  const defaultNavItems = [
-    {
-      id: "nav-0",
-      item: "Registration",
-      path: "/signup",
-    },
-    {
-      id: "nav-1",
-      item: "Login",
-      path: "/login",
-    },
-  ];
-
-  const { pathname } = useLocation();
-
   return (
     <StyledNavBar>
       <Link className="nav-logo" to="/">
@@ -66,7 +109,7 @@ const NavBar = () => {
         {(isAuth ? navItems : defaultNavItems).map(({ id, item, path }) => (
           <Link
             key={id}
-            className={path === pathname ? "active-link" : undefined}
+            className={path === pathname ? "active-link" : ""}
             to={path}
           >
             <li key={id}>{item}</li>

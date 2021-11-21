@@ -83,7 +83,7 @@ const Comment = ({ commentId, user, postId, content, date, edit, handleDelete, }
           <div className="comment-date">{formatDate()}</div>
           {isEdited === true ? (
             <div className="comment-edit">Edited</div>
-          ) : (<div className="comment-edit"></div>)}
+          ) : (<div className="comment-edit"/>)}
           {/* Display only for the comment creator */}
           {user === tokenUserName && (
             <div

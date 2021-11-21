@@ -7,9 +7,9 @@ import userRouter from "./routes/users.js";
 import postRouter from "./routes/posts.js";
 import groupRouter from "./routes/groups.js";
 import fileRouter from "./routes/files.js";
-import commentRouter from './routes/comments.js'
+import commentRouter from "./routes/comments.js";
 
-import { verifyRefresh } from "./auth.js";
+import authRouter from "./routes/auth.js";
 
 //Load Environment Variables
 dotenv.config();
@@ -71,7 +71,8 @@ app.use("/api/users/", userRouter);
 app.use("/api/posts/", postRouter);
 app.use("/api/groups/", groupRouter);
 app.use("/api/files/", fileRouter);
-app.use("/api/comments/", commentRouter)
+app.use("/api/comments/", commentRouter);
+app.use("/api/", authRouter);
 
 //Main route of server
 app.get("/", (_, res) => {
@@ -81,8 +82,4 @@ app.get("/", (_, res) => {
 //Api route
 app.get("/api/", (_, res) => {
   res.send("You have reached the api of this server!");
-});
-
-app.post("/api/refreshToken/", (req, res) => {
-  verifyRefresh(req, res);
 });

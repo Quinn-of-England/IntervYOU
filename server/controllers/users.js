@@ -1,9 +1,9 @@
-import User from '../models/User.js'
-import Group from '../models/Group.js'
-import bcrypt from 'bcrypt'
-import { createAccessToken, createRefreshToken } from '../auth.js'
-import Post from '../models/Post.js'
-export const refreshTokens = {}
+import User from "../models/User.js";
+import Group from "../models/Group.js";
+import bcrypt from "bcrypt";
+import { createAccessToken, createRefreshToken } from "../auth.js";
+import Post from "../models/Post.js";
+export const refreshTokens = {};
 
 /**
  * * This function will handle the user login
@@ -20,39 +20,49 @@ export const refreshTokens = {}
  */
 export const login_post = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username })
+    if (req.body.username === "" || req.body.password === "") {
+      return res.status(400).send({
+        message: "Username and password are required",
+      });
+    }
+
+    const user = await User.findOne({ username: req.body.username });
 
     //Bcrypt - Compare Encrypted Password
     if (user) {
       const matching = await bcrypt.compare(
         req.body.password.toString(),
         user.password
-      )
+      );
       if (!matching) {
-        return res.status(400).json({
-          message: 'Username or password incorrect',
-        })
+        return res.status(400).send({
+          message: "Username or password is incorrect",
+        });
       }
     } else {
-      return res.status(400).json({
-        message: 'Username or password incorrect',
-      })
+      return res.status(404).send({
+        message: "Username or password is incorrect",
+      });
     }
 
     //JWT - Create Token W/o Password & Add to Header
-    const token = createAccessToken(user)
-    res.setHeader('Authorization', token)
+    const token = createAccessToken(user);
+    res.setHeader("Authorization", token);
 
     //Create New Refresh Cookie
-    const refreshToken = createRefreshToken(user)
-    res.cookie('refreshToken', refreshToken, { httpOnly: true })
-    refreshTokens[refreshToken] = user._id
+    const refreshToken = createRefreshToken(user);
+    res.cookie("refreshToken", refreshToken, { httpOnly: true });
+    refreshTokens[refreshToken] = user._id;
 
-    res.status(200).send({ message: 'Success! Logging In...' })
+    res.status(200).send({
+      userId: user._id,
+      userName: user.username,
+      message: "Success! Logging In...",
+    });
   } catch (err) {
-    res.status(500).send({ message: err.message})
+    res.status(500).send({ message: err.message });
   }
-}
+};
 
 /**
  * * This function will handle the user registration
@@ -71,91 +81,91 @@ export const login_post = async (req, res) => {
  */
 export const registration_post = async (req, res) => {
   try {
-    let errors = { email: '', username: '', password: '' }
-    let isEmpty = false
+    //Return HTTP code 400(Bad request) if input fields are missing
     for (let key in req.body) {
-      if (req.body[key] === '') {
-        errors[key] = `Please enter ${key}`
-        isEmpty = true
+      if (req.body[key].trim() === "") {
+        return res.status(400).json({
+          message: "Missing input field(s)!",
+        });
       }
     }
 
-    //Return HTTP code 400(Bad request) if input fields are missing
-    if (isEmpty)
-      return res
-        .status(400)
-        .json({ message: 'Missing input field(s)', error: errors })
-
+    //Return HTTP code 409(Conflict)
     //Check is username exists
-    const oldUser = await User.findOne({ username: req.body.username })
-    if (oldUser) errors.username = 'Username already exists'
+    const oldUser = await User.findOne({ username: req.body.username });
+    if (oldUser)
+      return res.status(409).json({
+        message: "Username already exists!",
+      });
 
     //Check if email exists
-    const email = await User.findOne({ email: req.body.email })
-    if (email) errors.email = 'Email already exists'
-
-    //Return HTTP code 409(Conflict) if user already exists
-    if (oldUser || email)
-      return res
-        .status(409)
-        .json({ message: 'Errors in input field(s)', error: errors })
+    const email = await User.findOne({ email: req.body.email });
+    if (email)
+      return res.status(409).json({
+        message: "Email already in use!",
+      });
 
     //Encrypt password
-    const salt = await bcrypt.genSalt()
-    req.body.password = await bcrypt.hash(req.body.password.toString(), salt)
+    const salt = await bcrypt.genSalt();
+    req.body.password = await bcrypt.hash(req.body.password.toString(), salt);
 
     await User.create(req.body)
       .then((result) => {
         //Create jwt and add to header
-        const accessToken = createAccessToken(result)
-        res.setHeader('Authorization', accessToken)
+        const accessToken = createAccessToken(result);
+        res.setHeader("Authorization", accessToken);
 
         //Create refresh token
-        const refreshToken = createRefreshToken(result)
-        res.cookie('refreshToken', refreshToken, {
+        const refreshToken = createRefreshToken(result);
+        res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
-        })
-        refreshTokens[refreshToken] = result._id
+        });
+        refreshTokens[refreshToken] = result._id;
 
         res.status(201).json({
-          message: 'User successfully created!',
-        })
+          userId: result._id,
+          userName: result.username,
+          message: "User successfully created!",
+        });
       })
       .catch((err) => {
         res.status(409).send({
-          message: 'Failed to create user',
+          message: "Failed to create user",
           error: err.message,
-        })
-      })
+        });
+      });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: 'Server error in registration_post',
-        error: err.message,
-      })
+    res.status(500).json({
+      message: "Server error in registration_post",
+      error: err.message,
+    });
   }
-}
+};
 
 export const update_user_likes = async (req, res) => {
   const { postId, like } = req.body;
-  
+
   const user = await User.findById(req.params.id);
   const likeMap = user.likes;
   likeMap.set(postId, like);
 
-  User.findByIdAndUpdate(req.params.id,{ likes: likeMap } , { new: true}, (err, result) => {
-    if(err) {
-      res.status(401).json({
-        message: 'Could not update likes',
-        error: err.message,
-      })
-    } else {
-      console.log(likeMap.get(postId));
-      res.status(201).json(result);
+  User.findByIdAndUpdate(
+    req.params.id,
+    { likes: likeMap },
+    { new: true },
+    (err, result) => {
+      if (err) {
+        res.status(401).json({
+          message: "Could not update likes",
+          error: err.message,
+        });
+      } else {
+        console.log(likeMap.get(postId));
+        res.status(201).json(result);
+      }
     }
-  })
-}
+  );
+};
 
 /**
  * * This function will handle the user logout
@@ -164,15 +174,15 @@ export const update_user_likes = async (req, res) => {
  */
 export const logout_post = (req, res) => {
   try {
-    res.cookie('refreshToken', { maxAge: Date.now() })
-    res.status(200).json({ message: 'User logged out!' })
+    res.cookie("refreshToken", { maxAge: Date.now() });
+    res.status(200).json({ message: "User logged out!" });
   } catch (err) {
     res.status(500).json({
-      message: 'Server error while logging out...',
+      message: "Server error while logging out...",
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will get all the users from the database
@@ -182,12 +192,12 @@ export const logout_post = (req, res) => {
  */
 export const get_all_users = async (_, res) => {
   try {
-    const users = await User.find({}, 'role username email')
-    res.status(200).json(users)
+    const users = await User.find({}, "role username email");
+    res.status(200).json(users);
   } catch (err) {
-    res.status(400).json({ message: err.message })
+    res.status(400).json({ message: err.message });
   }
-}
+};
 
 /**
  * * This function will fetch a user using the id
@@ -198,21 +208,24 @@ export const get_all_users = async (_, res) => {
  */
 export const get_user_by_id = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id, 'role username email likes')
+    const user = await User.findById(
+      req.params.id,
+      "role username email likes"
+    );
     if (user) {
-      res.status(200).json(user)
+      res.status(200).json(user);
     } else {
       res
         .status(400)
-        .json({ message: `Cant find user with id ${req.params.id}` })
+        .json({ message: `Cant find user with id ${req.params.id}` });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while finding user with id`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will fetch a user using the email
@@ -225,22 +238,22 @@ export const get_user_by_email = async (req, res) => {
   try {
     const user = await User.findOne(
       { email: req.params.email },
-      'role username email'
-    )
+      "role username email"
+    );
     if (user) {
-      res.status(200).json(user)
+      res.status(200).json(user);
     } else {
       res
         .status(400)
-        .json({ message: `Cant find user with email ${req.params.email}` })
+        .json({ message: `Cant find user with email ${req.params.email}` });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while finding user with email`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will fetch a user using the username
@@ -253,24 +266,22 @@ export const get_user_by_username = async (req, res) => {
   try {
     const user = await User.findOne(
       { username: req.params.username },
-      'role username email'
-    )
+      "role username email"
+    );
     if (user) {
-      res.status(200).json(user)
+      res.status(200).json(user);
     } else {
-      res
-        .status(400)
-        .json({
-          message: `Cant find user with username ${req.params.username}`,
-        })
+      res.status(400).json({
+        message: `Cant find user with username ${req.params.username}`,
+      });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while finding user with username`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will fetch all users of a specific role
@@ -284,20 +295,20 @@ export const get_all_users_by_role = async (req, res) => {
   try {
     const users = await User.find(
       { role: req.query.role },
-      'role username email'
-    )
+      "role username email"
+    );
     if (users) {
-      res.status(200).json(users)
+      res.status(200).json(users);
     } else {
-      res.status(400).json({ message: `No users with role ${req.query.role}` })
+      res.status(400).json({ message: `No users with role ${req.query.role}` });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while finding users with role`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will get the list of groups from a user
@@ -308,29 +319,29 @@ export const get_all_users_by_role = async (req, res) => {
  */
 export const get_groups_by_id = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.params.id);
     if (user) {
-      Group.find({ _id: { $in: user.groups } }, 'name', (err, result) => {
+      Group.find({ _id: { $in: user.groups } }, "name", (err, result) => {
         if (err) {
           res.status(400).json({
-            message: 'Could not find list of groups',
+            message: "Could not find list of groups",
             error: err.message,
-          })
+          });
         } else {
           res.status(200).json({
-            message: 'Group list found',
+            message: "Group list found",
             groups: result,
-          })
+          });
         }
-      })
+      });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while getting groups`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will update the user information
@@ -346,22 +357,29 @@ export const get_groups_by_id = async (req, res) => {
  *  id: user id
  */
 export const update_user_by_id = async (req, res) => {
-  try{
-    const users = await User.find({ $and: [ { _id: { $ne: req.params.id } }, { $or: [ { "username": req.body.username }, { "email": req.body.email } ] }, ], })
-    const thisUser = await User.findById(req.params.id)
-    if(users.length){
-      return res.status(400).json({ message: "fields used"})
+  try {
+    const users = await User.find({
+      $and: [
+        { _id: { $ne: req.params.id } },
+        { $or: [{ username: req.body.username }, { email: req.body.email }] },
+      ],
+    });
+    const thisUser = await User.findById(req.params.id);
+    if (users.length) {
+      return res.status(400).json({ message: "fields used" });
     }
 
-    const matching = await bcrypt.compare(req.body.password.toString(), thisUser.password)
-    if(!matching){
+    const matching = await bcrypt.compare(
+      req.body.password.toString(),
+      thisUser.password
+    );
+    if (!matching) {
       //Encrypt password
-      const salt = await bcrypt.genSalt()
-      req.body.password = await bcrypt.hash(req.body.password.toString(), salt)
-    } else{
-      delete req.body.password
+      const salt = await bcrypt.genSalt();
+      req.body.password = await bcrypt.hash(req.body.password.toString(), salt);
+    } else {
+      delete req.body.password;
     }
-
     User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'role': 1, 'email': 1, 'username': 1 } }, (err, result) => {
       if(err){
         res.status(400).json({
@@ -374,14 +392,14 @@ export const update_user_by_id = async (req, res) => {
           user: result,
         })
       }
-    })
-  }catch(err){
+    });
+  } catch (err) {
     res.status(500).json({
       message: `Server error while updating user`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will update group list of a user
@@ -396,8 +414,8 @@ export const update_user_by_id = async (req, res) => {
  */
 export const update_group_list = async (req, res) => {
   try {
-    const group = await Group.findOne({ name: req.body.name })
-    if (!group) return res.status(400).json({ message: 'Group not found' })
+    const group = await Group.findOne({ name: req.body.name });
+    if (!group) return res.status(400).json({ message: "Group not found" });
     if (req.body.add) {
       User.findByIdAndUpdate(
         req.params.id,
@@ -406,18 +424,18 @@ export const update_group_list = async (req, res) => {
         (err, result) => {
           if (err) {
             res.status(400).json({
-              message: 'Could not add group to user',
+              message: "Could not add group to user",
               error: err.message,
-            })
+            });
           } else {
             res.status(200).json({
-              message: 'Group added',
+              message: "Group added",
               groups: result.groups,
-            })
+            });
           }
         }
-      )
-    }else {
+      );
+    } else {
       User.findByIdAndUpdate(
         req.params.id,
         { $pull: { groups: { _id: group._id } } },
@@ -425,25 +443,25 @@ export const update_group_list = async (req, res) => {
         (err, result) => {
           if (err) {
             res.status(400).json({
-              message: 'Could not remove group from user',
+              message: "Could not remove group from user",
               error: err.message,
-            })
+            });
           } else {
             res.status(200).json({
-              message: 'Group removed',
+              message: "Group removed",
               groups: result.groups,
-            })
+            });
           }
         }
-      )
+      );
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while adding group`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will delete a user from the database using the id
@@ -454,23 +472,21 @@ export const update_group_list = async (req, res) => {
  */
 export const delete_user_by_id = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id)
+    const user = await User.findByIdAndDelete(req.params.id);
     if (user) {
-      res.status(200).json({ message: `User ${user._id} deleted!` })
+      res.status(200).json({ message: `User ${user._id} deleted!` });
     } else {
-      res
-        .status(400)
-        .json({
-          message: `Not deleting user ${req.params.id} since id does not exist!`,
-        })
+      res.status(400).json({
+        message: `Not deleting user ${req.params.id} since id does not exist!`,
+      });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while deleting user with id`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will delete a user from the database using the email
@@ -483,24 +499,22 @@ export const delete_user_by_email = async (req, res) => {
   try {
     const user = await User.findOneAndDelete(
       { email: req.params.email },
-      'role username email'
-    )
+      "role username email"
+    );
     if (user) {
-      res.status(200).json({ message: `User ${user.email} deleted!` })
+      res.status(200).json({ message: `User ${user.email} deleted!` });
     } else {
-      res
-        .status(400)
-        .json({
-          message: `Not deleting user ${req.params.email} since email does not exist!`,
-        })
+      res.status(400).json({
+        message: `Not deleting user ${req.params.email} since email does not exist!`,
+      });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while deleting user with email`,
       error: err.message,
-    })
+    });
   }
-}
+};
 
 /**
  * * This function will delete a user from the database using the username
@@ -513,21 +527,19 @@ export const delete_user_by_username = async (req, res) => {
   try {
     const user = await User.findOneAndDelete(
       { username: req.params.username },
-      'role username email'
-    )
+      "role username email"
+    );
     if (user) {
-      res.status(200).json({ message: `User ${user.username} deleted!` })
+      res.status(200).json({ message: `User ${user.username} deleted!` });
     } else {
-      res
-        .status(204)
-        .json({
-          message: `Not deleting user ${req.params.username} since username does not exist!`,
-        })
+      res.status(204).json({
+        message: `Not deleting user ${req.params.username} since username does not exist!`,
+      });
     }
   } catch (err) {
     res.status(500).json({
       message: `Server error while deleting user with username`,
       error: err.message,
-    })
+    });
   }
-}
+};
