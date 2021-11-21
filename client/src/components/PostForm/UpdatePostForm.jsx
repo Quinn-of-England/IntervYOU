@@ -68,9 +68,6 @@ const UpdatePostForm = () => {
 
         //If File is Not Stored in S3, Then Add to Add Array
         if (filteredDroppedFiles.length > 0) {
-          console.log("Filtered: ", filteredDroppedFiles);
-          console.log("Added: ", addedFiles);
-
           //setAddedFiles((prevAddedFiles) => ([...prevAddedFiles, ...filteredDroppedFiles]));
           if (addedFiles.length > 0)
             setAddedFiles([...addedFiles, ...filteredDroppedFiles]);

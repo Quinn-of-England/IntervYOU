@@ -66,7 +66,7 @@ const Registration = () => {
         setTimeout(() => history.push("/"), 1000);
       })
       .catch((err) => {
-        console.log("Registration error", err);
+        console.log(err.message);
         setToastMsg({
           type: "ERROR",
           msg: err.response.data.message,

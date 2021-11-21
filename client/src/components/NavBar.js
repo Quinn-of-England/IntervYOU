@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import "../utils/global.css";
 
-import { useSelector } from "react-redux";
-//import { getAuthState } from "../actions/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthState } from "../actions/auth";
 
 const NavBar = () => {
   // Get Path in Url
@@ -17,22 +17,16 @@ const NavBar = () => {
   const [isAuth, setIsAuth] = useState(false);
   const authState = useSelector((state) => state.auth);
 
-  const isWaiting = useRef(true);
-
   // Update Auth State When Location Changes to Ensure Authorized Access
-  // useEffect(() => {
-  //   const updateState = async () => {
-  //     await dispatch(getAuthState());
-  //     setIsWaiting(false);
-  //   };
-
-  //   updateState();
-  // }, [location.pathname]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAuthState());
+  }, [location.pathname]);
 
   useEffect(() => {
-    // Wait for Dispatch Action to Finish
-    if (isWaiting.current) {
-      isWaiting.current = false;
+    // Wait for Dispatch Action to Finish (Either True or False Auth State)
+    if (authState.isAuth === null) {
+      console.log(authState);
       return;
     }
 
@@ -43,18 +37,7 @@ const NavBar = () => {
 
     // Update Auth State
     setIsAuth(authState.isAuth);
-  }, [authState]);
-
-  // useEffect(async () => {
-  //   console.log("update auth");
-  //   await dispatch(getAuthState());
-
-  //   console.log(authState);
-
-  //   setIsAuth(authState.isAuth);
-  //   console.log(authState.isAuth);
-  //   // setIsAuth(authState.isAuth);
-  // }, [location.pathname]);
+  }, [authState, getAuthState]);
 
   // Default Nav Items When Not Authenticated
   const defaultNavItems = [

@@ -1,18 +1,110 @@
-import React from "react";
+import React, { useState } from "react";
+import InputField from "../Inputs/InputField";
+import styled from "styled-components";
+import AddButton from "../Buttons/AddButton";
 
 const Profile = () => {
+  const [selectedTab, setSelectedTab] = useState("0");
+  const updateSelectedTab = (e) => {
+    setSelectedTab(e.target.id);
+  };
+
+  const tabOptions = [
+    { id: "0", option: "Posts" },
+    { id: "1", option: "Comments" },
+    { id: "2", option: "Groups" },
+  ];
+
   return (
-    <div>
-      <div>Profile</div>
+    <StyledProfile>
+      <div className="profile-container">
+        <div className="profile-title"> My Profile</div>
 
-      <div>Username:</div>
-      <div>Email:</div>
+        <InputField
+          inputId="username"
+          label="Username"
+          defaultText="My user name"
+        />
 
-      <div>Posts:</div>
+        <InputField inputId="email" label="Email" defaultText="My email" />
 
-      <div>Comments:</div>
-    </div>
+        <AddButton
+          btnText="UPDATE PROFILE"
+          handleClick={() => console.log("nice")}
+          width="220px"
+        />
+      </div>
+
+      <div className="tab-nav">
+        {tabOptions.map(({ id, option }) => (
+          <div
+            id={id}
+            className={
+              selectedTab === id ? "tab-option selected" : "tab-option"
+            }
+            onClick={updateSelectedTab}
+          >
+            {option}
+          </div>
+        ))}
+      </div>
+    </StyledProfile>
   );
 };
+
+const StyledProfile = styled.div`
+  margin: 0 40px;
+
+  .profile-container {
+    background: #fff;
+    border: 1px solid #dce1f0;
+    border-radius: 20px;
+
+    padding: 30px 20px;
+    margin-bottom: 40px;
+  }
+
+  .profile-title {
+    padding: 0 10px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-family: Tahoma, sans-serif;
+  }
+
+  // Tab to View Posts, Comments, and Groups
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid #dce1f0;
+    border-radius: 20px;
+
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border-radius: 5px;
+    background: #fff;
+
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  .tab-option {
+    padding: 5px 15px;
+    margin: 0 10px;
+    font-family: Tahoma, sans-serif;
+  }
+
+  .selected {
+    border-radius: 10px;
+    background-color: #006cbd;
+
+    color: #edeff1;
+  }
+`;
 
 export default Profile;
