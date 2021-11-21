@@ -48,6 +48,8 @@ export const updatePost = (postId, updatedPost) => async (dispatch) => {
   }
 };
 
+
+
 // export const deletePost = (postId) => async (dispatch) => {
 //   try {
 //     await axios.delete(postsRoute + postId);

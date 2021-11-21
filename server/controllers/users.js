@@ -381,22 +381,17 @@ export const update_user_by_id = async (req, res) => {
       delete req.body.password;
     }
 
-    User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, fields: { role: 1, email: 1, username: 1 } },
-      (err, result) => {
-        if (err) {
-          res.status(400).json({
-            message: "Could not update user",
-            error: err.message,
-          });
-        } else {
-          res.status(200).json({
-            message: "User updated!",
-            groups: result,
-          });
-        }
+    User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'role': 1, 'email': 1, 'username': 1 } }, (err, result) => {
+      if(err){
+        res.status(400).json({
+          message: 'Could not update user',
+          error: err.message,
+        })
+      }else{
+        res.status(200).json({
+          message: 'User updated!',
+          user: result,
+        })
       }
     );
   } catch (err) {

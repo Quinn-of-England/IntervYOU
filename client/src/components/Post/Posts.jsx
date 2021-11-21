@@ -38,6 +38,9 @@ const Posts = ({ postSortType }) => {
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
+        setTimeout(function(){
+          window.location.reload();
+        },100);
         console.log(res.data);
         setHasDeleted(true);
       })
@@ -64,7 +67,7 @@ const Posts = ({ postSortType }) => {
         deleteType="Post"
         showModal={showModal}
         updateModalState={updateModalState}
-        deletePostById={deletePostById}
+        deleteById={deletePostById}
       />
       {allPosts.length > 0 &&
         allPosts.map(({ _id, ...post }) => (

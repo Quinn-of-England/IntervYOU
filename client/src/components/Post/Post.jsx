@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import axios from "axios";
 import styled from "styled-components";
-
+  
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,

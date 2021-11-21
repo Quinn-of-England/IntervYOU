@@ -1,60 +1,86 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
-import { useHistory } from "react-router-dom";
 import jwt from "jwt-decode";
 import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types";
-import { PlusIcon } from "../../utils/icons";
+import { PlusIcon, EditIcon, DeleteIcon } from "../../utils/icons";
+import { useHistory } from "react-router-dom";
 
-const Group = ({ community, description, memberCount, followingStatus }) => {
-  const history = useHistory();
 
+const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+
+const Group = ({ groupId, name, description, follower_count, followingStatus, handleDelete, owner }) => {
   const [isFollowing, setIsFollowing] = useState(followingStatus);
-  const [followCount, setFollowCount] = useState(memberCount);
-  const [followState, setFollowState] = useState(false);
-
-  //Create State to Store User Groups List
-  const [groupList, setGroupList] = useState([]);
+  const[followCount, setFollowCount] = useState(follower_count ?? 0);
 
   let userId = "";
   if (localStorage.getItem("Authorization")) {
     userId = jwt(localStorage.getItem("Authorization"))._id;
   }
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
-  //     .then((res) => {
-  //       setGroupList(() => [res.data]);
-  //       //Get List of Groups of User
-  //       // Set Grouplist to grouplist from response
-  //       //Set Following state true if community is in list of groups of that user
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, [userId]);
+  const history = useHistory();
 
-  // On Click function
-  // -> setFollowCount() +1 if !isfollowing and on Click else if isFollowing then -1 to unfollow
 
-  const updateFollowStatus = () =>
+
+  useEffect(() =>{
+    //update followCount
+    
+    //Get Group By Id
+    if(groupId) {
+      console.log(owner);
+      console.log(groupId);
+    }
+  },[]); //update when follow state changes
+
+
+  const followChange = () => {
+    const followChange = isFollowing ? -1 : 1;
     setIsFollowing((prevFollowing) => !prevFollowing);
+    setFollowCount((prevTotal) => prevTotal + followChange);
+    const  followState = isFollowing ? false : true;
+    
+    axios 
+      .patch(groupPath + "count/" + name,
+      { 
+        inc: followChange
+      })
+      .then((res) => {      
+        axios
+        .patch(userPath + "groups/id/" + userId,{
+          name: name, 
+          add: followState,
+        })
+        .then((res)=> {
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);
+        });
+        console.log(res);
+      
+      }).catch((err) => {
+        console.log (err);
+      });
+  }
+
+  const editPost = () => {
+    history.push("/" + groupId + "/update-group");
+  };
 
   return (
     <StyledGroup isFollowing={isFollowing}>
       <div className="group-header">
-        <div className="group-title"> {community} </div>
-        <button className="group-following" onClick={updateFollowStatus}>
+        <div className="group-title"> {name} </div>
+        <button className="group-following" onClick={followChange}>
           {isFollowing ? (
             <>
-              <PlusIcon />
-              <div className="add-follow-text"> Follow </div>
+              <div> Following </div>
             </>
           ) : (
             <>
-              <div> Following </div>
+              <PlusIcon />
+              <div className="add-follow-text"> Follow </div>
             </>
           )}
         </button>
@@ -63,9 +89,17 @@ const Group = ({ community, description, memberCount, followingStatus }) => {
         <div className="group-description"> {description} </div>
         <div className="group-count"> {followCount} Members </div>
       </div>
+      {  owner === userId && 
+      <div>
+        <EditIcon color={"#a9a9a9"} editPost={editPost}/>
+        <DeleteIcon color={COLORS.burgundyRed} deletePost={() => handleDelete(groupId)}/>
+      </div>
+      }
     </StyledGroup>
   );
 };
+
+//Edit -> Pass current group content to new page 
 
 const StyledGroup = styled.div`
   display: flex;
@@ -147,14 +181,14 @@ const StyledGroup = styled.div`
       ${({ isFollowing }) =>
         isFollowing
           ? css`
-              color: #283747;
-              border-color: #007cc7;
-              background: #fff;
-            `
-          : css`
               color: #fff;
               border-color: #004e7c;
               background: #004e7c;
+            `
+          : css`
+              color: #283747;
+              border-color: #007cc7;
+              background: #fff;
             `}
 
       padding: 4px 10px;
