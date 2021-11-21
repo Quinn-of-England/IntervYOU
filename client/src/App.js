@@ -16,6 +16,7 @@ import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
 import CommentPage from "./pages/CommentPage";
 import UpdatePostPage from "./pages/UpdatePostPage";
+import UpdateGroupPage from "./pages/UpdateGroupPage"
 import ProfilePage from "./pages/ProfilePage";
 import LinkedinPage from "./pages/LinkedinPage";
 
@@ -80,6 +81,7 @@ const App = () => {
         <Route path="/:postId/comments" component={CommentPage} />
         <Route path="/groups" component={GroupPage} />
         <Route path="/group/create" component={CommunityPage} />
+        <Route path="/:groupId/update-group" component={UpdateGroupPage} />
         <Route path="/profile" component={ProfilePage} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />

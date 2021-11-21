@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
-
+  
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwt from "jwt-decode";
 import styled from "styled-components";
@@ -46,6 +46,15 @@ const PostForm = () => {
     onDrop: onDroppedFiles,
   });
 
+  useEffect(() => {
+    console.log(postContent);
+  }, [postContent]);
+
+  useEffect(() => {
+    console.log(files);
+  }, [files]);
+
+
   const onCreatePost = (e) => {
     e.preventDefault();
 
@@ -53,6 +62,11 @@ const PostForm = () => {
     if (localStorage.getItem("Authorization")) {
       token = jwt(localStorage.getItem("Authorization"));
     }
+
+    // axios.get(`${IP}:${SERVER_PORT}/api/groups/name/` + groupName).then((res) => {
+    //   setPostContent((group) => [res.data])
+    //   console.log
+    // })
 
     const userId = token._id;
     const name = token.name;

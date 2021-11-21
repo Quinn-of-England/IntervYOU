@@ -50,6 +50,9 @@ const Posts = () => {
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
+        setTimeout(function(){
+          window.location.reload();
+        },100);
         console.log(res.data);
       })
       .catch((err) => console.log(err.response));
@@ -62,7 +65,7 @@ const Posts = () => {
         deleteType="Post"
         showModal={showModal}
         updateModalState={updateModalState}
-        deletePostById={deletePostById}
+        deleteById={deletePostById}
       />
       {allPosts.length > 0 &&
         allPosts.map(({ _id, ...post }) => (
