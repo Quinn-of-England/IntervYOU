@@ -380,7 +380,6 @@ export const update_user_by_id = async (req, res) => {
     } else {
       delete req.body.password;
     }
-
     User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'role': 1, 'email': 1, 'username': 1 } }, (err, result) => {
       if(err){
         res.status(400).json({
@@ -393,7 +392,7 @@ export const update_user_by_id = async (req, res) => {
           user: result,
         })
       }
-    );
+    });
   } catch (err) {
     res.status(500).json({
       message: `Server error while updating user`,
