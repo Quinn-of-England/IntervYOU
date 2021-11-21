@@ -1,4 +1,5 @@
 import Group from "../models/Group.js";
+import User from "../models/User.js"
 
 /**
  * * This function will handle group creation
@@ -249,7 +250,16 @@ export const delete_group_by_id = async (req, res) => {
   try {
     const group = await Group.findByIdAndDelete(req.params.id);
     if (group) {
-      res.status(200).json({ message: `Group ${group._id} deleted!` });
+      User.updateMany({ groups: { $all: [{$elemMatch: {_id: group._id}}] } }, { $pull: { groups: { _id: group._id } } }, { new: true }, (err, result) => {
+        if(err){
+          res.status(400).json({
+            message: "Could not remove group from user list",
+            error: err.message
+          })
+        }else{
+          res.status(200).json({ message: `Group ${group._id} deleted!`});
+        }
+      })
     } else {
       res.status(400).json({
         message: `Not deleting group ${req.params.id} since id does not exist!`,
@@ -274,7 +284,16 @@ export const delete_group_by_name = async (req, res) => {
   try {
     const group = await Group.findOneAndDelete({ name: req.params.name });
     if (group) {
-      res.status(200).json({ message: `Group ${group.name} deleted!` });
+      User.updateMany({ groups: { $all: [{$elemMatch: {_id: group._id}}] } }, { $pull: { groups: { _id: group._id } } }, { new: true }, (err, result) => {
+        if(err){
+          res.status(400).json({
+            message: "Could not remove group from user list",
+            error: err.message
+          })
+        }else{
+          res.status(200).json({ message: `Group ${group._id} deleted!`});
+        }
+      })
     } else {
       res.status(400).json({
         message: `Not deleting group ${req.params.name} since name does not exist!`,
