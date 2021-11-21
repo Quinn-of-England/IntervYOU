@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Comments from "../components/Comment/Comments";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { IP, SERVER_PORT } from "../utils/types.js";
 import Post from "../components/Post/Post";
 
+import DeleteModal from "../components/DeleteModal";
+
 const baseUrl = `${IP}:${SERVER_PORT}`;
+const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
 
 const CommentPage = () => {
   const [postId, setPostId] = useState("");
@@ -17,6 +20,39 @@ const CommentPage = () => {
   useEffect(() => {
     setPostId(() => pathname.split(/[//]/)[1]);
   }, [pathname]);
+
+  //Modal Logic
+  const [showModal, setShowModal] = useState(false);
+  const [deletedPostId, setDeletedPostId] = useState({ postId: "" });
+
+  const history = useHistory();
+
+  const updateModalState = () => {
+    setShowModal((prevModalState) => !prevModalState);
+  };
+
+  const handleDeletePostClick = (deletePostId) => {
+    // Show Modal
+    updateModalState();
+
+    // Save Post Id to Delete
+    setDeletedPostId({ postId: deletePostId });
+  };
+
+  const deletePostById = () => {
+    setShowModal((prevModalState) => !prevModalState);
+
+    console.log(`${postUrl}${deletedPostId.postId}`);
+    axios
+      .delete(`${postUrl}${deletedPostId.postId}`)
+      .then((res) => {
+        console.log(res.data);
+        history.push("/");
+      })
+      .catch((err) => console.log(err.response));
+      //.catch((err) => console.log(err.message));
+  };
+
 
   useEffect(() => {
     //Ensure Post Id is Defined Before Making Axios Request to Get Post
@@ -34,6 +70,12 @@ const CommentPage = () => {
 
   return (
     <StyledCommentScreen>
+        <DeleteModal
+        deleteType="Post"
+        showModal={showModal}
+        updateModalState={updateModalState}
+        deleteById={deletePostById}
+        />
       {selectedPost != null && (
         <Post
           postId={selectedPost._id}
@@ -43,6 +85,7 @@ const CommentPage = () => {
           content={selectedPost.content}
           likes={selectedPost.likes}
           files={selectedPost.files}
+          handleDelete={handleDeletePostClick}
         />
       )}
       <div className="comment-container">
