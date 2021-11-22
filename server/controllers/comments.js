@@ -76,16 +76,16 @@ export const get_all_comments = async (req, res) => {
  */
 export const get_comments_by_user = async (req, res) => {
     try {
-        const sort = {}
-        if (req.query.sortBy === 'date') sort['date'] = -1
-        else sort['date'] = -1
+        const sort = {'date': -1}
 
         const options = {
             page: parseInt(req.query.page),
             limit: parseInt(req.query.size),
             sort,
         }
-        const { docs, totalPages } = await Comment.paginate({ user: req.query.userId }, options);
+        console.log(req.query.user);
+        const { docs, totalPages } = await Comment.paginate({ user: req.query.user }, options);
+        console.log(docs);
         res.status(200).json({ comments: docs, totalPages: totalPages });
     } catch (err) {
         res.status(500).json({

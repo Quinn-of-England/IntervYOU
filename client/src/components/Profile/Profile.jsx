@@ -10,6 +10,7 @@ const Profile = () => {
   const [selectedTab, setSelectedTab] = useState("0");
   const updateSelectedTab = (e) => {
     setSelectedTab(e.target.id);
+    console.log(selectedTab);
   };
 
   const tabOptions = [
@@ -18,15 +19,16 @@ const Profile = () => {
     { id: "2", option: "Groups" },
   ];
 
+  console.log(selectedTab);
   return (
     <StyledProfile>
       {selectedTab === "0" && (
       <Posts postSortType={"date"} postSearchType={"user"} />
       )}
       {selectedTab === "1" && (
-      <Comments /> )}
+      <Comments commentSearchType={"user"}/> )}
       {selectedTab === "2" && (
-      <Groups /> )}
+      <Groups groupSearchType={"user"}/> )}
 
       <div className="profile-container">
         <div className="profile-title"> My Profile</div>

@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment/Comment";
 import styled from "styled-components";
+import jwt from "jwt-decode";
 import axios from "axios";
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
 import DeleteModal from "../DeleteModal";
 
 const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
-const Comments = ({ postId, hasNewComments }) => {
+const Comments = ({ postId, hasNewComments, commentSearchType }) => {
   const [allComments, setAllComments] = useState([]);
-  
+
+  let userId = "";
+  let tokenUserName = "";
+  if (localStorage.getItem("Authorization")) {
+    const token = jwt(localStorage.getItem("Authorization"));
+    userId = token._id;
+    tokenUserName = token.name;
+  }
+
   useEffect(() => {
-    if (postId) {
-      axios
-        .get(`${IP}:${SERVER_PORT}/api/comments/post/`, {
-          params: { page: 1, limit: 10, sortBy: "date", postId: postId },
-        })
-        .then((res) => {
-          setAllComments(() => res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    let url = commentPath;
+    if (commentSearchType === "user") {
+      // TODO ADD PATH to comments not groups
+      url = userPath + "groups/id/" + userId;
+    } else if (commentSearchType === "post" && postId) {
+      url += "post/";
     }
-  }, [postId, hasNewComments]);
+
+    if (url !== commentPath) {
+    axios
+      .get(url, {
+        params: { page: 1, limit: 10, sortBy: "date", postId: postId, user: tokenUserName },
+      })
+      .then((res) => {
+        setAllComments(() => res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, [postId, hasNewComments, commentSearchType]);
 
   //Modal Logic
   const [showModal, setShowModal] = useState(false);

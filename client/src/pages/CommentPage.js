@@ -91,7 +91,7 @@ const CommentPage = () => {
         />
       )}
       <div className="comment-container">
-        <Comments postId={postId} hasNewComments={hasNewComments} />
+        <Comments postId={postId} hasNewComments={hasNewComments} commentSearchType={"post"} />
       </div>
     </StyledCommentScreen>
   );

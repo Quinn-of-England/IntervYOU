@@ -314,9 +314,10 @@ export const get_all_users_by_role = async (req, res) => {
  */
 export const get_groups_by_id = async (req, res) => {
   try {
+
     const user = await User.findById(req.params.id);
     if (user) {
-      Group.find({ _id: { $in: user.groups } }, "name", (err, result) => {
+      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", (err, result) => {
         if (err) {
           res.status(400).json({
             message: "Could not find list of groups",
