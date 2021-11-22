@@ -159,6 +159,7 @@ export const update_comment = async (req, res) => {
  * }
  * Path parameters:
  *  id: comment id
+ *  postId: id of post
  */
 export const delete_comment = async (req, res) => {
     try {
