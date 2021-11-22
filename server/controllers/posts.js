@@ -57,9 +57,19 @@ export const getAllPostsByUser = async (req, res) => {
 export const getAllPostsByGroups= async (req, res) => {
   try {
     const user = await User.findOne({ username: req.query.userName });
+
+    const sort = {}
+    if (req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    }
     if (user) {
       let allGroupNames = [];
-      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", (err, result) => {
+      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", async (err, result) => {
         if (err) {
           res.status(400).json({
             message: "Could not find list of groups",
@@ -70,20 +80,8 @@ export const getAllPostsByGroups= async (req, res) => {
               allGroupNames.push(group.name);
             }
 
-            Post.find({group: { $in: allGroupNames}}, 'files date likes userName group content title', (err, result) => {
-              if (err) {
-                res.status(400).json({
-                  message: "Could not find list of posts",
-                  error: err.message,
-                });
-              } else {
-                let allPosts = [];
-                for (const post of result) {
-                  allPosts.push(post);
-                }
-                res.status(200).json({posts: allPosts});
-              }
-            });
+            const { docs, totalPages } = await Post.paginate({ group: { $in: allGroupNames } }, options);
+            res.status(200).json({ posts: docs, totalPages: totalPages })
         }
       });
     }
