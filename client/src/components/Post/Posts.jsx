@@ -63,7 +63,6 @@ const Posts = ({ postSortType, postSearchType }) => {
     } else if (postSearchType === "user") {
       url += "user";
     }
-    console.log(url);
     axios
       .get(url, {
         params: { sortBy: postSortType, page: currPage, size: 10, userName: tokenUserName, userId: userId },
