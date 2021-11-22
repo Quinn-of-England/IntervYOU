@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
   createPost,
   getAllPosts,
+  getAllPostsByUser,
+  getAllPostsByGroups,
   getPostById,
   getPostsByTitle,
   getPostsByDate,
@@ -18,6 +20,12 @@ PostRouter.post("/add-post", createPost);
 
 //Read - Get All Posts
 PostRouter.get("/", getAllPosts);
+
+//Read - Get All Posts by user
+PostRouter.get("/user", getAllPostsByUser);
+
+//Read - Get All Posts by Groups
+PostRouter.get("/groups", getAllPostsByGroups);
 
 //Read - Get Posts By ID
 PostRouter.get("/:id", getPostById);

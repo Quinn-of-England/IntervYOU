@@ -281,6 +281,7 @@ const StyledPost = styled.div`
 
   padding: 5px 10px;
   margin: 20px 0;
+  width: 1000px;
 
   border-radius: 20px;
   border: solid 1px ${COLORS.inputBorder};

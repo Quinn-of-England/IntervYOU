@@ -7,21 +7,23 @@ import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types";
 
-const Groups = () => {
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+
+const Groups = ( {groupSearchType}) => {
   const [allGroups, setAllGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState(null);
 
   const [hasDeletedGroups, setHasDeletedGroups] = useState(false);
 
   const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
-  const usersUrl = `${IP}:${SERVER_PORT}/api/users/`;
+  const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
 
   const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userId) {
       axios
-        .get(usersUrl + "groups/id/" + userId)
+        .get(usersUrl + userId)
         .then((res) => {
           setFollowedGroups(res.data.groups);
         })
@@ -32,10 +34,20 @@ const Groups = () => {
   }, [userId, hasDeletedGroups]);
 
   useEffect(() => {
+    
+    let url = groupsUrl;
+    if (groupSearchType === "user") {
+      url = usersUrl + userId;
+    }
+
     axios
-      .get(groupsUrl)
+      .get(url)
       .then((res) => {
-        setAllGroups(() => res.data);
+        if (groupSearchType === "user") {
+          setAllGroups(() => res.data.groups);
+        } else {
+          setAllGroups(() => res.data);
+        }
         setHasDeletedGroups(false);
       })
       .catch((err) => {

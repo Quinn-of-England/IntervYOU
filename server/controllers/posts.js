@@ -1,4 +1,6 @@
 import Post from "../models/Post.js";
+import User from "../models/User.js";
+import Group from "../models/Group.js";
 import Comment from "../models/Comment.js";
 import { upload, s3 } from "../file-upload.js";
 import dotenv from "dotenv";
@@ -32,6 +34,61 @@ export const getAllPosts = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const getAllPostsByUser = async (req, res) => {
+  try {
+    const sort = {}
+    if (req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    }
+
+    const { docs, totalPages } = await Post.paginate({userName: req.query.userName}, options)
+    res.status(200).json({ posts: docs, totalPages: totalPages })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
+  }
+}
+
+export const getAllPostsByGroups= async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.query.userName });
+
+    const sort = {}
+    if (req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    }
+    if (user) {
+      let allGroupNames = [];
+      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", async (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: "Could not find list of groups",
+            error: err.message,
+          });
+        } else {
+            for (const group of result) {
+              allGroupNames.push(group.name);
+            }
+
+            const { docs, totalPages } = await Post.paginate({ group: { $in: allGroupNames } }, options);
+            res.status(200).json({ posts: docs, totalPages: totalPages })
+        }
+      });
+    }
+  } catch (err) {
+    res.status(404).json({ message: err.message })
+  }
+}
 
 export const getPostById = async (req, res) => {
   const { id } = req.params;

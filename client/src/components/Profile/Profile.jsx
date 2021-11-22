@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import InputField from "../Inputs/InputField";
 import styled from "styled-components";
+import Posts from "../../components/Post/Posts";
+import Comments from "../../components/Comment/Comments";
+import Groups from "../../components/Group/Groups";
 import AddButton from "../Buttons/AddButton";
 
 const Profile = () => {
@@ -17,6 +20,14 @@ const Profile = () => {
 
   return (
     <StyledProfile>
+      {selectedTab === "0" && (
+      <Posts postSortType={"date"} postSearchType={"user"} />
+      )}
+      {selectedTab === "1" && (
+      <Comments commentSearchType={"user"}/> )}
+      {selectedTab === "2" && (
+      <Groups groupSearchType={"user"}/> )}
+
       <div className="profile-container">
         <div className="profile-title"> My Profile</div>
 

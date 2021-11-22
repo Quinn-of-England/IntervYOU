@@ -31,7 +31,7 @@ const Home = () => {
 
         <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
-      <Posts postSortType={postSortType} />
+      <Posts postSortType={postSortType} postSearchType={"all"}/>
     </StyledHome>
   );
 };

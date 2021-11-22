@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import jwt from "jwt-decode";
 
 import Post from "./Post";
 import Pagination from "../Pagination/Pagination";
@@ -9,7 +10,7 @@ import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Posts = ({ postSortType }) => {
+const Posts = ({ postSortType, postSearchType }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
@@ -18,6 +19,14 @@ const Posts = ({ postSortType }) => {
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
   const [deletedPostId, setDeletedPostId] = useState({ postId: "" });
+
+  let userId = "";
+  let tokenUserName = "";
+  if (localStorage.getItem("Authorization")) {
+    const token = jwt(localStorage.getItem("Authorization"));
+    userId = token._id;
+    tokenUserName = token.name;
+  }
 
   const updateModalState = () => {
     setShowModal((prevModalState) => !prevModalState);
@@ -47,9 +56,16 @@ const Posts = ({ postSortType }) => {
   };
 
   useEffect(() => {
+    let url = postUrl;
+    
+    if (postSearchType === "feed") {
+      url += "groups"; 
+    } else if (postSearchType === "user") {
+      url += "user";
+    }
     axios
-      .get(postUrl, {
-        params: { sortBy: postSortType, page: currPage, size: 2 },
+      .get(url, {
+        params: { sortBy: postSortType, page: currPage, size: 10, userName: tokenUserName, userId: userId },
       })
       .then((res) => {
         setAllPosts(res.data.posts);
