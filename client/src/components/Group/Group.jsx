@@ -1,68 +1,59 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
-import jwt from "jwt-decode";
+import { useSelector } from "react-redux";
+
 import { COLORS } from "../../utils/customStyles";
 import { IP, SERVER_PORT } from "../../utils/types";
 import { PlusIcon, EditIcon, DeleteIcon } from "../../utils/icons";
 import { useHistory } from "react-router-dom";
 
-
 const groupPath = `${IP}:${SERVER_PORT}/api/groups/`;
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
-const Group = ({ groupId, name, description, follower_count, followingStatus, handleDelete, owner }) => {
+const Group = ({
+  groupId,
+  name,
+  description,
+  follower_count,
+  followingStatus,
+  handleDelete,
+  owner,
+}) => {
   const [isFollowing, setIsFollowing] = useState(followingStatus);
-  const[followCount, setFollowCount] = useState(follower_count ?? 0);
+  const [followCount, setFollowCount] = useState(follower_count ?? 0);
 
-  let userId = "";
-  if (localStorage.getItem("Authorization")) {
-    userId = jwt(localStorage.getItem("Authorization"))._id;
-  }
+  const { userId } = useSelector((state) => state.auth);
 
   const history = useHistory();
-
-
-
-  useEffect(() =>{
-    //update followCount
-    
-    //Get Group By Id
-    if(groupId) {
-      console.log(owner);
-      console.log(groupId);
-    }
-  },[]); //update when follow state changes
-
 
   const followChange = () => {
     const followChange = isFollowing ? -1 : 1;
     setIsFollowing((prevFollowing) => !prevFollowing);
     setFollowCount((prevTotal) => prevTotal + followChange);
-    const  followState = isFollowing ? false : true;
-    
-    axios 
-      .patch(groupPath + "count/" + name,
-      { 
-        inc: followChange
+    const followState = isFollowing ? false : true;
+
+    axios
+      .patch(groupPath + "count/" + name, {
+        inc: followChange,
       })
-      .then((res) => {      
+      .then((res) => {
         axios
-        .patch(userPath + "groups/id/" + userId,{
-          name: name, 
-          add: followState,
-        })
-        .then((res)=> {
-          console.log(res);
-        }).catch((err) => {
-          console.log(err);
-        });
-        console.log(res);
-      
-      }).catch((err) => {
-        console.log (err);
+          .patch(userPath + "groups/id/" + userId, {
+            name: name,
+            add: followState,
+          })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
       });
-  }
+  };
 
   const editPost = () => {
     history.push("/" + groupId + "/update-group");
@@ -87,19 +78,25 @@ const Group = ({ groupId, name, description, follower_count, followingStatus, ha
       </div>
       <div className="group-footer">
         <div className="group-description"> {description} </div>
-        <div className="group-count"> {followCount} Members </div>
+        <div className="group-actions">
+          <div className="group-count"> {followCount} Members </div>
+
+          {owner === userId && (
+            <div className="crud-actions">
+              <EditIcon color={"#a9a9a9"} editPost={editPost} />
+              <DeleteIcon
+                color={COLORS.burgundyRed}
+                deletePost={() => handleDelete(groupId)}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      {  owner === userId && 
-      <div>
-        <EditIcon color={"#a9a9a9"} editPost={editPost}/>
-        <DeleteIcon color={COLORS.burgundyRed} deletePost={() => handleDelete(groupId)}/>
-      </div>
-      }
     </StyledGroup>
   );
 };
 
-//Edit -> Pass current group content to new page 
+//Edit -> Pass current group content to new page
 
 const StyledGroup = styled.div`
   display: flex;
@@ -158,7 +155,7 @@ const StyledGroup = styled.div`
 
       text-align: center;
 
-      margin-top: auto;
+      width: 100%;
       padding-bottom: 5px;
     }
 
@@ -207,6 +204,27 @@ const StyledGroup = styled.div`
         box-shadow: 0px 3px 5px -4px ${COLORS.darkBlue};
       }
     }
+  }
+
+  .group-actions {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    width: 80px;
+
+    padding-top: 10px;
+  }
+
+  .crud-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+
+    width: 100%;
+
+    padding-top: 10px;
+    cursor: pointer;
   }
 `;
 

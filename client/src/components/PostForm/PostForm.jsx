@@ -46,24 +46,15 @@ const PostForm = () => {
     onDrop: onDroppedFiles,
   });
 
-  useEffect(() => {
-    console.log(postContent);
-  }, [postContent]);
-
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
-
-
   const onCreatePost = (e) => {
     e.preventDefault();
 
-    // Add Post to Group 
+    // Add Post to Group
     // axios.get(`${IP}:${SERVER_PORT}/api/groups/name/` + groupName).then((res) => {
     //   setPostContent((group) => [res.data])
     //   console.log
     // })
-    
+
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);

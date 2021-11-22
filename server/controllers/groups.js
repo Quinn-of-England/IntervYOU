@@ -1,5 +1,5 @@
 import Group from "../models/Group.js";
-import User from "../models/User.js"
+import User from "../models/User.js";
 
 /**
  * * This function will handle group creation
@@ -16,7 +16,7 @@ import User from "../models/User.js"
 export const create_group = async (req, res) => {
   try {
     const oldGroup = await Group.findOne({ name: req.body.name });
-    console.log(req.body);
+
     if (oldGroup) {
       return res
         .status(409)
@@ -159,7 +159,7 @@ export const update_follower_count_with_name = (req, res) => {
 
 /**
  * This function will update the group using groupId
- * Will return a 200(Ok) if group updated 
+ * Will return a 200(Ok) if group updated
  * Will return a 400(Bad request) if could not update
  * body: {
  *  name
@@ -168,14 +168,16 @@ export const update_follower_count_with_name = (req, res) => {
  * Path parameters:
  *  id: group id
  */
- export const update_group_with_id = async (req, res) => {
+export const update_group_with_id = async (req, res) => {
   try {
-    const group = await Group.find({ $and: [ { _id: { $ne: req.params.id } }, { name: req.body.name } ] })
-    if(group.length){
+    const group = await Group.find({
+      $and: [{ _id: { $ne: req.params.id } }, { name: req.body.name }],
+    });
+    if (group.length) {
       return res.status(400).json({
         message: "Cant update group because new name supplied already in use",
         error: err.message,
-      })
+      });
     }
     Group.findByIdAndUpdate(
       req.params.id,
@@ -184,29 +186,28 @@ export const update_follower_count_with_name = (req, res) => {
       (err, result) => {
         if (err) {
           res.status(400).json({
-            message: 'Could not update group',
+            message: "Could not update group",
             error: err.message,
-          })
+          });
         } else {
           res.status(200).json({
-            message: 'Group updated!',
-            group: result
-          })
+            message: "Group updated!",
+            group: result,
+          });
         }
       }
-    )
+    );
   } catch (err) {
     res.status(500).json({
-      message: 'Server error while updating group',
-      error: err.message
-    })
+      message: "Server error while updating group",
+      error: err.message,
+    });
   }
-}
-
+};
 
 /**
  * This function will update the following status of the group using the name( since all group names are unique)
- * Will return a 200(Ok) if group updated 
+ * Will return a 200(Ok) if group updated
  * Will return a 400(Bad request) if could not update
  * body{
  * following status, true if following, false otherwise
@@ -215,30 +216,32 @@ export const update_follower_count_with_name = (req, res) => {
  *  .id
  */
 export const update_group_status = (req, res) => {
-  const {name} = req.params;
+  const { name } = req.params;
   try {
     Group.findByIdAndUpdate(
       name,
-      {followingStatus: req.body},
-      {new: true},
+      { followingStatus: req.body },
+      { new: true },
       (err, result) => {
         if (err) {
           res.status(400).json({
-            message: 'Could not update group',
+            message: "Could not update group",
             error: err.message,
-          })
+          });
         } else {
-          res.status(200).json(result)
+          res.status(200).json(result);
         }
       }
-    )
+    );
   } catch (err) {
-    res.status(500).json({message: `Server error while updating group`, 
-    error: err.message,
-    })
-
+    res
+      .status(500)
+      .json({
+        message: `Server error while updating group`,
+        error: err.message,
+      });
   }
-}
+};
 
 /**
  * * This function will delete a group from the database using the id
@@ -251,16 +254,21 @@ export const delete_group_by_id = async (req, res) => {
   try {
     const group = await Group.findByIdAndDelete(req.params.id);
     if (group) {
-      User.updateMany({ groups: { $all: [{$elemMatch: {_id: group._id}}] } }, { $pull: { groups: { _id: group._id } } }, { new: true }, (err, result) => {
-        if(err){
-          res.status(400).json({
-            message: "Could not remove group from user list",
-            error: err.message
-          })
-        }else{
-          res.status(200).json({ message: `Group ${group._id} deleted!`});
+      User.updateMany(
+        { groups: { $all: [{ $elemMatch: { _id: group._id } }] } },
+        { $pull: { groups: { _id: group._id } } },
+        { new: true },
+        (err, result) => {
+          if (err) {
+            res.status(400).json({
+              message: "Could not remove group from user list",
+              error: err.message,
+            });
+          } else {
+            res.status(200).json({ message: `Group ${group._id} deleted!` });
+          }
         }
-      })
+      );
     } else {
       res.status(400).json({
         message: `Not deleting group ${req.params.id} since id does not exist!`,
@@ -285,16 +293,21 @@ export const delete_group_by_name = async (req, res) => {
   try {
     const group = await Group.findOneAndDelete({ name: req.params.name });
     if (group) {
-      User.updateMany({ groups: { $all: [{$elemMatch: {_id: group._id}}] } }, { $pull: { groups: { _id: group._id } } }, { new: true }, (err, result) => {
-        if(err){
-          res.status(400).json({
-            message: "Could not remove group from user list",
-            error: err.message
-          })
-        }else{
-          res.status(200).json({ message: `Group ${group._id} deleted!`});
+      User.updateMany(
+        { groups: { $all: [{ $elemMatch: { _id: group._id } }] } },
+        { $pull: { groups: { _id: group._id } } },
+        { new: true },
+        (err, result) => {
+          if (err) {
+            res.status(400).json({
+              message: "Could not remove group from user list",
+              error: err.message,
+            });
+          } else {
+            res.status(200).json({ message: `Group ${group._id} deleted!` });
+          }
         }
-      })
+      );
     } else {
       res.status(400).json({
         message: `Not deleting group ${req.params.name} since name does not exist!`,

@@ -46,7 +46,6 @@ const Login = () => {
 
         // Dispatch Action to Update Auth State
         const { userId, userName } = res.data;
-        console.log(res.data);
         dispatch(addAuthState(userId, userName));
 
         // Display Success Message Before Changing Pages
