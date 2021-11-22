@@ -19,7 +19,6 @@ const Profile = () => {
     { id: "2", option: "Groups" },
   ];
 
-  console.log(selectedTab);
   return (
     <StyledProfile>
       {selectedTab === "0" && (

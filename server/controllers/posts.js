@@ -1,4 +1,6 @@
 import Post from "../models/Post.js";
+import User from "../models/User.js";
+import Group from "../models/Group.js";
 import Comment from "../models/Comment.js";
 import { upload, s3 } from "../file-upload.js";
 import dotenv from "dotenv";
@@ -47,6 +49,44 @@ export const getAllPostsByUser = async (req, res) => {
 
     const { docs, totalPages } = await Post.paginate({userName: req.query.userName}, options)
     res.status(200).json({ posts: docs, totalPages: totalPages })
+  } catch (err) {
+    res.status(404).json({ message: err.message })
+  }
+}
+
+export const getAllPostsByGroups= async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.query.userName });
+    if (user) {
+      let allGroupNames = [];
+      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: "Could not find list of groups",
+            error: err.message,
+          });
+        } else {
+            for (const group of result) {
+              allGroupNames.push(group.name);
+            }
+
+            Post.find({group: { $in: allGroupNames}}, 'files date likes userName group content title', (err, result) => {
+              if (err) {
+                res.status(400).json({
+                  message: "Could not find list of posts",
+                  error: err.message,
+                });
+              } else {
+                let allPosts = [];
+                for (const post of result) {
+                  allPosts.push(post);
+                }
+                res.status(200).json({posts: allPosts});
+              }
+            });
+        }
+      });
+    }
   } catch (err) {
     res.status(404).json({ message: err.message })
   }

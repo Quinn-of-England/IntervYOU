@@ -58,15 +58,15 @@ const Posts = ({ postSortType, postSearchType }) => {
   useEffect(() => {
     let url = postUrl;
     
-    if (postSearchType === "groups") {
+    if (postSearchType === "feed") {
       url += "groups"; 
     } else if (postSearchType === "user") {
       url += "user";
-    } 
-
+    }
+    console.log(url);
     axios
       .get(url, {
-        params: { sortBy: postSortType, page: currPage, size: 10, userName: tokenUserName },
+        params: { sortBy: postSortType, page: currPage, size: 10, userName: tokenUserName, userId: userId },
       })
       .then((res) => {
         setAllPosts(res.data.posts);

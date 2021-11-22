@@ -21,6 +21,7 @@ import UpdatePostPage from "./pages/UpdatePostPage";
 import UpdateGroupPage from "./pages/UpdateGroupPage";
 import ProfilePage from "./pages/ProfilePage";
 import LinkedinPage from "./pages/LinkedinPage";
+import Feed from "./pages/FeedPage";
 import LogoutPage from "./pages/LogoutPage";
 
 const App = () => {
@@ -30,7 +31,7 @@ const App = () => {
       <Switch>
         {/* Routing Main Pages */}
         <Route path="/" exact component={Home} />
-        <Route path="/feed" component={LinkedinPage} />
+        <Route path="/feed" component={Feed} />
         <Route path="/post" component={PostPage} />
         <Route path="/:postId/update-post" component={UpdatePostPage} />
         <Route path="/:postId/comments" component={CommentPage} />
