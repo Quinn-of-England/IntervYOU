@@ -50,47 +50,18 @@ const Comment = ({
   };
 
   const editComment = () => {
-    if (postId) {
-      axios
-      .get(postPath + postId)
+    axios
+      .patch(commentPath + "id/" + commentId, {
+        _id: commentId,
+        content: updatedComment,
+      })
       .then((res) => {
-        if (res.data) {
-          axios
-            .patch(commentPath + commentId, {
-              _id: commentId,
-              user: user,
-              content: updatedComment,
-              post: res.data,
-              edit: true,
-            })
-            .then((res) => {
-              isEditedHanler(res.data.comment.edit);
-              window.location.reload();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        } else {
-          console.log("Error");
-        }
+        isEditedHanler(res.data.comment.edit);
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);
       });
-    } else {
-      axios
-        .patch(commentPath + "id/" + commentId, {
-          _id: commentId,
-          content: updatedComment,
-        })
-        .then((res) => {
-          isEditedHanler(res.data.comment.edit);
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
   };
 
   return (
