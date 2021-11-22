@@ -24,7 +24,6 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
   useEffect(() => {
     let url = commentPath;
     if (commentSearchType === "user") {
-      // TODO ADD PATH to comments not groups
       url += "user/";
     } else if (commentSearchType === "post" && postId) {
       url += "post/";

@@ -10,7 +10,6 @@ const Profile = () => {
   const [selectedTab, setSelectedTab] = useState("0");
   const updateSelectedTab = (e) => {
     setSelectedTab(e.target.id);
-    console.log(selectedTab);
   };
 
   const tabOptions = [
