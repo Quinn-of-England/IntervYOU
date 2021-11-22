@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 import { RightArrowIcon } from "../../utils/icons";
 
-const AddButton = ({ btnText, handleClick }) => {
+const AddButton = ({ btnText, handleClick, width }) => {
   return (
-    <StyledAddButton onClick={handleClick}>
+    <StyledAddButton width={width} onClick={handleClick}>
       <div className="btn-text"> {btnText} </div>
       <div className="svg-holder">
         <RightArrowIcon />
@@ -23,7 +23,7 @@ const StyledAddButton = styled.div`
 
   color: #fff;
 
-  width: 120px;
+  width: ${({ width }) => width ?? "120px"};
 
   border: none;
   border-radius: 30px;

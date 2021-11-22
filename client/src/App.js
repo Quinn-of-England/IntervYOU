@@ -18,23 +18,12 @@ import GroupPage from "./pages/GroupPage";
 import CommunityPage from "./pages/CommunityPage";
 import CommentPage from "./pages/CommentPage";
 import UpdatePostPage from "./pages/UpdatePostPage";
-import UpdateGroupPage from "./pages/UpdateGroupPage"
+import UpdateGroupPage from "./pages/UpdateGroupPage";
 import ProfilePage from "./pages/ProfilePage";
 import LinkedinPage from "./pages/LinkedinPage";
 import LogoutPage from "./pages/LogoutPage";
 
-import { useDispatch } from "react-redux";
-import { getAuthState } from "./actions/auth";
-
 const App = () => {
-  // Update Auth State to Ensure Authorized Access
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAuthState());
-    console.log("dispatching...");
-    // eslint-disable-next-line
-  }, []);
-
   return (
     <Router>
       <NavBar />

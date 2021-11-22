@@ -43,13 +43,12 @@ const Posts = ({ postSortType, postSearchType }) => {
   const deletePostById = () => {
     setShowModal((prevModalState) => !prevModalState);
 
-    console.log(`${postUrl}${deletedPostId.postId}`);
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
-        setTimeout(function(){
+        setTimeout(function () {
           window.location.reload();
-        },100);
+        }, 100);
         console.log(res.data);
         setHasDeleted(true);
       })

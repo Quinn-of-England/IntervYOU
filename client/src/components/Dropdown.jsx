@@ -12,7 +12,6 @@ const Dropdown = ({ dropdownOptions, setPostSortType }) => {
   const [selectedOption, setSelectedOption] = useState("Newest");
   const updateSelectedOption = (e) => {
     setPostSortType(e.target.id);
-    console.log(e.target);
     setSelectedOption(e.target.innerText);
   };
 

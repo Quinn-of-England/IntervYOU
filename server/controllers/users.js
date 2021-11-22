@@ -2,8 +2,6 @@ import User from "../models/User.js";
 import Group from "../models/Group.js";
 import bcrypt from "bcrypt";
 import { createAccessToken, createRefreshToken } from "../auth.js";
-import Post from "../models/Post.js";
-export const refreshTokens = {};
 
 /**
  * * This function will handle the user login
@@ -52,7 +50,6 @@ export const login_post = async (req, res) => {
     //Create New Refresh Cookie
     const refreshToken = createRefreshToken(user);
     res.cookie("refreshToken", refreshToken, { httpOnly: true });
-    refreshTokens[refreshToken] = user._id;
 
     res.status(200).send({
       userId: user._id,
@@ -120,7 +117,6 @@ export const registration_post = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
         });
-        refreshTokens[refreshToken] = result._id;
 
         res.status(201).json({
           userId: result._id,
@@ -160,7 +156,6 @@ export const update_user_likes = async (req, res) => {
           error: err.message,
         });
       } else {
-        console.log(likeMap.get(postId));
         res.status(201).json(result);
       }
     }
@@ -380,19 +375,24 @@ export const update_user_by_id = async (req, res) => {
     } else {
       delete req.body.password;
     }
-    User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'role': 1, 'email': 1, 'username': 1 } }, (err, result) => {
-      if(err){
-        res.status(400).json({
-          message: 'Could not update user',
-          error: err.message,
-        })
-      }else{
-        res.status(200).json({
-          message: 'User updated!',
-          user: result,
-        })
+    User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, fields: { role: 1, email: 1, username: 1 } },
+      (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: "Could not update user",
+            error: err.message,
+          });
+        } else {
+          res.status(200).json({
+            message: "User updated!",
+            user: result,
+          });
+        }
       }
-    });
+    );
   } catch (err) {
     res.status(500).json({
       message: `Server error while updating user`,

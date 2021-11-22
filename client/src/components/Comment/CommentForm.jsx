@@ -36,7 +36,6 @@ const CommentForm = ({ postId, setHasNewComments }) => {
               comment: res.data.comment,
             })
             .then((result) => {
-              console.log(result);
               setHasNewComments(true);
             })
             .catch((err) => {

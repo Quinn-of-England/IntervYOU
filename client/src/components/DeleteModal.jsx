@@ -21,7 +21,6 @@ const DeleteModal = ({
     }
 
     const handleClick = (e) => {
-      console.log(modalRef.current);
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         updateModalState();
       }

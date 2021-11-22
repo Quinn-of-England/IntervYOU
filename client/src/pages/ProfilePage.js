@@ -1,23 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import Posts from "../components/Post/Posts";
 import Profile from "../components/Profile/Profile";
-import Dropdown from "../components/Dropdown";
-
 const ProfilePage = () => {
-  const [selection, setSelection] = useState(["posts"]);
 
   return (
     <StyledProfilePage>
-      <div>Posts</div>
-      {selection === "posts" && (
-      <Posts postSortType={"date"} postSearchType={"user"} />
-      )}
-      {selection === "comments" && (
-      <Comments /> )}
-      {selection === "groups" && (
-      <Groups /> )}
       <Profile />
     </StyledProfilePage>
   );

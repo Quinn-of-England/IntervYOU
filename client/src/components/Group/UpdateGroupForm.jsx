@@ -5,14 +5,11 @@ import styled from "styled-components";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
-import jwt from "jwt-decode";
 import { IP, SERVER_PORT } from "../../utils/types";
-// import { ToastContainer, toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
+
 const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
 
-
-const UpdateGroupForm = ({name, description}) => {
+const UpdateGroupForm = ({ name, description }) => {
   const [groupContent, setGroupContent] = useState([
     { name: name, description: description },
   ]);
@@ -21,27 +18,25 @@ const UpdateGroupForm = ({name, description}) => {
 
   const [groupId, setGroupId] = useState("");
   const { pathname } = useLocation();
-  const [errMessage, setErrMessage] = useState("")
+  const [errMessage, setErrMessage] = useState("");
 
   useEffect(() => {
     setGroupId(() => pathname.split(/[//]/)[1]);
   }, [pathname]);
 
-  console.log(pathname);
-
   useEffect(() => {
     if (groupId !== "") {
-      //Get Group By Id 
+      //Get Group By Id
       axios
         .get(`${IP}:${SERVER_PORT}/api/groups/id/${groupId}`)
         .then((res) => {
-          const {name, description} = res.data;
+          const { name, description } = res.data;
           setGroupContent({
             name,
             description,
           });
         })
-        .catch((err)=>{
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -50,46 +45,38 @@ const UpdateGroupForm = ({name, description}) => {
   const onUpdateGroup = (e) => {
     e.preventDefault();
 
-    let token = "";
-    if (localStorage.getItem("Authorization")) {
-      token = jwt(localStorage.getItem("Authorization"));
-    }
-
-    axios.patch(groupsUrl + "/" + groupId,{
-      "name": groupContent.name,
-      "description": groupContent.description,
-    })
-    .then((res) => {
-      console.log(res.data);
-      history.push("/groups");
-    })
-    .catch((err) => {
-      console.log(err);
-      setErrMessage("Group name already exists")
-    })
-    
+    axios
+      .patch(groupsUrl + "/" + groupId, {
+        name: groupContent.name,
+        description: groupContent.description,
+      })
+      .then((res) => {
+        history.push("/groups");
+      })
+      .catch((err) => {
+        console.log(err);
+        setErrMessage("Group name already exists");
+      });
   };
 
   const updateInputState = (e) => {
     setGroupContent({ ...groupContent, [e.target.id]: e.target.value });
-    console.log(groupContent);
-  }
+  };
 
   return (
     <StyledGroupForm>
-      
       <div className="create-form-title"> Update a group </div>
 
       {/* Community Title and Description */}
-      <InputField 
+      <InputField
         inputId="name"
         label="Community"
         errMessage="Required *"
         defaultText={groupContent.name}
-        setPostAttribute={updateInputState}  
+        setPostAttribute={updateInputState}
       />
       <div className="errorMessage"> {errMessage} </div>
-      <InputField 
+      <InputField
         inputId="description"
         label="Description"
         errMessage="Required *"
@@ -97,7 +84,10 @@ const UpdateGroupForm = ({name, description}) => {
         setPostAttribute={updateInputState}
       />
       <div className="group-actions">
-        <CancelButton btnText="CANCEL" handleClick={() => history.push("/groups")} />
+        <CancelButton
+          btnText="CANCEL"
+          handleClick={() => history.push("/groups")}
+        />
         <AddButton btnText="UPDATE" handleClick={onUpdateGroup} />
       </div>
     </StyledGroupForm>

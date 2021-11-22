@@ -9,7 +9,7 @@ import groupRouter from "./routes/groups.js";
 import fileRouter from "./routes/files.js";
 import commentRouter from "./routes/comments.js";
 
-import authRouter from "./routes/auth.js";
+import { verifyAuth } from "./auth.js";
 
 //Load Environment Variables
 dotenv.config();
@@ -72,14 +72,16 @@ app.use("/api/posts/", postRouter);
 app.use("/api/groups/", groupRouter);
 app.use("/api/files/", fileRouter);
 app.use("/api/comments/", commentRouter);
-app.use("/api/", authRouter);
 
-//Main route of server
+// Authenticate User Using JWT Access and Refresh Tokens
+app.post("/api/validAccess/", verifyAuth);
+
+// Main Server Route
 app.get("/", (_, res) => {
   res.send("You have reached the server of IntervYOU!");
 });
 
-//Api route
+// API Route
 app.get("/api/", (_, res) => {
-  res.send("You have reached the api of this server!");
+  res.send("You have reached the api of IntervYOU!");
 });
