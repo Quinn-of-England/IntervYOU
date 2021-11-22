@@ -152,6 +152,30 @@ export const update_comment = async (req, res) => {
     }
 }
 
+export const update_comment_by_id = async (req, res) => {   
+    try {
+        Comment.findByIdAndUpdate(req.params.id, { content: req.body.content, date: Date.now(), edit: true}, { new: true }, (err, result) => {
+            if (err) {
+                res.status(400).json({
+                    message: "Could not update comment",
+                    error: err.message
+                });
+            } else {
+                res.status(200).json({ 
+                    message: "Comment updated!",
+                    comment: result
+                });
+            }
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error in update_comment",
+            error: err.message
+        })
+    }
+}
+
+
 /**
  * * This function will delete the comment and also delete from the post list of comments
  * * Will return a 200(Ok) if deleted

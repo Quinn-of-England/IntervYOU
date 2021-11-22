@@ -39,7 +39,7 @@ const Comment = ({
 
   const onClickComment = () => {
     setIsEditing((prevState) => !prevState);
-
+    console.log(isEditing);
     if (isEditing) {
       editComment();
     }
@@ -50,7 +50,8 @@ const Comment = ({
   };
 
   const editComment = () => {
-    axios
+    if (postId) {
+      axios
       .get(postPath + postId)
       .then((res) => {
         if (res.data) {
@@ -76,6 +77,20 @@ const Comment = ({
       .catch((err) => {
         console.log(err);
       });
+    } else {
+      axios
+        .patch(commentPath + "id/" + commentId, {
+          _id: commentId,
+          content: updatedComment,
+        })
+        .then((res) => {
+          isEditedHanler(res.data.comment.edit);
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
