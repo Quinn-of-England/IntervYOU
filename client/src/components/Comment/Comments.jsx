@@ -25,7 +25,7 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
     let url = commentPath;
     if (commentSearchType === "user") {
       // TODO ADD PATH to comments not groups
-      url = userPath + "groups/id/" + userId;
+      url += "user/";
     } else if (commentSearchType === "post" && postId) {
       url += "post/";
     }
@@ -37,7 +37,6 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
       })
       .then((res) => {
         setAllComments(() => res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);

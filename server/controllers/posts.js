@@ -46,7 +46,6 @@ export const getAllPostsByUser = async (req, res) => {
     }
 
     const { docs, totalPages } = await Post.paginate({userName: req.query.userName}, options)
-    console.log(docs);
     res.status(200).json({ posts: docs, totalPages: totalPages })
   } catch (err) {
     res.status(404).json({ message: err.message })
