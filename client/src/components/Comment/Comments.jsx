@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment/Comment";
 import styled from "styled-components";
-import jwt from "jwt-decode";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
@@ -13,13 +13,9 @@ const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const Comments = ({ postId, hasNewComments, commentSearchType }) => {
   const [allComments, setAllComments] = useState([]);
 
-  let userId = "";
-  let tokenUserName = "";
-  if (localStorage.getItem("Authorization")) {
-    const token = jwt(localStorage.getItem("Authorization"));
-    userId = token._id;
-    tokenUserName = token.name;
-  }
+  const { userName: tokenUserName, userId } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     let url = commentPath;
@@ -30,16 +26,22 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
     }
 
     if (url !== commentPath) {
-    axios
-      .get(url, {
-        params: { page: 1, limit: 10, sortBy: "date", postId: postId, user: tokenUserName },
-      })
-      .then((res) => {
-        setAllComments(() => res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      axios
+        .get(url, {
+          params: {
+            page: 1,
+            limit: 10,
+            sortBy: "date",
+            postId: postId,
+            user: tokenUserName,
+          },
+        })
+        .then((res) => {
+          setAllComments(() => res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [postId, hasNewComments, commentSearchType]);
 
@@ -63,13 +65,15 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
     setShowModal((prevModalState) => !prevModalState);
 
     axios
-      .delete(commentPath + deletedCommentId.commentId, { postId: postId }).then((res) => {
+      .delete(commentPath + deletedCommentId.commentId, { postId: postId })
+      .then((res) => {
         console.log(res);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
       });
     window.location.reload();
-  }
+  };
 
   return (
     <StyledComments>
@@ -80,14 +84,16 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
         updateModalState={updateModalState}
         deleteById={deleteCommentById}
       />
-      {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
-        <Comment key={_id}
-          commentId={_id}
-          postId={postId}
-          {...comment}
-          handleDelete={handleDeleteCommentClick}
-        />
-      ))}
+      {allComments?.length > 0 &&
+        allComments.map(({ _id, ...comment }) => (
+          <Comment
+            key={_id}
+            commentId={_id}
+            postId={postId}
+            {...comment}
+            handleDelete={handleDeleteCommentClick}
+          />
+        ))}
     </StyledComments>
   );
 };

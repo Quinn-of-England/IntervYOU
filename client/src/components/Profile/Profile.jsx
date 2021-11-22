@@ -20,14 +20,6 @@ const Profile = () => {
 
   return (
     <StyledProfile>
-      {selectedTab === "0" && (
-      <Posts postSortType={"date"} postSearchType={"user"} />
-      )}
-      {selectedTab === "1" && (
-      <Comments commentSearchType={"user"}/> )}
-      {selectedTab === "2" && (
-      <Groups groupSearchType={"user"}/> )}
-
       <div className="profile-container">
         <div className="profile-title"> My Profile</div>
 
@@ -59,6 +51,12 @@ const Profile = () => {
           </div>
         ))}
       </div>
+
+      {selectedTab === "0" && (
+        <Posts postSortType="date" postSearchType="user" />
+      )}
+      {selectedTab === "1" && <Comments commentSearchType="user" />}
+      {selectedTab === "2" && <Groups groupSearchType="user" />}
     </StyledProfile>
   );
 };
