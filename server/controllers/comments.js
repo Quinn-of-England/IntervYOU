@@ -148,7 +148,7 @@ export const update_comment = async (req, res) => {
         res.status(500).json({
             message: "Server error in update_comment",
             error: err.message
-        })
+        });
     }
 }
 
@@ -171,7 +171,7 @@ export const update_comment_by_id = async (req, res) => {
         res.status(500).json({
             message: "Server error in update_comment",
             error: err.message
-        })
+        });
     }
 }
 
