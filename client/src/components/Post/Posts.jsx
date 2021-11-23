@@ -63,24 +63,29 @@ const Posts = ({ postSortType, postSearchType }) => {
       url += "liked";
     }
     console.log(url);
-    axios
-      .get(url, {
-        params: {
-          sortBy: postSortType,
-          page: currPage,
-          size: 10,
-          userName: tokenUserName,
-          userId: userId,
-        },
-      })
-      .then((res) => {
-        setAllPosts(res.data.posts);
-        setNumPages(res.data.totalPages);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currPage, postSortType, hasDeleted]);
+    if(tokenUserName && userId) {
+      axios
+        .get(url, {
+          params: {
+            sortBy: postSortType,
+            page: currPage,
+            size: 10,
+            userName: tokenUserName,
+            userId: userId,
+          },
+        })
+        .then((res) => {
+          console.log(tokenUserName);
+          console.log(userId);
+          setAllPosts(res.data.posts);
+          console.log(res.data.posts);
+          setNumPages(res.data.totalPages);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [currPage, postSortType, hasDeleted, tokenUserName, userId]);
 
   return (
     <>
