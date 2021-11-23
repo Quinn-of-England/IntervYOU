@@ -16,6 +16,7 @@ const Profile = () => {
     { id: "0", option: "Posts" },
     { id: "1", option: "Comments" },
     { id: "2", option: "Groups" },
+    { id: "3", option: "Likes" },
   ];
 
   return (
@@ -57,6 +58,7 @@ const Profile = () => {
       )}
       {selectedTab === "1" && <Comments commentSearchType="user" />}
       {selectedTab === "2" && <Groups groupSearchType="user" />}
+      {selectedTab === "3" && <Posts postSearchType="likes" />}
     </StyledProfile>
   );
 };

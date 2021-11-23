@@ -9,6 +9,7 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
+const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
 const Posts = ({ postSortType, postSearchType }) => {
   const [allPosts, setAllPosts] = useState([]);
@@ -58,7 +59,10 @@ const Posts = ({ postSortType, postSearchType }) => {
       url += "groups";
     } else if (postSearchType === "user") {
       url += "user";
+    } else if (postSearchType === "likes") {
+      url += "liked";
     }
+    console.log(url);
     axios
       .get(url, {
         params: {

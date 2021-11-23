@@ -4,6 +4,7 @@ import {
   getAllPosts,
   getAllPostsByUser,
   getAllPostsByGroups,
+  getAllPostsByUserLikes,
   getPostById,
   getPostsByTitle,
   getPostsByDate,
@@ -26,6 +27,9 @@ PostRouter.get("/user", getAllPostsByUser);
 
 //Read - Get All Posts by Groups
 PostRouter.get("/groups", getAllPostsByGroups);
+
+//Read - Get All Posts by Groups
+PostRouter.get("/liked", getAllPostsByUserLikes);
 
 //Read - Get Posts By ID
 PostRouter.get("/:id", getPostById);
