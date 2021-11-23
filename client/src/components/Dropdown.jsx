@@ -26,6 +26,7 @@ const Dropdown = ({ dropdownOptions, setPostSortType }) => {
         <div className="dropdown-content">
           {dropdownOptions.map(({ id, value }) => (
             <div
+              key={id}
               id={id}
               className={
                 selectedOption === value
