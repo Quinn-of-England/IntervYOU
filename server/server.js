@@ -8,6 +8,7 @@ import postRouter from "./routes/posts.js";
 import groupRouter from "./routes/groups.js";
 import fileRouter from "./routes/files.js";
 import commentRouter from "./routes/comments.js";
+import linkedinRouter from './routes/linkedin.js'
 
 import { verifyAuth } from "./auth.js";
 
@@ -72,6 +73,7 @@ app.use("/api/posts/", postRouter);
 app.use("/api/groups/", groupRouter);
 app.use("/api/files/", fileRouter);
 app.use("/api/comments/", commentRouter);
+app.use("/api/linkedin/", linkedinRouter)
 
 // Authenticate User Using JWT Access and Refresh Tokens
 app.post("/api/validAccess/", verifyAuth);
