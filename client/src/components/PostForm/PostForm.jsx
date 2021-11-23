@@ -19,7 +19,7 @@ const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 const PostForm = () => {
   const history = useHistory();
 
-  const { username: name, userId } = useSelector((state) => state.auth);
+  const { userName: name, userId } = useSelector((state) => state.auth);
 
   const [postContent, setPostContent] = useState({
     title: "",
@@ -49,7 +49,7 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-
+    console.log(postContent);
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);
