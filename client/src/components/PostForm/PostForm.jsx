@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
-
+import ModularDropdown from "../ModularDropdown";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
@@ -12,13 +12,14 @@ import File from "../File/File";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
+import Group from "../Group/Group";
 
 const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
 const PostForm = () => {
   const history = useHistory();
 
-  const { userName: name, userId } = useSelector((state) => state.auth);
+  const { username: name, userId } = useSelector((state) => state.auth);
 
   const [postContent, setPostContent] = useState({
     title: "",
@@ -48,12 +49,6 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-
-    // Add Post to Group
-    // axios.get(`${IP}:${SERVER_PORT}/api/groups/name/` + groupName).then((res) => {
-    //   setPostContent((group) => [res.data])
-    //   console.log
-    // })
 
     const formData = new FormData();
     formData.append("userName", name);
@@ -136,6 +131,23 @@ const PostForm = () => {
     setFiles((prevFiles) => prevFiles.filter((f) => f.path !== fileName));
   };
 
+  const [groups, setGroups] = useState([]);
+
+  useEffect(() => {
+    if(!!userId) {
+      axios
+      .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
+      .then((res) =>{
+        console.log(res)
+        setGroups((res?.data.groups ?? []).map(({id, name: value}) => ({id, value})));
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+  }, [userId]); 
+
+  const dropdownOptions = groups;
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Create a post </div>
@@ -149,13 +161,16 @@ const PostForm = () => {
           setPostContent({ ...postContent, title: e.target.value })
         }
       />
-      <InputField
-        label="Community"
-        errMessage="Required *"
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        }
-      />
+      <div className="communityWrapper">
+        <div className="communityLabel">Community</div>
+        <ModularDropdown
+          //Dropdown with all followed groups
+          dropdownOptions={dropdownOptions}
+          onValueChange={(group) => {
+            setPostContent({ ...postContent, group})
+          }}
+        />
+      </div>
       {/* TODO: Search for a community to post to */}
       <InputField
         label="Content"
@@ -213,7 +228,17 @@ const StyledPostForm = styled.div`
 
   padding: 20px;
   margin: auto;
-
+  
+  .communityLabel{
+    padding: 3px 6px;
+    font-family: "Noto Sans JP", sans-serif;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #acb0b6;
+  }
+  .communityWrapper{
+    margin-left: 10px;
+  }
   .create-form-title {
     font-size: 24px;
     font-family: "Noto Sans JP", sans-serif;
