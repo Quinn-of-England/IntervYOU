@@ -147,7 +147,6 @@ const PostForm = () => {
   }, [userId]); 
 
   const dropdownOptions = groups;
-  console.log(">> " + dropdownOptions)
 
   return (
     <StyledPostForm>
