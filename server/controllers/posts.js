@@ -54,6 +54,33 @@ export const getAllPostsByUser = async (req, res) => {
   }
 }
 
+export const getAllPostsByUserLikes = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.query.userName });
+
+    const sort = {}
+    if (req.query.sortBy === 'date') sort['date'] = -1
+    else sort['likes'] = -1
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    }
+    console.log(user.likes.keys());
+    if (user) {
+      let allKeys = [];
+      for (const key of user.likes.keys()) {
+        allKeys.push(key);
+      }
+      const { docs, totalPages } = await Post.paginate( { _id: { $in: allKeys } }, options)
+      res.status(200).json({ posts: docs, totalPages: totalPages })
+    }
+  } catch (err) {
+    res.status(404).json({ message: err.message })
+  }
+}
+
 export const getAllPostsByGroups= async (req, res) => {
   try {
     const user = await User.findOne({ username: req.query.userName });

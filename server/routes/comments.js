@@ -18,6 +18,9 @@ commentRouter.get("/post/", commentController.get_comments_by_post)
 //Update - Update comment
 commentRouter.patch("/:id", commentController.update_comment)
 
+//Update - Update comment
+commentRouter.patch("/id/:id", commentController.update_comment_by_id)
+
 //Delete - Delete comment
 commentRouter.delete("/:id", commentController.delete_comment)
 
