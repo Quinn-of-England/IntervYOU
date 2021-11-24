@@ -49,7 +49,6 @@ const PostForm = () => {
 
   const onCreatePost = (e) => {
     e.preventDefault();
-    console.log(postContent);
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);

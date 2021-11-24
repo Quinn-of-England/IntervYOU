@@ -75,10 +75,7 @@ const Posts = ({ postSortType, postSearchType }) => {
           },
         })
         .then((res) => {
-          console.log(tokenUserName);
-          console.log(userId);
           setAllPosts(res.data.posts);
-          console.log(res.data.posts);
           setNumPages(res.data.totalPages);
         })
         .catch((err) => {
