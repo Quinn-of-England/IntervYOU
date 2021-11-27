@@ -28,3 +28,5 @@ docker_nuke.sh
 docker_push_to_aws.sh
 iam.txt
 login.sh
+*.crt
+*.key
