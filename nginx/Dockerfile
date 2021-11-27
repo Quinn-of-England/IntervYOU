@@ -8,3 +8,5 @@ COPY ssl/ /etc/nginx/ssl
 
 RUN chown -R root:root /etc/nginx/ssl
 RUN chmod -R 600 /etc/nginx/ssl
+
+EXPOSE 80
