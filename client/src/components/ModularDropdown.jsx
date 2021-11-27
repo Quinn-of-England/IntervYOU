@@ -3,22 +3,17 @@ import styled from "styled-components";
 
 import { DownArrow } from "../utils/icons";
 
-const ModularDropdown = ({ dropdownOptions, onValueChange }) => {
+const ModularDropdown = ({ dropdownOptions, setPostGroup }) => {
   const [openDropdown, setOpenDropdown] = useState(false);
   const updateDropdownState = () => {
     setOpenDropdown((prevState) => !prevState);
   };
 
   const [selectedOption, setSelectedOption] = useState("");
-  useEffect(() => {
-    if (selectedOption === "") {
-      setSelectedOption(dropdownOptions[0]);
-    }
-  }, [dropdownOptions]);
 
   const updateSelectedOption = (e) => {
     setSelectedOption(e.target.innerText);
-    onValueChange(e.target.innerText);
+    setPostGroup(e.target.innerText);
   };
 
   return (
@@ -30,7 +25,7 @@ const ModularDropdown = ({ dropdownOptions, onValueChange }) => {
 
       {openDropdown && (
         <div className="dropdown-content">
-          {dropdownOptions.map(({ id, value }) => (
+          {dropdownOptions.map(({id, value }) => (
             <div
               key={id}
               id={id}

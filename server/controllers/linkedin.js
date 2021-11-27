@@ -20,7 +20,10 @@ export const get_profile = (req, res) => {
                 'x-rapidapi-key': process.env.RAPID_API_KEY
             }
         }).then((response) => {
-            res.status(200).json(response.data)
+            if(response.data.detail)
+                res.status(400).json({message: "Id does not exist"})
+            else
+                res.status(200).json(response.data)
         }).catch((error) => {
             res.status(400).json({
                 message: 'Cant get profile from linkedin',

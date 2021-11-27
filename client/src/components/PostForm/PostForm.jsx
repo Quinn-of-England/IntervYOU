@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import ModularDropdown from "../ModularDropdown";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
-import ExpandingText from "../Inputs/ExpandingText";
+import ExpandText from "../Inputs/ExpandText";
 import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
@@ -134,25 +134,22 @@ const PostForm = () => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
-    if (!!userId) {
+    if (userId) {
       axios
         .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
         .then((res) => {
-          console.log(res);
-          setGroups(
-            (res?.data.groups ?? []).map(({ id, name: value }) => ({
-              id,
-              value,
-            }))
-          );
+          const groupsList = [];
+          res.data.groups.forEach(({_id, name}) => {
+            groupsList.push({id: _id, value: name});
+          })
+            
+          setGroups(groupsList);
         })
         .catch((err) => {
           console.log(err);
         });
     }
   }, [userId]);
-
-  const dropdownOptions = groups;
 
   return (
     <StyledPostForm>
@@ -168,30 +165,26 @@ const PostForm = () => {
       />
       <div className="communityWrapper">
         <div className="communityLabel">Community</div>
+        {/* Dropdown with all followed groups */}
         <ModularDropdown
-          //Dropdown with all followed groups
-          dropdownOptions={dropdownOptions}
-          onValueChange={(group) => {
+          dropdownOptions={groups}
+          setPostGroup={(group) => {
             setPostContent({ ...postContent, group });
           }}
         />
       </div>
-      {/* TODO: Search for a community to post to */}
-      <InputField
+
+      <ExpandText
+        inputId="content"
         label="Content"
         errMessage=""
+        postContent={postContent.content}
         setPostAttribute={(e) =>
           setPostContent({ ...postContent, content: e.target.value })
         }
+        setProfilePostAttribute={(profileContent) => setPostContent({...postContent, content: profileContent })}
       />
 
-      {/* <ExpandingText
-        label="Content"
-        errMessage=""
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, content: e.target.value })
-        }
-      /> */}
       {/* File Drag and Drop Section */}
       <div className="dropzone-container">
         <div {...getRootProps()}>
@@ -249,6 +242,7 @@ const StyledPostForm = styled.div`
   .communityWrapper {
     margin-left: 10px;
   }
+
   .create-form-title {
     font-size: 24px;
     font-family: "Noto Sans JP", sans-serif;
