@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
@@ -12,10 +11,10 @@ const ModularDropdown = ({ dropdownOptions, onValueChange }) => {
 
   const [selectedOption, setSelectedOption] = useState("");
   useEffect(() => {
-    if(selectedOption === "") {
-        setSelectedOption(dropdownOptions[0])
+    if (selectedOption === "") {
+      setSelectedOption(dropdownOptions[0]);
     }
-  }, [dropdownOptions])
+  }, [dropdownOptions]);
 
   const updateSelectedOption = (e) => {
     setSelectedOption(e.target.innerText);
