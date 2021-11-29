@@ -62,7 +62,7 @@ export const login_post = async (req, res) => {
 };
 
 /**
- * * This function will handle the user registration
+ * * This function will handle the user signup
  * * Will receive email, username and password
  * * If the username or email already exists
  * * A 409(Conflict) will be sent

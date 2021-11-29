@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { COLORS } from "../../utils/customStyles";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
-import {
-  UpVoteArrowIcon,
-  DownVoteArrowIcon,
-  EditIcon,
-  DeleteIcon,
-} from "../../utils/icons";
+import { EditIcon, DeleteIcon } from "../../utils/icons";
 
 const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
-const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 
 const Comment = ({
   commentId,
@@ -24,6 +17,7 @@ const Comment = ({
   date,
   edit,
   handleDelete,
+  setHasUpdatedComment,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEdited, setIsEdited] = useState(edit);
@@ -39,7 +33,7 @@ const Comment = ({
 
   const onClickComment = () => {
     setIsEditing((prevState) => !prevState);
-    console.log(isEditing);
+
     if (isEditing) {
       editComment();
     }
@@ -57,7 +51,7 @@ const Comment = ({
       })
       .then((res) => {
         isEditedHanler(res.data.comment.edit);
-        window.location.reload();
+        setHasUpdatedComment((prevState) => !prevState);
       })
       .catch((err) => {
         console.log(err);

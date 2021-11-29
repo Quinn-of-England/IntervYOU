@@ -7,9 +7,7 @@ import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types";
 
-const userPath = `${IP}:${SERVER_PORT}/api/users/`;
-
-const Groups = ( {groupSearchType}) => {
+const Groups = ({ groupSearchType }) => {
   const [allGroups, setAllGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState(null);
 
@@ -34,7 +32,6 @@ const Groups = ( {groupSearchType}) => {
   }, [userId, hasDeletedGroups]);
 
   useEffect(() => {
-    
     let url = groupsUrl;
     if (groupSearchType === "user") {
       url = usersUrl + userId;

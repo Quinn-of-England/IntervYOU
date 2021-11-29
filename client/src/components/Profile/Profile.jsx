@@ -4,13 +4,16 @@ import styled from "styled-components";
 import Posts from "../../components/Post/Posts";
 import Comments from "../../components/Comment/Comments";
 import Groups from "../../components/Group/Groups";
-import AddButton from "../Buttons/AddButton";
+
+import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [selectedTab, setSelectedTab] = useState("0");
   const updateSelectedTab = (e) => {
     setSelectedTab(e.target.id);
   };
+
+  const { userName, userId } = useSelector((state) => state.auth);
 
   const tabOptions = [
     { id: "0", option: "Posts" },
@@ -24,18 +27,12 @@ const Profile = () => {
       <div className="profile-container">
         <div className="profile-title"> My Profile</div>
 
+        <InputField inputId="userid" label="User Id" defaultText={userId} />
+
         <InputField
           inputId="username"
           label="Username"
-          defaultText="My user name"
-        />
-
-        <InputField inputId="email" label="Email" defaultText="My email" />
-
-        <AddButton
-          btnText="UPDATE PROFILE"
-          handleClick={() => console.log("nice")}
-          width="220px"
+          defaultText={userName}
         />
       </div>
 

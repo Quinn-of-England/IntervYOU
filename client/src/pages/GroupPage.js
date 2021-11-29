@@ -6,9 +6,6 @@ import SearchBar from "../components/Inputs/SearchBar";
 import CreateButton from "../components/PostForm/CreateButton";
 
 const GroupPage = () => {
-
-
-
   return (
     <StyledGroup>
       <div className="group-actions">

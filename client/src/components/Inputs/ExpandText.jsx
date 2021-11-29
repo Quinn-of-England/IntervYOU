@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import styled, { css } from "styled-components";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import axios from "axios";
 
 import "../../utils/global.css";
@@ -16,45 +16,53 @@ const ExpandText = ({
   defaultText,
   postContent,
   setPostAttribute,
-  setProfilePostAttribute
+  setProfilePostAttribute,
 }) => {
-    // Use to Expand Text Input
-    const [numRows, setNumRows] = useState(1);
-    useEffect(() => {
-        //Resize Text Area
-        const lineArr = postContent.split("\n");
-        setNumRows(lineArr ? lineArr.length + 1 : 1);
-    }, [postContent])
+  // Use to Expand Text Input
+  const [numRows, setNumRows] = useState(1);
+  useEffect(() => {
+    //Resize Text Area
+    const lineArr = postContent.split("\n");
+    setNumRows(lineArr ? lineArr.length + 1 : 1);
+  }, [postContent]);
 
-    const getProfile = async () => {
-        const response = await axios.post(`${baseUrl}/profile`, { profile_id: postContent.trim(), profile_type: "personal"});
+  const getProfile = async () => {
+    const response = await axios.post(`${baseUrl}/profile`, {
+      profile_id: postContent.trim(),
+      profile_type: "personal",
+    });
 
-        // Get Desired Fields from Linkedin Profile
-        const { first_name, last_name, industry, summary, education, skills} = response.data;
-        
-        let desiredContent = `Name: ${first_name} ${last_name}\nIndustry: ${industry}\nSummary: ${summary}\n`;
+    // Get Desired Fields from Linkedin Profile
+    const { first_name, last_name, industry, summary, education, skills } =
+      response.data;
 
-        let schools = "\nEducation:\n";
-        education.forEach((edu) => {
-            schools += ` -${edu.school.name} (${edu.date.start.year} - ${edu.date.end.year}) , ${edu.degree_name} ${edu.field_of_study}\n`
-        })
+    let desiredContent = `Name: ${first_name} ${last_name}\nIndustry: ${industry}\nSummary: ${summary}\n`;
 
-        desiredContent += schools;
+    let schools = "\nEducation:\n";
+    education.forEach((edu) => {
+      schools += ` -${edu.school.name} (${edu.date.start.year} - ${edu.date.end.year}) , ${edu.degree_name} ${edu.field_of_study}\n`;
+    });
 
-        let skillsStr = "\nSkills:\n";
-        skills.forEach((skill) => {
-            skillsStr += ` -${skill}\n`
-        })
-        desiredContent += skillsStr;
+    desiredContent += schools;
 
-        setProfilePostAttribute(desiredContent);
-    }
+    let skillsStr = "\nSkills:\n";
+    skills.forEach((skill) => {
+      skillsStr += ` -${skill}\n`;
+    });
+    desiredContent += skillsStr;
+
+    setProfilePostAttribute(desiredContent);
+  };
 
   return (
-    <StyledExpandText >
+    <StyledExpandText>
       <div className="title-validation">
         <label className="styled-label">{label}</label>
-        <GetProfileButton btnText="Get Profile" handleClick={getProfile} width="170px"/>
+        <GetProfileButton
+          btnText="Get Profile"
+          handleClick={getProfile}
+          width="170px"
+        />
       </div>
 
       <div className="input-validation">
@@ -64,9 +72,9 @@ const ExpandText = ({
           type="text"
           className="styled-input textarea"
           value={postContent}
-          onChange={ setPostAttribute}
+          onChange={setPostAttribute}
         />
-     </div>
+      </div>
     </StyledExpandText>
   );
 };

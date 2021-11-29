@@ -43,7 +43,6 @@ const CommentPage = () => {
   const deletePostById = () => {
     setShowModal((prevModalState) => !prevModalState);
 
-    console.log(`${postUrl}${deletedPostId.postId}`);
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
@@ -51,9 +50,7 @@ const CommentPage = () => {
         history.push("/");
       })
       .catch((err) => console.log(err.response));
-      //.catch((err) => console.log(err.message));
   };
-
 
   useEffect(() => {
     //Ensure Post Id is Defined Before Making Axios Request to Get Post
@@ -71,12 +68,12 @@ const CommentPage = () => {
 
   return (
     <StyledCommentScreen>
-        <DeleteModal
+      <DeleteModal
         deleteType="Post"
         showModal={showModal}
         updateModalState={updateModalState}
         deleteById={deletePostById}
-        />
+      />
       {selectedPost != null && (
         <Post
           postId={selectedPost._id}
@@ -91,7 +88,11 @@ const CommentPage = () => {
         />
       )}
       <div className="comment-container">
-        <Comments postId={postId} hasNewComments={hasNewComments} commentSearchType={"post"} />
+        <Comments
+          postId={postId}
+          hasNewComments={hasNewComments}
+          commentSearchType={"post"}
+        />
       </div>
     </StyledCommentScreen>
   );
