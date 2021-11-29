@@ -76,7 +76,7 @@ export const login_post = async (req, res) => {
  *  password
  * }
  */
-export const registration_post = async (req, res) => {
+export const signup_post = async (req, res) => {
   try {
     //Return HTTP code 400(Bad request) if input fields are missing
     for (let key in req.body) {
