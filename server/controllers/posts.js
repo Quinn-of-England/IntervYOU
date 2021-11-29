@@ -14,6 +14,7 @@ dotenv.config();
  *  size: max number of posts to return
  *  page: page number
  *  sortBy: type date or likes
+ *  search: serach word
  * }
  */
 export const getAllPosts = async (req, res) => {
@@ -28,8 +29,9 @@ export const getAllPosts = async (req, res) => {
       sort,
     };
 
-    const { docs, totalPages } = await Post.paginate({}, options);
-    res.status(200).json({ posts: docs, totalPages: totalPages });
+    const query = req.query.search ? { $or: [{ title: { $regex: `.*${req.query.search}.*` } }, { content: { $regex: `.*${req.query.search}.*` } } ] } : {}
+    const { docs, totalPages } = await Post.paginate(query, options)
+    res.status(200).json({ posts: docs, totalPages: totalPages })
   } catch (err) {
     res.status(404).json({ message: err.message });
   }

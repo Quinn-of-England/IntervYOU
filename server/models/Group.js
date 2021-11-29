@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const GroupSchema = new mongoose.Schema({
   name: {
@@ -19,5 +20,6 @@ const GroupSchema = new mongoose.Schema({
   },
 });
 
-const Group = mongoose.model("Group", GroupSchema);
-export default Group;
+GroupSchema.plugin(mongoosePaginate)
+const Group = mongoose.model("Group", GroupSchema)
+export default Group
