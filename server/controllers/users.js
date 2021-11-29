@@ -183,7 +183,6 @@ export const logout_post = (req, res) => {
  * * This function will get all the users from the database
  * * Only the role, username and email of each user will be returned
  * * A 200(Ok) will be sent after success
- * TODO: Check Whether User Has to Access All Users
  */
 export const get_all_users = async (_, res) => {
   try {
@@ -316,19 +315,23 @@ export const get_groups_by_id = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (user) {
-      Group.find({ _id: { $in: user.groups } }, "name description follower_count owner", (err, result) => {
-        if (err) {
-          res.status(400).json({
-            message: "Could not find list of groups",
-            error: err.message,
-          });
-        } else {
-          res.status(200).json({
-            message: "Group list found",
-            groups: result,
-          });
+      Group.find(
+        { _id: { $in: user.groups } },
+        "name description follower_count owner",
+        (err, result) => {
+          if (err) {
+            res.status(400).json({
+              message: "Could not find list of groups",
+              error: err.message,
+            });
+          } else {
+            res.status(200).json({
+              message: "Group list found",
+              groups: result,
+            });
+          }
         }
-      });
+      );
     }
   } catch (err) {
     res.status(500).json({

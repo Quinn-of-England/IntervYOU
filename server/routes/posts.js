@@ -11,7 +11,7 @@ import {
   deletePost,
   updatePost,
   updateVote,
-  addComment
+  addComment,
 } from "../controllers/posts.js";
 
 const PostRouter = Router();
@@ -51,6 +51,5 @@ PostRouter.delete("/:id", deletePost);
 
 //Vote post
 PostRouter.patch("/:id/vote", updateVote);
-
 
 export default PostRouter;

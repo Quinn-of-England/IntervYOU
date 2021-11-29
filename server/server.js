@@ -8,7 +8,7 @@ import postRouter from "./routes/posts.js";
 import groupRouter from "./routes/groups.js";
 import fileRouter from "./routes/files.js";
 import commentRouter from "./routes/comments.js";
-import linkedinRouter from './routes/linkedin.js'
+import linkedinRouter from "./routes/linkedin.js";
 
 import { verifyAuth } from "./auth.js";
 
@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 //Connect to MongoDB
 if (process.env.NODE_ENV == "production") {
-  //Connect to mongo db on atlas
+  //Connect to MongoDB on Atlas
   const dbUri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@intervyoucluster.vah3w.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
   mongoose
     .connect(dbUri, {
@@ -46,7 +46,7 @@ if (process.env.NODE_ENV == "production") {
       console.error(`Error: ${err.message}`);
     });
 } else {
-  //Connect to local mongo db
+  //Connect to Local MongoDB
   mongoose
     .connect(`mongodb://mongo:${process.env.MONGO_PORT}`, {
       useNewUrlParser: true,
@@ -73,7 +73,7 @@ app.use("/api/posts/", postRouter);
 app.use("/api/groups/", groupRouter);
 app.use("/api/files/", fileRouter);
 app.use("/api/comments/", commentRouter);
-app.use("/api/linkedin/", linkedinRouter)
+app.use("/api/linkedin/", linkedinRouter);
 
 // Authenticate User Using JWT Access and Refresh Tokens
 app.post("/api/validAccess/", verifyAuth);

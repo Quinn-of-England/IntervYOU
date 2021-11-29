@@ -27,20 +27,11 @@ userRouter.get("/email/:email", userController.get_user_by_email);
 //Read - Get user by username
 userRouter.get("/username/:username", userController.get_user_by_username);
 
-// //Read - Get list of groups
-// userRouter.get("/groups/id/:id", userController.get_groups_by_id)
+//Read - Get list of groups
+userRouter.get("/groups/id/:id", userController.get_groups_by_id);
 
 //Update - Update user likes
 userRouter.patch("/id/:id/likes", userController.update_user_likes);
-
-// //Update - Update user
-// userRouter.put("/id/:id", userController.update_user_by_id)
-
-// //Update - Add group
-// userRouter.patch("/groups/id/:id", userController.update_group_list)
-
-//Read - Get list of groups
-userRouter.get("/groups/id/:id", userController.get_groups_by_id);
 
 //Update - Update user
 userRouter.put("/id/:id", userController.update_user_by_id);

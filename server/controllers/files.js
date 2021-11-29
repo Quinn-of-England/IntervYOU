@@ -3,7 +3,6 @@ import { upload, s3 } from "../file-upload.js";
 
 dotenv.config();
 
-
 /* *
  * * This function will upload all files to S3 bucket
  * * Pass files as form-data with key 'files'

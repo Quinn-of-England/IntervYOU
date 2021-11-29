@@ -47,7 +47,6 @@ export const create_group = async (req, res) => {
  * * This function will get all the groups from the database
  * * Only the name and description of each group will be returned
  * * A 200(Ok) will be sent after success
- * TODO: Check Whether User Has to Access All Groups
  */
 export const get_all_groups = async (_, res) => {
   try {

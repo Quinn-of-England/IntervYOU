@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2'
+import mongoosePaginate from "mongoose-paginate-v2";
 
 //Post Schema
 const PostSchema = new mongoose.Schema({
@@ -11,11 +11,11 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  content: {
+  title: {
     type: String,
     required: true,
   },
-  title: {
+  content: {
     type: String,
     required: true,
   },
@@ -33,12 +33,12 @@ const PostSchema = new mongoose.Schema({
       key: String,
       size: String,
       file_type: String,
-    }
+    },
   ],
   comments: [
     {
-      comment: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
-    }
+      comment: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
+    },
   ],
 });
 
