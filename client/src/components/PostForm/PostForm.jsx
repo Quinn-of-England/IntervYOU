@@ -6,6 +6,7 @@ import { useDropzone } from "react-dropzone";
 import ModularDropdown from "../ModularDropdown";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
+import ExpandText from "../Inputs/ExpandText";
 import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
@@ -133,24 +134,26 @@ const PostForm = () => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
-    if(!!userId) {
+    if (userId) {
       axios
-      .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
-      .then((res) =>{
-        console.log(res)
-        setGroups((res?.data.groups ?? []).map(({id, name: value}) => ({id, value})));
-      }).catch((err) => {
-        console.log(err);
-      })
+        .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
+        .then((res) => {
+          const groupsList = [];
+          res.data.groups.forEach(({_id, name}) => {
+            groupsList.push({id: _id, value: name});
+          })
+            
+          setGroups(groupsList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }, [userId]); 
-
-  const dropdownOptions = groups;
+  }, [userId]);
 
   return (
     <StyledPostForm>
       <div className="create-form-title"> Create a post </div>
-
       {/* Title, Community, Content, Files */}
       <InputField
         name="title"
@@ -162,21 +165,24 @@ const PostForm = () => {
       />
       <div className="communityWrapper">
         <div className="communityLabel">Community</div>
+        {/* Dropdown with all followed groups */}
         <ModularDropdown
-          //Dropdown with all followed groups
-          dropdownOptions={dropdownOptions}
-          onValueChange={(group) => {
-            setPostContent({ ...postContent, group})
+          dropdownOptions={groups}
+          setPostGroup={(group) => {
+            setPostContent({ ...postContent, group });
           }}
         />
       </div>
-      {/* TODO: Search for a community to post to */}
-      <InputField
+
+      <ExpandText
+        inputId="content"
         label="Content"
         errMessage=""
+        postContent={postContent.content}
         setPostAttribute={(e) =>
           setPostContent({ ...postContent, content: e.target.value })
         }
+        setProfilePostAttribute={(profileContent) => setPostContent({...postContent, content: profileContent })}
       />
 
       {/* File Drag and Drop Section */}
@@ -187,7 +193,6 @@ const PostForm = () => {
           <div> Or Click to Select Files </div>
         </div>
       </div>
-
       {files?.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>
@@ -207,7 +212,6 @@ const PostForm = () => {
       ) : (
         <div className="no-files">No Files</div>
       )}
-
       <div className="post-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
         <AddButton btnText="POST" handleClick={onCreatePost} />
@@ -227,17 +231,18 @@ const StyledPostForm = styled.div`
 
   padding: 20px;
   margin: auto;
-  
-  .communityLabel{
+
+  .communityLabel {
     padding: 3px 6px;
     font-family: "Noto Sans JP", sans-serif;
     text-transform: uppercase;
     font-size: 12px;
     color: #acb0b6;
   }
-  .communityWrapper{
+  .communityWrapper {
     margin-left: 10px;
   }
+
   .create-form-title {
     font-size: 24px;
     font-family: "Noto Sans JP", sans-serif;

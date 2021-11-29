@@ -46,7 +46,7 @@ const Registration = () => {
     }
 
     axios
-      .post(`${IP}:${SERVER_PORT}/api/users/registration`, details, {
+      .post(`${IP}:${SERVER_PORT}/api/users/signup`, details, {
         withCredentials: true,
       })
       .then((res) => {

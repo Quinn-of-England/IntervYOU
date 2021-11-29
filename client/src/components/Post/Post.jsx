@@ -194,6 +194,8 @@ const Post = ({
     //window.location.reload();
   };
 
+  console.log(content)
+
   return (
     <StyledPost voteState={currentColor} onClick={onClickPost}>
       <div id="ref-0" className="voting-buttons" ref={setRestrictedRef}>
@@ -361,6 +363,10 @@ const StyledPost = styled.div`
         color: ${COLORS.fadedGrey};
         padding: 0 8px;
       }
+    }
+
+    &-description {
+      white-space: pre-wrap;
     }
 
     &-content {
