@@ -59,9 +59,6 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
 
     // Save Comment Id to Delete
     setDeletedCommentId({ commentId: deleteCommentId });
-
-    // Handle Reload Comments
-    setHasUpdatedComments((prevState) => !prevState);
   };
 
   const deleteCommentById = () => {
@@ -69,7 +66,10 @@ const Comments = ({ postId, hasNewComments, commentSearchType }) => {
 
     axios
       .delete(commentPath + deletedCommentId.commentId, { postId: postId })
-      .then()
+      .then(() => {
+        // Handle Reload Comments
+        setHasUpdatedComments((prevState) => !prevState);
+      })
       .catch((err) => {
         console.log(err);
       });

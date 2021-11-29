@@ -19,8 +19,8 @@ const Comment = ({
   handleDelete,
   setHasUpdatedComment,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isEdited, setIsEdited] = useState(edit);
+  const [isEditing, setIsEditing] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(content);
 
   const { userName: tokenUserName, userId } = useSelector(
@@ -39,10 +39,6 @@ const Comment = ({
     }
   };
 
-  const isEditedHanler = (state) => {
-    setIsEdited(state);
-  };
-
   const editComment = () => {
     axios
       .patch(commentPath + "id/" + commentId, {
@@ -50,7 +46,7 @@ const Comment = ({
         content: updatedComment,
       })
       .then((res) => {
-        isEditedHanler(res.data.comment.edit);
+        setIsEdited(res.data.comment.edit);
         setHasUpdatedComment((prevState) => !prevState);
       })
       .catch((err) => {
