@@ -14,7 +14,7 @@ dotenv.config();
  *  size: max number of posts to return
  *  page: page number
  *  sortBy: type date or likes
- *  search: serach word
+ *  search: search word
  * }
  */
 export const getAllPosts = async (req, res) => {
@@ -104,8 +104,9 @@ export const getAllPostsByGroups = async (req, res) => {
     };
     if (user) {
       let allGroupNames = [];
+      const query = req.query.search ? { $and: [ { _id: { $in: user.groups } }, { $or: [{ title: { $regex: `.*${req.query.search}.*` } }, { content: { $regex: `.*${req.query.search}.*` } } ] } ] } : { _id: { $in: user.groups } }
       Group.find(
-        { _id: { $in: user.groups } },
+        query,
         "name description follower_count owner",
         async (err, result) => {
           if (err) {

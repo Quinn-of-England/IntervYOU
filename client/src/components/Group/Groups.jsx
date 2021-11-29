@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Group from "./Group";
+import Pagination from "../Pagination/Pagination";
 import DeleteModal from "../DeleteModal";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types";
 
-const Groups = ({ groupSearchType }) => {
+const Groups = ({ groupSearchType, groupFilter }) => {
   const [allGroups, setAllGroups] = useState([]);
+  const [numPages, setNumPages] = useState(1);
+  const [currPage, setCurrPage] = useState(1);
   const [followedGroups, setFollowedGroups] = useState(null);
 
   const [hasDeletedGroups, setHasDeletedGroups] = useState(false);
@@ -38,21 +41,27 @@ const Groups = ({ groupSearchType }) => {
     }
 
     axios
-      .get(url)
+      .get(url, { params: {
+        page: currPage,
+        size: 1,
+      }})
       .then((res) => {
+        console.log(res.data);
         if (groupSearchType === "user") {
           setAllGroups(() => res.data.groups);
         } else {
           setAllGroups(() => res.data);
         }
-        setHasDeletedGroups(false);
+
+        //Update Pagination 
+        setNumPages(res.data.totalPages);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [hasDeletedGroups]);
+  }, [currPage, hasDeletedGroups]);
 
-  //modal logic for groups
+  // Modal logic for groups
   const [showModal, setShowModal] = useState(false);
   const [deletedGroupId, setDeletedGroupId] = useState({ groupId: "" });
 
@@ -75,7 +84,7 @@ const Groups = ({ groupSearchType }) => {
       .delete(groupsUrl + "id/" + deletedGroupId.groupId)
       .then(() => {
         // Update to Reload to Reflect Deleted Groups
-        setHasDeletedGroups(true);
+        setHasDeletedGroups((prevState) => !prevState);
       })
       .catch((err) => {
         console.log(err);
@@ -91,6 +100,7 @@ const Groups = ({ groupSearchType }) => {
         deleteById={deleteGroupById}
       />
 
+      <div className="group-container">
       {allGroups?.length > 0 &&
         followedGroups &&
         allGroups.map(({ _id, ...group }) => (
@@ -104,18 +114,29 @@ const Groups = ({ groupSearchType }) => {
             handleDelete={handleDeleteGroupClick}
           />
         ))}
+       </div>
+
+        {numPages > 1 && (
+        <Pagination
+          totalPages={numPages}
+          currPage={currPage}
+          setCurrPage={setCurrPage}
+        />
+      )}
     </StyledGroups>
   );
 };
 
 const StyledGroups = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+  .group-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 
-  gap: 15px;
+    gap: 15px;
+  }
 `;
 
 export default Groups;

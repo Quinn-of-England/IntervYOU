@@ -8,8 +8,8 @@ import CreateButton from "../components/PostForm/CreateButton";
 import Dropdown from "../components/Dropdown";
 
 const Home = () => {
-  // const [filteredInput, setFilteredInput] = useState("");
-
+  const [filteredInput, setFilteredInput] = useState("");
+  
   // Storing Sorting State and Dropdown Options
   const [postSortType, setPostSortType] = useState("date");
   const dropdownOptions = [
@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <StyledHome>
       <div className="home-actions">
-        <SearchBar placeHolder="Search for posts" />
+        <SearchBar placeHolder="Search for posts" applyFilter={setFilteredInput}/>
         <Dropdown
           dropdownOptions={dropdownOptions}
           setPostSortType={setPostSortType}
@@ -28,7 +28,7 @@ const Home = () => {
 
         <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
-      <Posts postSortType={postSortType} postSearchType={"all"} />
+      <Posts postSortType={postSortType} postSearchType={"all"} postFilter={filteredInput}/>
     </StyledHome>
   );
 };

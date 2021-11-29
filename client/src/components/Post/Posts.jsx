@@ -10,7 +10,7 @@ import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Posts = ({ postSortType, postSearchType }) => {
+const Posts = ({ postSortType, postSearchType, postFilter }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
@@ -68,6 +68,7 @@ const Posts = ({ postSortType, postSearchType }) => {
             size: 10,
             userName: tokenUserName,
             userId: userId,
+            search: postFilter ?? ""
           },
         })
         .then((res) => {
@@ -78,7 +79,7 @@ const Posts = ({ postSortType, postSearchType }) => {
           console.log(err);
         });
     }
-  }, [currPage, postSortType, hasDeleted, tokenUserName, userId]);
+  }, [currPage, postSortType, hasDeleted, tokenUserName, userId, postFilter]);
 
   return (
     <>

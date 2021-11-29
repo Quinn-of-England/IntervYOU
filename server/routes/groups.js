@@ -16,10 +16,7 @@ groupRouter.get("/id/:id", groupController.get_group_by_id);
 groupRouter.get("/name/:name", groupController.get_group_by_name);
 
 //Update - Update follower count
-groupRouter.patch(
-  "/count/:name",
-  groupController.update_follower_count_with_name
-);
+groupRouter.patch("/count/:name", groupController.update_follower_count_with_name);
 
 //Update - Update group by id
 groupRouter.patch("/:id", groupController.update_group_with_id);

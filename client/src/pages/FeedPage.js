@@ -8,6 +8,8 @@ import CreateButton from "../components/PostForm/CreateButton";
 import Dropdown from "../components/Dropdown";
 
 const Feed = () => {
+  const [filteredInput, setFilteredInput] = useState("");
+
   const [postSortType, setPostSortType] = useState("date");
   const dropdownOptions = [
     { id: "date", value: "Newest" },
@@ -17,15 +19,14 @@ const Feed = () => {
   return (
     <StyledFeed>
       <div className="feed-actions">
-        <SearchBar placeHolder="Search for posts" />
+        <SearchBar placeHolder="Search for posts" applyFilter={setFilteredInput}/>
         <Dropdown
           dropdownOptions={dropdownOptions}
           setPostSortType={setPostSortType}
         />
-
         <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
-      <Posts postSortType={postSortType} postSearchType={"feed"} />
+      <Posts postSortType={postSortType} postSearchType={"feed"} postFilter={filteredInput} />
     </StyledFeed>
   );
 };
