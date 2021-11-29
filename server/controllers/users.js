@@ -2,8 +2,6 @@ import User from "../models/User.js";
 import Group from "../models/Group.js";
 import bcrypt from "bcrypt";
 import { createAccessToken, createRefreshToken } from "../auth.js";
-import Post from "../models/Post.js";
-export const refreshTokens = {};
 
 /**
  * * This function will handle the user login
@@ -40,7 +38,7 @@ export const login_post = async (req, res) => {
         });
       }
     } else {
-      return res.status(404).send({
+      return res.status(400).send({
         message: "Username or password is incorrect",
       });
     }
@@ -52,7 +50,6 @@ export const login_post = async (req, res) => {
     //Create New Refresh Cookie
     const refreshToken = createRefreshToken(user);
     res.cookie("refreshToken", refreshToken, { httpOnly: true });
-    refreshTokens[refreshToken] = user._id;
 
     res.status(200).send({
       userId: user._id,
@@ -65,7 +62,7 @@ export const login_post = async (req, res) => {
 };
 
 /**
- * * This function will handle the user registration
+ * * This function will handle the user signup
  * * Will receive email, username and password
  * * If the username or email already exists
  * * A 409(Conflict) will be sent
@@ -79,7 +76,7 @@ export const login_post = async (req, res) => {
  *  password
  * }
  */
-export const registration_post = async (req, res) => {
+export const signup_post = async (req, res) => {
   try {
     //Return HTTP code 400(Bad request) if input fields are missing
     for (let key in req.body) {
@@ -120,7 +117,6 @@ export const registration_post = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
         });
-        refreshTokens[refreshToken] = result._id;
 
         res.status(201).json({
           userId: result._id,
@@ -160,7 +156,6 @@ export const update_user_likes = async (req, res) => {
           error: err.message,
         });
       } else {
-        console.log(likeMap.get(postId));
         res.status(201).json(result);
       }
     }
@@ -188,7 +183,6 @@ export const logout_post = (req, res) => {
  * * This function will get all the users from the database
  * * Only the role, username and email of each user will be returned
  * * A 200(Ok) will be sent after success
- * TODO: Check Whether User Has to Access All Users
  */
 export const get_all_users = async (_, res) => {
   try {
@@ -321,19 +315,23 @@ export const get_groups_by_id = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (user) {
-      Group.find({ _id: { $in: user.groups } }, "name", (err, result) => {
-        if (err) {
-          res.status(400).json({
-            message: "Could not find list of groups",
-            error: err.message,
-          });
-        } else {
-          res.status(200).json({
-            message: "Group list found",
-            groups: result,
-          });
+      Group.find(
+        { _id: { $in: user.groups } },
+        "name description follower_count owner",
+        (err, result) => {
+          if (err) {
+            res.status(400).json({
+              message: "Could not find list of groups",
+              error: err.message,
+            });
+          } else {
+            res.status(200).json({
+              message: "Group list found",
+              groups: result,
+            });
+          }
         }
-      });
+      );
     }
   } catch (err) {
     res.status(500).json({
@@ -380,19 +378,24 @@ export const update_user_by_id = async (req, res) => {
     } else {
       delete req.body.password;
     }
-    User.findByIdAndUpdate(req.params.id, req.body, { new: true , fields: { 'role': 1, 'email': 1, 'username': 1 } }, (err, result) => {
-      if(err){
-        res.status(400).json({
-          message: 'Could not update user',
-          error: err.message,
-        })
-      }else{
-        res.status(200).json({
-          message: 'User updated!',
-          user: result,
-        })
+    User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, fields: { role: 1, email: 1, username: 1 } },
+      (err, result) => {
+        if (err) {
+          res.status(400).json({
+            message: "Could not update user",
+            error: err.message,
+          });
+        } else {
+          res.status(200).json({
+            message: "User updated!",
+            user: result,
+          });
+        }
       }
-    });
+    );
   } catch (err) {
     res.status(500).json({
       message: `Server error while updating user`,

@@ -46,15 +46,12 @@ const Login = () => {
 
         // Dispatch Action to Update Auth State
         const { userId, userName } = res.data;
-        console.log(res.data);
         dispatch(addAuthState(userId, userName));
 
         // Display Success Message Before Changing Pages
         setTimeout(() => history.push("/"), 1000);
       })
       .catch((err) => {
-        console.log(err.message);
-
         setToastMsg({
           type: "ERROR",
           msg: err.response.data.message,

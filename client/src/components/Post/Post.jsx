@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import axios from "axios";
 import styled from "styled-components";
-  
+
 import {
   UpVoteArrowIcon,
   DownVoteArrowIcon,
@@ -25,7 +25,6 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 const postPath = `${IP}:${SERVER_PORT}/api/posts/`;
 const filePath = `${IP}:${SERVER_PORT}/api/files/`;
-const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
 const Post = ({
   postId,
@@ -191,7 +190,6 @@ const Post = ({
 
   const reloadComments = () => {
     console.log("going to post page...");
-    //window.location.reload();
   };
 
   return (
@@ -281,6 +279,7 @@ const StyledPost = styled.div`
 
   padding: 5px 10px;
   margin: 20px 0;
+  width: 1000px;
 
   border-radius: 20px;
   border: solid 1px ${COLORS.inputBorder};
@@ -360,6 +359,10 @@ const StyledPost = styled.div`
         color: ${COLORS.fadedGrey};
         padding: 0 8px;
       }
+    }
+
+    &-description {
+      white-space: pre-wrap;
     }
 
     &-content {

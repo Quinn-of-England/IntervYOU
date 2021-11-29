@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment/Comment";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { IP, SERVER_PORT } from "../../utils/types.js";
 
@@ -8,14 +9,32 @@ import DeleteModal from "../DeleteModal";
 
 const commentPath = `${IP}:${SERVER_PORT}/api/comments/`;
 
-const Comments = ({ postId, hasNewComments }) => {
+const Comments = ({ postId, hasNewComments, commentSearchType }) => {
   const [allComments, setAllComments] = useState([]);
-  
+  const [hasUpdatedComments, setHasUpdatedComments] = useState(true);
+
+  const { userName: tokenUserName, userId } = useSelector(
+    (state) => state.auth
+  );
+
   useEffect(() => {
-    if (postId) {
+    let url = commentPath;
+    if (commentSearchType === "user") {
+      url += "user/";
+    } else if (commentSearchType === "post" && postId) {
+      url += "post/";
+    }
+
+    if (url !== commentPath) {
       axios
-        .get(`${IP}:${SERVER_PORT}/api/comments/post/`, {
-          params: { page: 1, limit: 10, sortBy: "date", postId: postId },
+        .get(url, {
+          params: {
+            page: 1,
+            limit: 10,
+            sortBy: "date",
+            postId: postId,
+            user: tokenUserName,
+          },
         })
         .then((res) => {
           setAllComments(() => res.data);
@@ -24,7 +43,7 @@ const Comments = ({ postId, hasNewComments }) => {
           console.log(err);
         });
     }
-  }, [postId, hasNewComments]);
+  }, [postId, hasNewComments, commentSearchType, hasUpdatedComments]);
 
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
@@ -46,13 +65,15 @@ const Comments = ({ postId, hasNewComments }) => {
     setShowModal((prevModalState) => !prevModalState);
 
     axios
-      .delete(commentPath + deletedCommentId.commentId, { postId: postId }).then((res) => {
-        console.log(res);
-      }).catch((err) => {
+      .delete(commentPath + deletedCommentId.commentId, { postId: postId })
+      .then(() => {
+        // Handle Reload Comments
+        setHasUpdatedComments((prevState) => !prevState);
+      })
+      .catch((err) => {
         console.log(err);
       });
-    window.location.reload();
-  }
+  };
 
   return (
     <StyledComments>
@@ -63,14 +84,17 @@ const Comments = ({ postId, hasNewComments }) => {
         updateModalState={updateModalState}
         deleteById={deleteCommentById}
       />
-      {allComments?.length > 0 && allComments.map(({ _id, ...comment }) => (
-        <Comment key={_id}
-          commentId={_id}
-          postId={postId}
-          {...comment}
-          handleDelete={handleDeleteCommentClick}
-        />
-      ))}
+      {allComments?.length > 0 &&
+        allComments.map(({ _id, ...comment }) => (
+          <Comment
+            key={_id}
+            commentId={_id}
+            postId={postId}
+            {...comment}
+            handleDelete={handleDeleteCommentClick}
+            setHasUpdatedComment={setHasUpdatedComments}
+          />
+        ))}
     </StyledComments>
   );
 };

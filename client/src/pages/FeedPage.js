@@ -7,10 +7,7 @@ import SearchBar from "../components/Inputs/SearchBar";
 import CreateButton from "../components/PostForm/CreateButton";
 import Dropdown from "../components/Dropdown";
 
-const Home = () => {
-  // const [filteredInput, setFilteredInput] = useState("");
-
-  // Storing Sorting State and Dropdown Options
+const Feed = () => {
   const [postSortType, setPostSortType] = useState("date");
   const dropdownOptions = [
     { id: "date", value: "Newest" },
@@ -18,8 +15,8 @@ const Home = () => {
   ];
 
   return (
-    <StyledHome>
-      <div className="home-actions">
+    <StyledFeed>
+      <div className="feed-actions">
         <SearchBar placeHolder="Search for posts" />
         <Dropdown
           dropdownOptions={dropdownOptions}
@@ -28,12 +25,12 @@ const Home = () => {
 
         <CreateButton btnText="Create a post" linkPath="/post" />
       </div>
-      <Posts postSortType={postSortType} postSearchType={"all"} />
-    </StyledHome>
+      <Posts postSortType={postSortType} postSearchType={"feed"} />
+    </StyledFeed>
   );
 };
 
-const StyledHome = styled.div`
+const StyledFeed = styled.div`
   width: 100vw;
   height: 100%;
   min-height: 100vh;
@@ -42,7 +39,7 @@ const StyledHome = styled.div`
   padding: 50px;
   margin-top: 20px;
 
-  .home-actions {
+  .feed-actions {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -50,4 +47,4 @@ const StyledHome = styled.div`
   }
 `;
 
-export default Home;
+export default Feed;

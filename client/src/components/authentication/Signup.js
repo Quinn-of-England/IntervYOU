@@ -12,7 +12,7 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 import { useDispatch } from "react-redux";
 import { addAuthState } from "../../actions/auth";
 
-const Registration = () => {
+const Signup = () => {
   //Update Current Link & User Profile
   const history = useHistory();
 
@@ -46,7 +46,7 @@ const Registration = () => {
     }
 
     axios
-      .post(`${IP}:${SERVER_PORT}/api/users/registration`, details, {
+      .post(`${IP}:${SERVER_PORT}/api/users/signup`, details, {
         withCredentials: true,
       })
       .then((res) => {
@@ -66,7 +66,6 @@ const Registration = () => {
         setTimeout(() => history.push("/"), 1000);
       })
       .catch((err) => {
-        console.log("Registration error", err);
         setToastMsg({
           type: "ERROR",
           msg: err.response.data.message,
@@ -291,4 +290,4 @@ const StyledSignup = styled.div`
   }
 `;
 
-export default Registration;
+export default Signup;

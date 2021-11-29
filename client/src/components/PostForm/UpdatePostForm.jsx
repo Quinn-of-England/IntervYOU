@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useLocation, useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
-
+import ExpandText from "../Inputs/ExpandText";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "./CancelButton";
@@ -18,7 +18,7 @@ const postUrl = `${IP}:${SERVER_PORT}/api/posts`;
 const UpdatePostForm = () => {
   const history = useHistory();
 
-  const { userName: name } = useSelector((state) => state.auth);
+  const { userName: name, userId } = useSelector((state) => state.auth);
 
   const [postContent, setPostContent] = useState({
     title: "",
@@ -38,7 +38,7 @@ const UpdatePostForm = () => {
     setPostId(() => pathname.split(/[//]/)[1]);
   }, [pathname]);
 
-  //TODO: Initialize Post Content with Get Request
+  // Initialize Post Content with Get Request
   useEffect(() => {
     if (postId !== "") {
       axios
@@ -68,10 +68,6 @@ const UpdatePostForm = () => {
 
         //If File is Not Stored in S3, Then Add to Add Array
         if (filteredDroppedFiles.length > 0) {
-          console.log("Filtered: ", filteredDroppedFiles);
-          console.log("Added: ", addedFiles);
-
-          //setAddedFiles((prevAddedFiles) => ([...prevAddedFiles, ...filteredDroppedFiles]));
           if (addedFiles.length > 0)
             setAddedFiles([...addedFiles, ...filteredDroppedFiles]);
           else setAddedFiles([...filteredDroppedFiles]);
@@ -202,7 +198,7 @@ const UpdatePostForm = () => {
     <StyledPostForm>
       <div className="create-form-title"> Update your post </div>
 
-      {/* Title, Community, Content, Files */}
+      {/* Title Input & Label */}
       <InputField
         inputId="title"
         label="Title"
@@ -211,24 +207,27 @@ const UpdatePostForm = () => {
         setPostAttribute={updateInputState}
       />
 
-      <InputField
-        inputId="group"
-        label="Community"
-        errMessage="Required *"
-        defaultText={postContent.group}
-        setPostAttribute={updateInputState}
-      />
+      {/* Group/Community Text */}
+      <div className="communityWrapper">
+        <div className="communityLabel">Community</div>
+        <div className="communityName"> {postContent.group} </div>
+      </div>
 
-      {/* TODO: Search for a community to post to */}
-      <InputField
+      {/* Post Content, Auto Expanding */}
+      <ExpandText
         inputId="content"
         label="Content"
         errMessage=""
-        defaultText={postContent.content}
-        setPostAttribute={updateInputState}
+        postContent={postContent.content}
+        setPostAttribute={(e) =>
+          setPostContent({ ...postContent, content: e.target.value })
+        }
+        setProfilePostAttribute={(profileContent) =>
+          setPostContent({ ...postContent, content: profileContent })
+        }
       />
 
-      {/* File Drag and Drop Section */}
+      {/* File Drag and Drop Zone */}
       <div className="dropzone-container">
         <div {...getRootProps()}>
           <input {...getInputProps()} />
@@ -312,6 +311,22 @@ const StyledPostForm = styled.div`
       border-color: #2196f3;
       cursor: pointer;
     }
+  }
+
+  .communityLabel {
+    padding: 3px 6px;
+    font-family: "Noto Sans JP", sans-serif;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #acb0b6;
+  }
+
+  .communityWrapper {
+    margin-left: 10px;
+  }
+
+  .communityName {
+    margin-left: 10px;
   }
 
   .no-files,

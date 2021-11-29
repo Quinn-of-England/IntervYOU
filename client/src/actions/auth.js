@@ -34,7 +34,9 @@ export const getAuthState = () => async (dispatch) => {
       }
     }
   } catch (err) {
+    // Failed Authentication
     console.log(err.message);
+    dispatch({ type: "AUTH_FAILED", payload: notAuthenticatedPayload });
   }
 };
 

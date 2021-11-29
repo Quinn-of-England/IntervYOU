@@ -12,7 +12,6 @@ const Dropdown = ({ dropdownOptions, setPostSortType }) => {
   const [selectedOption, setSelectedOption] = useState("Newest");
   const updateSelectedOption = (e) => {
     setPostSortType(e.target.id);
-    console.log(e.target);
     setSelectedOption(e.target.innerText);
   };
 
@@ -27,6 +26,7 @@ const Dropdown = ({ dropdownOptions, setPostSortType }) => {
         <div className="dropdown-content">
           {dropdownOptions.map(({ id, value }) => (
             <div
+              key={id}
               id={id}
               className={
                 selectedOption === value

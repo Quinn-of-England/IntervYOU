@@ -12,14 +12,15 @@ const LogoutPage = () => {
 
   useEffect(() => {
     // Redirect to Login After 1s
+    // Dispatch Action to Update Auth State for Log Out
     setTimeout(() => {
       history.push("/login");
-    }, 2000);
+      dispatch(removeAuthState());
+    }, 1000);
 
-    // Dispatch Action to Update Auth State for Log Out
-    dispatch(removeAuthState());
+    // Clear Access and Refresh Tokens
     localStorage.removeItem("Authorization");
-
+    sessionStorage.removeItem("refreshToken");
     // eslint-disable-next-line
   }, []);
 

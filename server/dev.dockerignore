@@ -1,12 +1,14 @@
-# dependencies
+# Node Dependencies
 client/node_modules
 backend/node_modules
 **/node_modules
 
+# Docker Files
 *Dockerfile*
 *docker-compose*
 .dockerignore
 
+# Github Files
 .github
 .gitignore
 README.md

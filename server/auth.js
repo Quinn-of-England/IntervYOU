@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import User from "./models/User.js";
-import { refreshTokens } from "./controllers/users.js";
 
 //Store User Id and email in JWT
 const storeUserCredentials = (user) => ({
@@ -25,8 +24,7 @@ export const createRefreshToken = (user) => {
 
 //Verify Auth Middleware
 export const verifyAuth = async (req, res) => {
-  // Retrieve Access Token from Headers
-  //const authorization = req.headers["authorization"];
+  // Retrieve Access Token from Client Storage
   const authorization = req.body.accessToken;
 
   if (!authorization)
@@ -43,11 +41,8 @@ export const verifyAuth = async (req, res) => {
         process.env.JWT_ACCESS_SECRET,
         async (err, decodedToken) => {
           if (err) {
-            return res.status(403).json({
-              isAuth: false,
-              message: "Access denied...",
-              error: err.message,
-            });
+            // Verify Refresh if Expired
+            return verifyRefresh(req, res);
           } else {
             //Verfiy User Exists
             const user = await User.findById(decodedToken._id);
@@ -79,10 +74,11 @@ export const verifyAuth = async (req, res) => {
 export const verifyRefresh = async (req, res) => {
   // Retrieve Refresh Token from Cookies
   const token = req.cookies.refreshToken;
-  if (!token || !(token in refreshTokens))
+
+  if (!token)
     return res
       .status(401)
-      .json({ auth: false, message: "Access Denied! No Cookie Found." });
+      .json({ isAuth: false, message: "Access Denied! No Cookie Found." });
 
   try {
     //Verfiy Refresh Token is Valid
@@ -92,13 +88,15 @@ export const verifyRefresh = async (req, res) => {
         process.env.JWT_REFRESH_SECRET,
         async (err, decodedToken) => {
           if (err) {
-            return res.status(403).json({ message: err.message });
+            return res
+              .status(403)
+              .json({ isAuth: false, message: err.message });
           } else {
             //Verfiy User Exists
             const user = await User.findById(decodedToken._id);
             if (!user)
               return res.status(401).json({
-                auth: false,
+                isAuth: false,
                 message: "Access Denied! User Not Found.",
               });
 
@@ -107,9 +105,11 @@ export const verifyRefresh = async (req, res) => {
             res.setHeader("Authorization", updatedToken);
             const newRefreshToken = createRefreshToken(user);
             res.cookie("refreshToken", newRefreshToken, { httpOnly: true });
-            refreshTokens[newRefreshToken] = user._id;
 
             return res.status(200).json({
+              isAuth: true,
+              userId: decodedToken._id,
+              userName: decodedToken.name,
               message: "New tokens created!",
             });
           }
@@ -119,6 +119,6 @@ export const verifyRefresh = async (req, res) => {
   } catch {
     res
       .status(401)
-      .json({ auth: false, message: "Access Denied! Server Error." });
+      .json({ isAuth: false, message: "Access Denied! Server Error." });
   }
 };

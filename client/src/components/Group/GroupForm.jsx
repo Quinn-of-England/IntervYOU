@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router";
 import axios from "axios";
 import styled from "styled-components";
-import jwt from "jwt-decode";
+import { useSelector } from "react-redux";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
 import CancelButton from "../PostForm/CancelButton";
@@ -13,22 +13,20 @@ const groupsUrl = `${IP}:${SERVER_PORT}/api/groups`;
 const createGroupUrl = `${groupsUrl}/create`;
 
 const GroupForm = () => {
-  const [groupContent, setGroupContent] = useState(
-    {name: "", description: ""}
-  );
+  const [groupContent, setGroupContent] = useState({
+    name: "",
+    description: "",
+  });
 
   const history = useHistory();
+
+  const { userId } = useSelector((state) => state.auth);
 
   const onCreateGroup = (e) => {
     e.preventDefault();
 
-    let userId = "";
-    if (localStorage.getItem("Authorization")) {
-      userId = jwt(localStorage.getItem("Authorization"))._id;
-    }
-
     axios
-      .post(createGroupUrl, {...groupContent, owner: userId})
+      .post(createGroupUrl, { ...groupContent, owner: userId })
       .then((res) => {
         console.log(res);
 
@@ -45,14 +43,25 @@ const GroupForm = () => {
       <div className="create-form-title"> Create a group </div>
 
       {/* Community Title and Description */}
-      <InputField label="Community" errMessage="Required *" setPostAttribute={(e) =>
-          setGroupContent({...groupContent, name: e.target.value })
-        }/>
-      <InputField label="Description" errMessage="Required *" setPostAttribute={(e) =>
-          setGroupContent({...groupContent, description: e.target.value })
-        }/>
+      <InputField
+        label="Community"
+        errMessage="Required *"
+        setPostAttribute={(e) =>
+          setGroupContent({ ...groupContent, name: e.target.value })
+        }
+      />
+      <InputField
+        label="Description"
+        errMessage="Required *"
+        setPostAttribute={(e) =>
+          setGroupContent({ ...groupContent, description: e.target.value })
+        }
+      />
       <div className="group-actions">
-        <CancelButton btnText="CANCEL" handleClick={() => history.push("/groups")} />
+        <CancelButton
+          btnText="CANCEL"
+          handleClick={() => history.push("/groups")}
+        />
         <AddButton btnText="POST" handleClick={onCreateGroup} />
       </div>
     </StyledGroupForm>

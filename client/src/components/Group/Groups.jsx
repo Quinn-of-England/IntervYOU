@@ -1,45 +1,56 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import jwt from "jwt-decode";
 import Group from "./Group";
 import DeleteModal from "../DeleteModal";
+import { useSelector } from "react-redux";
+
 import { IP, SERVER_PORT } from "../../utils/types";
 
-const Groups = () => {
+const Groups = ({ groupSearchType }) => {
   const [allGroups, setAllGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState(null);
 
-  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
-  const usersUrl = `${IP}:${SERVER_PORT}/api/users/`;
+  const [hasDeletedGroups, setHasDeletedGroups] = useState(false);
 
-  let userId = "";
-  if (localStorage.getItem("Authorization")) {
-    userId = jwt(localStorage.getItem("Authorization"))._id;
-  }
+  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
+  const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
+
+  const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if(userId) {
-      axios.get(usersUrl + "groups/id/"  + userId).then((res) => {
-        setFollowedGroups(res.data.groups);
-        console.log(res.data.groups);
+    if (userId) {
+      axios
+        .get(usersUrl + userId)
+        .then((res) => {
+          setFollowedGroups(res.data.groups);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [userId, hasDeletedGroups]);
+
+  useEffect(() => {
+    let url = groupsUrl;
+    if (groupSearchType === "user") {
+      url = usersUrl + userId;
+    }
+
+    axios
+      .get(url)
+      .then((res) => {
+        if (groupSearchType === "user") {
+          setAllGroups(() => res.data.groups);
+        } else {
+          setAllGroups(() => res.data);
+        }
+        setHasDeletedGroups(false);
       })
       .catch((err) => {
         console.log(err);
       });
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    axios.get(groupsUrl)
-      .then((res) => {
-        setAllGroups(() => res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });    
-  }, []);
+  }, [hasDeletedGroups]);
 
   //modal logic for groups
   const [showModal, setShowModal] = useState(false);
@@ -55,23 +66,20 @@ const Groups = () => {
 
     // Save Post Id to Delete
     setDeletedGroupId({ groupId: deleteGroupId });
-    
   };
 
   const deleteGroupById = () => {
     setShowModal((prevModalState) => !prevModalState);
-    
-    console.log(groupsUrl + "id/" + deletedGroupId.groupId);
+
     axios
-     .delete(groupsUrl + "id/" + deletedGroupId.groupId)
-     .then((res) =>{
-      setTimeout(()=>{
-        window.location.reload();
-      },100); 
-       console.log(res);
-     }).catch((err) => {
-       console.log(err);
-     })
+      .delete(groupsUrl + "id/" + deletedGroupId.groupId)
+      .then(() => {
+        // Update to Reload to Reflect Deleted Groups
+        setHasDeletedGroups(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -83,14 +91,19 @@ const Groups = () => {
         deleteById={deleteGroupById}
       />
 
-      {allGroups?.length>0 && followedGroups && allGroups.map(({ _id,  ...group }) => (
-        <Group
-         key={_id}
-         followingStatus={followedGroups.find(followedGroup => followedGroup._id === _id)}
-         groupId={_id}
-         {...group}
-         handleDelete={handleDeleteGroupClick}/>
-      ))}
+      {allGroups?.length > 0 &&
+        followedGroups &&
+        allGroups.map(({ _id, ...group }) => (
+          <Group
+            key={_id}
+            followingStatus={followedGroups.find(
+              (followedGroup) => followedGroup._id === _id
+            )}
+            groupId={_id}
+            {...group}
+            handleDelete={handleDeleteGroupClick}
+          />
+        ))}
     </StyledGroups>
   );
 };

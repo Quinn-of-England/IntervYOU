@@ -2,13 +2,16 @@ import { Router } from "express";
 import {
   createPost,
   getAllPosts,
+  getAllPostsByUser,
+  getAllPostsByGroups,
+  getAllPostsByUserLikes,
   getPostById,
   getPostsByTitle,
   getPostsByDate,
   deletePost,
   updatePost,
   updateVote,
-  addComment
+  addComment,
 } from "../controllers/posts.js";
 
 const PostRouter = Router();
@@ -18,6 +21,15 @@ PostRouter.post("/add-post", createPost);
 
 //Read - Get All Posts
 PostRouter.get("/", getAllPosts);
+
+//Read - Get All Posts by user
+PostRouter.get("/user", getAllPostsByUser);
+
+//Read - Get All Posts by Groups
+PostRouter.get("/groups", getAllPostsByGroups);
+
+//Read - Get All Posts by Groups
+PostRouter.get("/liked", getAllPostsByUserLikes);
 
 //Read - Get Posts By ID
 PostRouter.get("/:id", getPostById);
@@ -39,6 +51,5 @@ PostRouter.delete("/:id", deletePost);
 
 //Vote post
 PostRouter.patch("/:id/vote", updateVote);
-
 
 export default PostRouter;

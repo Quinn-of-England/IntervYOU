@@ -3,16 +3,16 @@ import axios from "axios";
 import styled from "styled-components";
 import { useHistory } from "react-router";
 import { useDropzone } from "react-dropzone";
-
+import ModularDropdown from "../ModularDropdown";
 import AddButton from "../Buttons/AddButton";
 import InputField from "../Inputs/InputField";
+import ExpandText from "../Inputs/ExpandText";
 import CancelButton from "./CancelButton";
 import FormData from "form-data";
 import File from "../File/File";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
-
 const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
 const PostForm = () => {
@@ -46,24 +46,8 @@ const PostForm = () => {
     onDrop: onDroppedFiles,
   });
 
-  useEffect(() => {
-    console.log(postContent);
-  }, [postContent]);
-
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
-
-
   const onCreatePost = (e) => {
     e.preventDefault();
-
-    // Add Post to Group 
-    // axios.get(`${IP}:${SERVER_PORT}/api/groups/name/` + groupName).then((res) => {
-    //   setPostContent((group) => [res.data])
-    //   console.log
-    // })
-    
     const formData = new FormData();
     formData.append("userName", name);
     formData.append("title", postContent.title);
@@ -82,7 +66,7 @@ const PostForm = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
+      .then(() => {
         //Push
         history.push("/");
       })
@@ -145,10 +129,29 @@ const PostForm = () => {
     setFiles((prevFiles) => prevFiles.filter((f) => f.path !== fileName));
   };
 
+  const [groups, setGroups] = useState([]);
+
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
+        .then((res) => {
+          const groupsList = [];
+          res.data.groups.forEach(({ _id, name }) => {
+            groupsList.push({ id: _id, value: name });
+          });
+
+          setGroups(groupsList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [userId]);
+
   return (
     <StyledPostForm>
       <div className="create-form-title"> Create a post </div>
-
       {/* Title, Community, Content, Files */}
       <InputField
         name="title"
@@ -158,19 +161,29 @@ const PostForm = () => {
           setPostContent({ ...postContent, title: e.target.value })
         }
       />
-      <InputField
-        label="Community"
-        errMessage="Required *"
-        setPostAttribute={(e) =>
-          setPostContent({ ...postContent, group: e.target.value })
-        }
-      />
-      {/* TODO: Search for a community to post to */}
-      <InputField
+
+      {/* Dropdown with all followed groups */}
+      <div className="communityWrapper">
+        <div className="communityLabel">Community</div>
+        <ModularDropdown
+          dropdownOptions={groups}
+          setPostGroup={(group) => {
+            setPostContent({ ...postContent, group });
+          }}
+        />
+      </div>
+
+      {/* Post Content, Auto Expanding */}
+      <ExpandText
+        inputId="content"
         label="Content"
         errMessage=""
+        postContent={postContent.content}
         setPostAttribute={(e) =>
           setPostContent({ ...postContent, content: e.target.value })
+        }
+        setProfilePostAttribute={(profileContent) =>
+          setPostContent({ ...postContent, content: profileContent })
         }
       />
 
@@ -183,6 +196,7 @@ const PostForm = () => {
         </div>
       </div>
 
+      {/* Files List */}
       {files?.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>
@@ -202,7 +216,6 @@ const PostForm = () => {
       ) : (
         <div className="no-files">No Files</div>
       )}
-
       <div className="post-actions">
         <CancelButton btnText="CANCEL" handleClick={() => history.push("/")} />
         <AddButton btnText="POST" handleClick={onCreatePost} />
@@ -222,6 +235,17 @@ const StyledPostForm = styled.div`
 
   padding: 20px;
   margin: auto;
+
+  .communityLabel {
+    padding: 3px 6px;
+    font-family: "Noto Sans JP", sans-serif;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #acb0b6;
+  }
+  .communityWrapper {
+    margin-left: 10px;
+  }
 
   .create-form-title {
     font-size: 24px;

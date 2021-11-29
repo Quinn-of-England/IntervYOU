@@ -43,8 +43,6 @@ const StyledCreateButton = styled.div`
 
     padding: 8px 0;
     padding-left: 20px;
-
-    //width: 90%;
   }
 
   // Create Icon

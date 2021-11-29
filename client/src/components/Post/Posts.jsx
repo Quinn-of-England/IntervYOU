@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 import Post from "./Post";
 import Pagination from "../Pagination/Pagination";
@@ -9,7 +10,7 @@ import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
 
-const Posts = ({ postSortType }) => {
+const Posts = ({ postSortType, postSearchType }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
@@ -18,6 +19,10 @@ const Posts = ({ postSortType }) => {
   //Modal Logic
   const [showModal, setShowModal] = useState(false);
   const [deletedPostId, setDeletedPostId] = useState({ postId: "" });
+
+  const { userName: tokenUserName, userId } = useSelector(
+    (state) => state.auth
+  );
 
   const updateModalState = () => {
     setShowModal((prevModalState) => !prevModalState);
@@ -34,13 +39,9 @@ const Posts = ({ postSortType }) => {
   const deletePostById = () => {
     setShowModal((prevModalState) => !prevModalState);
 
-    console.log(`${postUrl}${deletedPostId.postId}`);
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
-        setTimeout(function(){
-          window.location.reload();
-        },100);
         console.log(res.data);
         setHasDeleted(true);
       })
@@ -48,18 +49,36 @@ const Posts = ({ postSortType }) => {
   };
 
   useEffect(() => {
-    axios
-      .get(postUrl, {
-        params: { sortBy: postSortType, page: currPage, size: 2 },
-      })
-      .then((res) => {
-        setAllPosts(res.data.posts);
-        setNumPages(res.data.totalPages);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currPage, postSortType, hasDeleted]);
+    let url = postUrl;
+
+    if (postSearchType === "feed") {
+      url += "groups";
+    } else if (postSearchType === "user") {
+      url += "user";
+    } else if (postSearchType === "likes") {
+      url += "liked";
+    }
+
+    if (tokenUserName && userId) {
+      axios
+        .get(url, {
+          params: {
+            sortBy: postSortType,
+            page: currPage,
+            size: 10,
+            userName: tokenUserName,
+            userId: userId,
+          },
+        })
+        .then((res) => {
+          setAllPosts(res.data.posts);
+          setNumPages(res.data.totalPages);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [currPage, postSortType, hasDeleted, tokenUserName, userId]);
 
   return (
     <>
