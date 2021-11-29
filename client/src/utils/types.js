@@ -8,6 +8,6 @@ export const EDIT_POST = "EDIT_POST";
 export const DELETE_POST = "DELETE_POST";
 export const DELETE_GROUP = "DELETE_GROUP";
 
-export const IP = "https://localhost";
+export const IP = process.env.REACT_APP_IP;
 export const CLIENT_PORT = 3000;
-export const SERVER_PORT = "443";
+export const SERVER_PORT = process.env.REACT_APP_SERVER_PORT;
