@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import { DownArrow } from "../utils/icons";
@@ -25,7 +25,7 @@ const ModularDropdown = ({ dropdownOptions, setPostGroup }) => {
 
       {openDropdown && (
         <div className="dropdown-content">
-          {dropdownOptions.map(({id, value }) => (
+          {dropdownOptions.map(({ id, value }) => (
             <div
               key={id}
               id={id}

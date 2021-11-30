@@ -2,21 +2,22 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Group from "./Group";
+import Pagination from "../Pagination/Pagination";
 import DeleteModal from "../DeleteModal";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types";
 
-const userPath = `${IP}:${SERVER_PORT}/api/users/`;
+const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
+const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
 
-const Groups = ( {groupSearchType}) => {
+const Groups = ({ groupSearchType, groupFilter }) => {
   const [allGroups, setAllGroups] = useState([]);
+  const [numPages, setNumPages] = useState(1);
+  const [currPage, setCurrPage] = useState(1);
   const [followedGroups, setFollowedGroups] = useState(null);
 
   const [hasDeletedGroups, setHasDeletedGroups] = useState(false);
-
-  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
-  const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
 
   const { userId } = useSelector((state) => state.auth);
 
@@ -34,28 +35,31 @@ const Groups = ( {groupSearchType}) => {
   }, [userId, hasDeletedGroups]);
 
   useEffect(() => {
-    
     let url = groupsUrl;
     if (groupSearchType === "user") {
       url = usersUrl + userId;
     }
 
     axios
-      .get(url)
+      .get(url, {
+        params: {
+          page: currPage,
+          size: 5,
+          search: groupFilter,
+        },
+      })
       .then((res) => {
-        if (groupSearchType === "user") {
-          setAllGroups(() => res.data.groups);
-        } else {
-          setAllGroups(() => res.data);
-        }
-        setHasDeletedGroups(false);
+        setAllGroups(() => res.data.groups);
+
+        //Update Pagination
+        setNumPages(res.data.totalPages);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [hasDeletedGroups]);
+  }, [groupFilter, currPage, hasDeletedGroups]);
 
-  //modal logic for groups
+  // Modal logic for groups
   const [showModal, setShowModal] = useState(false);
   const [deletedGroupId, setDeletedGroupId] = useState({ groupId: "" });
 
@@ -78,7 +82,7 @@ const Groups = ( {groupSearchType}) => {
       .delete(groupsUrl + "id/" + deletedGroupId.groupId)
       .then(() => {
         // Update to Reload to Reflect Deleted Groups
-        setHasDeletedGroups(true);
+        setHasDeletedGroups((prevState) => !prevState);
       })
       .catch((err) => {
         console.log(err);
@@ -94,31 +98,43 @@ const Groups = ( {groupSearchType}) => {
         deleteById={deleteGroupById}
       />
 
-      {allGroups?.length > 0 &&
-        followedGroups &&
-        allGroups.map(({ _id, ...group }) => (
-          <Group
-            key={_id}
-            followingStatus={followedGroups.find(
-              (followedGroup) => followedGroup._id === _id
-            )}
-            groupId={_id}
-            {...group}
-            handleDelete={handleDeleteGroupClick}
-          />
-        ))}
+      <div className="group-container">
+        {allGroups?.length > 0 &&
+          followedGroups &&
+          allGroups.map(({ _id, ...group }) => (
+            <Group
+              key={_id}
+              followingStatus={followedGroups.find(
+                (followedGroup) => followedGroup._id === _id
+              )}
+              groupId={_id}
+              {...group}
+              handleDelete={handleDeleteGroupClick}
+            />
+          ))}
+      </div>
+
+      {numPages > 1 && (
+        <Pagination
+          totalPages={numPages}
+          currPage={currPage}
+          setCurrPage={setCurrPage}
+        />
+      )}
     </StyledGroups>
   );
 };
 
 const StyledGroups = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+  .group-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 
-  gap: 15px;
+    gap: 15px;
+  }
 `;
 
 export default Groups;

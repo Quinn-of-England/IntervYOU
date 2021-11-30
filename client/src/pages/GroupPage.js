@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Groups from "../components/Group/Groups";
@@ -6,16 +6,18 @@ import SearchBar from "../components/Inputs/SearchBar";
 import CreateButton from "../components/PostForm/CreateButton";
 
 const GroupPage = () => {
-
-
+  const [filteredInput, setFilteredInput] = useState("");
 
   return (
     <StyledGroup>
       <div className="group-actions">
-        <SearchBar />
+        <SearchBar
+          placeHolder="Search for groups"
+          applyFilter={setFilteredInput}
+        />
         <CreateButton btnText="Create a group" linkPath="/group/create" />
       </div>
-      <Groups />
+      <Groups groupFilter={filteredInput} />
     </StyledGroup>
   );
 };

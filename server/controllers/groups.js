@@ -47,12 +47,38 @@ export const create_group = async (req, res) => {
  * * This function will get all the groups from the database
  * * Only the name and description of each group will be returned
  * * A 200(Ok) will be sent after success
- * TODO: Check Whether User Has to Access All Groups
+ * Query params: {
+ *  size: max number of groups to return
+ *  page: page number
+ *  search: search word
+ * }
  */
-export const get_all_groups = async (_, res) => {
+export const get_all_groups = async (req, res) => {
   try {
-    const groups = await Group.find();
-    res.status(200).json(groups);
+    const sort = {};
+    sort["follower_count"] = -1;
+
+    const options = {
+      page: parseInt(req.query.page),
+      limit: parseInt(req.query.size),
+      sort,
+    };
+
+    const query = req.query.search
+      ? {
+          $or: [
+            { name: { $regex: `.*${req.query.search}.*`, $options: "i" } },
+            {
+              description: { $regex: `.*${req.query.search}.*`, $options: "i" },
+            },
+          ],
+        }
+      : {};
+    const { docs, totalPages } = await Group.paginate(query, options);
+    res.status(200).json({
+      groups: docs,
+      totalPages: totalPages,
+    });
   } catch (err) {
     res.status(500).json({
       message: "Server error in get_all_groups",
@@ -75,7 +101,7 @@ export const get_group_by_id = async (req, res) => {
       "name description follower_count"
     );
     if (group) {
-      res.status(200).json(group);
+      res.status(200).json({ groups: group });
     } else {
       res
         .status(400)

@@ -35,7 +35,7 @@ const CommentForm = ({ postId, setHasNewComments }) => {
             .patch(postPath + postId + "/add-comment", {
               comment: res.data.comment,
             })
-            .then((result) => {
+            .then(() => {
               setHasNewComments(true);
             })
             .catch((err) => {

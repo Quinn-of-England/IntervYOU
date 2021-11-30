@@ -1,8 +1,8 @@
-import { Router } from 'express'
-import * as linkedinController from '../controllers/linkedin.js'
+import { Router } from "express";
+import { get_profile } from "../controllers/linkedin.js";
 
-const linkedinRouter = Router()
+const linkedinRouter = Router();
 
-linkedinRouter.post('/profile', linkedinController.get_profile)
+linkedinRouter.post("/profile", get_profile);
 
-export default linkedinRouter
+export default linkedinRouter;

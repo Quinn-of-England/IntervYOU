@@ -14,28 +14,20 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    default: "MENTEE",
-  },
   posts: [
     {
-      post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post'}
-    }
+      post: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
+    },
   ],
   likes: {
     type: Map,
     of: Number,
-    default: {}
-  },
-  tokenVersion: {
-    type: Number,
-    default: 0,
+    default: {},
   },
   groups: [
     {
-      group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group'}
-    }
+      group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
+    },
   ],
 });
 

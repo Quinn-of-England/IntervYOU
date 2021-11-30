@@ -31,10 +31,6 @@ const StyledBackButton = styled.div`
 
   cursor: pointer;
 
-  // &:hover {
-  //   box-shadow: 0 3px 8px #2f69eb1a;
-  // }
-
   .btn-text {
     font-size: 16px;
     font-family: "Trebuchet MS", sans-serif;
@@ -50,14 +46,7 @@ const StyledBackButton = styled.div`
     color: #0b5ac4;
 
     padding: 8px;
-
-    // border-radius: 50%;
-    // background: #2f69eb;
   }
-
-  // &:hover .svg-holder {
-  //   background: #0b5ac4;
-  // }
 `;
 
 export default BackButton;

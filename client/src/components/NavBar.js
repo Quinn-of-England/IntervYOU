@@ -26,7 +26,6 @@ const NavBar = () => {
   useEffect(() => {
     // Wait for Dispatch Action to Finish (Either True or False Auth State)
     if (authState.isAuth === null) {
-      console.log(authState);
       return;
     }
 

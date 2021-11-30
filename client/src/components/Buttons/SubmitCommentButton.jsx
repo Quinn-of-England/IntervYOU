@@ -20,8 +20,6 @@ const StyledSubmitCommentButton = styled.div`
   padding: 8px 4px;
 
   width: 120px;
-  // min-height: 100%;
-  // top: 50%;
 
   border: none;
   border-radius: 30px;

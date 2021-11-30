@@ -13,8 +13,6 @@ import File from "../File/File";
 import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types.js";
-import Group from "../Group/Group";
-
 const baseUrl = `${IP}:${SERVER_PORT}/api/posts/add-post`;
 
 const PostForm = () => {
@@ -68,7 +66,7 @@ const PostForm = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
+      .then(() => {
         //Push
         history.push("/");
       })
@@ -139,10 +137,10 @@ const PostForm = () => {
         .get(`${IP}:${SERVER_PORT}/api/users/groups/id/${userId}`)
         .then((res) => {
           const groupsList = [];
-          res.data.groups.forEach(({_id, name}) => {
-            groupsList.push({id: _id, value: name});
-          })
-            
+          res.data.groups.forEach(({ _id, name }) => {
+            groupsList.push({ id: _id, value: name });
+          });
+
           setGroups(groupsList);
         })
         .catch((err) => {
@@ -163,9 +161,10 @@ const PostForm = () => {
           setPostContent({ ...postContent, title: e.target.value })
         }
       />
+
+      {/* Dropdown with all followed groups */}
       <div className="communityWrapper">
         <div className="communityLabel">Community</div>
-        {/* Dropdown with all followed groups */}
         <ModularDropdown
           dropdownOptions={groups}
           setPostGroup={(group) => {
@@ -174,6 +173,7 @@ const PostForm = () => {
         />
       </div>
 
+      {/* Post Content, Auto Expanding */}
       <ExpandText
         inputId="content"
         label="Content"
@@ -182,7 +182,9 @@ const PostForm = () => {
         setPostAttribute={(e) =>
           setPostContent({ ...postContent, content: e.target.value })
         }
-        setProfilePostAttribute={(profileContent) => setPostContent({...postContent, content: profileContent })}
+        setProfilePostAttribute={(profileContent) =>
+          setPostContent({ ...postContent, content: profileContent })
+        }
       />
 
       {/* File Drag and Drop Section */}
@@ -193,6 +195,8 @@ const PostForm = () => {
           <div> Or Click to Select Files </div>
         </div>
       </div>
+
+      {/* Files List */}
       {files?.length > 0 ? (
         <div className="dropped-files">
           <div className="has-files">Files</div>

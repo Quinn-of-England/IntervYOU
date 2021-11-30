@@ -1,21 +1,22 @@
-#Version of node
+# Install Node with Specified Version
 FROM node:12.22.6-alpine
 
-#Set working directory to app
+# Create and Set Working Directory to App 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-#copy package.json into the container
-COPY package*.json ./
+# Copy package.json into Container
+COPY package*.json .
 
-#install dependencies
+# Install Dependencies
 RUN npm install --production
 
-#Copy current directory contents into the container
-COPY . /usr/src/app/
+# Copy Project into Working Directory in Container
+COPY . .
+#/usr/src/app/
 
-#Make port 3000 available to the world outside this container
+# Expose/Make Port 3000 Accessible
 EXPOSE 3000
 
-#Run the app when comtainer launches
+# Run Client Side with Start Script
 CMD ["npm", "start"]

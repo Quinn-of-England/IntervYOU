@@ -1,71 +1,71 @@
 version: "3.7"
 
 services:
-    server:
-      restart: always
-      build:
-        context: ./server
-        dockerfile: Dockerfile.dev
-      image: intervyou-server
-      container_name: intervyou-node-server
-      command: npm start
-      ports: 
-        - "5000:5000"
-      depends_on:
-        - mongo
-      volumes:
-        - /app/node_modules
-        - ./server:/usr/src/app/app
-      networks:
-        - intervyou-network
+  server:
+    restart: always
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    image: intervyou-server
+    container_name: intervyou-node-server
+    command: npm start
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    volumes:
+      - /app/node_modules
+      - ./server:/usr/src/app/app
+    networks:
+      - intervyou-network
 
-    mongo:
-      restart: always
-      image: mongo
-      environment:
-        MONGO_INITDB_DATABASE: testdb
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: root
-      ports:
-        - "27017:27017"
-      volumes:
-        - mongodb-data:/data/db
-      networks:
-        - intervyou-network
+  mongo:
+    restart: always
+    image: mongo
+    environment:
+      MONGO_INITDB_DATABASE: testdb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - intervyou-network
 
-    client:
-      restart: always
-      build:
-        context: ./client
-        dockerfile: Dockerfile.dev
-      image: intervyou-client
-      container_name: intervyou-react-client
-      command: npm start
-      depends_on:
-        - server
-      ports:
-        - "3000:3000"
-      volumes:
-        - /app/node_modules
-        - ./client/src:/usr/src/app/src
-      networks:
-        - intervyou-network
-      stdin_open: true
+  client:
+    restart: always
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    image: intervyou-client
+    container_name: intervyou-react-client
+    command: npm start
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - ./client/src:/usr/src/app/src
+    networks:
+      - intervyou-network
+    stdin_open: true
 
-    nginx:
-      image: intervyou-nginx
-      depends_on:
-        - client
-        - server
-      restart: always
-      build: 
-        dockerfile: Dockerfile
-        context: ./nginx
-      ports:
-        - "80:80"
-        - "443:443"
-      networks:
-        - intervyou-network
+  nginx:
+    image: intervyou-nginx
+    depends_on:
+      - client
+      - server
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - intervyou-network
 
 networks:
   intervyou-network:

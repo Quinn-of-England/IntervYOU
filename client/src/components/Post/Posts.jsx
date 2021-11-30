@@ -9,9 +9,8 @@ import { IP, SERVER_PORT } from "../../utils/types.js";
 import DeleteModal from "../DeleteModal";
 
 const postUrl = `${IP}:${SERVER_PORT}/api/posts/`;
-const userPath = `${IP}:${SERVER_PORT}/api/users/`;
 
-const Posts = ({ postSortType, postSearchType }) => {
+const Posts = ({ postSortType, postSearchType, postFilter }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [numPages, setNumPages] = useState(1);
   const [currPage, setCurrPage] = useState(1);
@@ -43,9 +42,6 @@ const Posts = ({ postSortType, postSearchType }) => {
     axios
       .delete(`${postUrl}${deletedPostId.postId}`)
       .then((res) => {
-        setTimeout(function () {
-          window.location.reload();
-        }, 100);
         console.log(res.data);
         setHasDeleted(true);
       })
@@ -62,8 +58,8 @@ const Posts = ({ postSortType, postSearchType }) => {
     } else if (postSearchType === "likes") {
       url += "liked";
     }
-    console.log(url);
-    if(tokenUserName && userId) {
+
+    if (tokenUserName && userId) {
       axios
         .get(url, {
           params: {
@@ -72,6 +68,7 @@ const Posts = ({ postSortType, postSearchType }) => {
             size: 10,
             userName: tokenUserName,
             userId: userId,
+            search: postFilter,
           },
         })
         .then((res) => {
@@ -82,7 +79,7 @@ const Posts = ({ postSortType, postSearchType }) => {
           console.log(err);
         });
     }
-  }, [currPage, postSortType, hasDeleted, tokenUserName, userId]);
+  }, [currPage, postSortType, hasDeleted, tokenUserName, userId, postFilter]);
 
   return (
     <>

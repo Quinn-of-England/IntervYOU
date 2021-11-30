@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -20,7 +20,6 @@ import CommentPage from "./pages/CommentPage";
 import UpdatePostPage from "./pages/UpdatePostPage";
 import UpdateGroupPage from "./pages/UpdateGroupPage";
 import ProfilePage from "./pages/ProfilePage";
-import LinkedinPage from "./pages/LinkedinPage";
 import Feed from "./pages/FeedPage";
 import LogoutPage from "./pages/LogoutPage";
 
