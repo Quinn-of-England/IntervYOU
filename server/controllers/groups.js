@@ -55,20 +55,29 @@ export const create_group = async (req, res) => {
  */
 export const get_all_groups = async (req, res) => {
   try {
-    const sort = {}
-    sort['follower_count'] = -1
+    const sort = {};
+    sort["follower_count"] = -1;
 
     const options = {
       page: parseInt(req.query.page),
       limit: parseInt(req.query.size),
       sort,
-    }
+    };
 
-    const query = req.query.search ? { $or: [{ name: { $regex: `.*${req.query.search}.*` } }, { description: { $regex: `.*${req.query.search}.*` } } ] } : {}
+    const query = req.query.search
+      ? {
+          $or: [
+            { name: { $regex: `.*${req.query.search}.*`, $options: "i" } },
+            {
+              description: { $regex: `.*${req.query.search}.*`, $options: "i" },
+            },
+          ],
+        }
+      : {};
     const { docs, totalPages } = await Group.paginate(query, options);
     res.status(200).json({
       groups: docs,
-      totalPages: totalPages
+      totalPages: totalPages,
     });
   } catch (err) {
     res.status(500).json({
@@ -92,7 +101,7 @@ export const get_group_by_id = async (req, res) => {
       "name description follower_count"
     );
     if (group) {
-      res.status(200).json(group);
+      res.status(200).json({ groups: group });
     } else {
       res
         .status(400)

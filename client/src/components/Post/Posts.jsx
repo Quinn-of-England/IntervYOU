@@ -68,7 +68,7 @@ const Posts = ({ postSortType, postSearchType, postFilter }) => {
             size: 10,
             userName: tokenUserName,
             userId: userId,
-            search: postFilter ?? ""
+            search: postFilter,
           },
         })
         .then((res) => {

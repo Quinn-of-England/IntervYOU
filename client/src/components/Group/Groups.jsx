@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 
 import { IP, SERVER_PORT } from "../../utils/types";
 
+const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
+const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
+
 const Groups = ({ groupSearchType, groupFilter }) => {
   const [allGroups, setAllGroups] = useState([]);
   const [numPages, setNumPages] = useState(1);
@@ -15,9 +18,6 @@ const Groups = ({ groupSearchType, groupFilter }) => {
   const [followedGroups, setFollowedGroups] = useState(null);
 
   const [hasDeletedGroups, setHasDeletedGroups] = useState(false);
-
-  const groupsUrl = `${IP}:${SERVER_PORT}/api/groups/`;
-  const usersUrl = `${IP}:${SERVER_PORT}/api/users/groups/id/`;
 
   const { userId } = useSelector((state) => state.auth);
 
@@ -41,25 +41,23 @@ const Groups = ({ groupSearchType, groupFilter }) => {
     }
 
     axios
-      .get(url, { params: {
-        page: currPage,
-        size: 1,
-      }})
+      .get(url, {
+        params: {
+          page: currPage,
+          size: 5,
+          search: groupFilter,
+        },
+      })
       .then((res) => {
-        console.log(res.data);
-        if (groupSearchType === "user") {
-          setAllGroups(() => res.data.groups);
-        } else {
-          setAllGroups(() => res.data);
-        }
+        setAllGroups(() => res.data.groups);
 
-        //Update Pagination 
+        //Update Pagination
         setNumPages(res.data.totalPages);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [currPage, hasDeletedGroups]);
+  }, [groupFilter, currPage, hasDeletedGroups]);
 
   // Modal logic for groups
   const [showModal, setShowModal] = useState(false);
@@ -101,22 +99,22 @@ const Groups = ({ groupSearchType, groupFilter }) => {
       />
 
       <div className="group-container">
-      {allGroups?.length > 0 &&
-        followedGroups &&
-        allGroups.map(({ _id, ...group }) => (
-          <Group
-            key={_id}
-            followingStatus={followedGroups.find(
-              (followedGroup) => followedGroup._id === _id
-            )}
-            groupId={_id}
-            {...group}
-            handleDelete={handleDeleteGroupClick}
-          />
-        ))}
-       </div>
+        {allGroups?.length > 0 &&
+          followedGroups &&
+          allGroups.map(({ _id, ...group }) => (
+            <Group
+              key={_id}
+              followingStatus={followedGroups.find(
+                (followedGroup) => followedGroup._id === _id
+              )}
+              groupId={_id}
+              {...group}
+              handleDelete={handleDeleteGroupClick}
+            />
+          ))}
+      </div>
 
-        {numPages > 1 && (
+      {numPages > 1 && (
         <Pagination
           totalPages={numPages}
           currPage={currPage}

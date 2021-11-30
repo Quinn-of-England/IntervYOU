@@ -29,9 +29,16 @@ export const getAllPosts = async (req, res) => {
       sort,
     };
 
-    const query = req.query.search ? { $or: [{ title: { $regex: `.*${req.query.search}.*` } }, { content: { $regex: `.*${req.query.search}.*` } } ] } : {}
-    const { docs, totalPages } = await Post.paginate(query, options)
-    res.status(200).json({ posts: docs, totalPages: totalPages })
+    const query = req.query.search
+      ? {
+          $or: [
+            { title: { $regex: `.*${req.query.search}.*`, $options: "i" } },
+            { content: { $regex: `.*${req.query.search}.*`, $options: "i" } },
+          ],
+        }
+      : {};
+    const { docs, totalPages } = await Post.paginate(query, options);
+    res.status(200).json({ posts: docs, totalPages: totalPages });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -104,7 +111,8 @@ export const getAllPostsByGroups = async (req, res) => {
     };
     if (user) {
       let allGroupNames = [];
-      const query = req.query.search ? { $and: [ { _id: { $in: user.groups } }, { $or: [{ title: { $regex: `.*${req.query.search}.*` } }, { content: { $regex: `.*${req.query.search}.*` } } ] } ] } : { _id: { $in: user.groups } }
+      const query = { _id: { $in: user.groups } };
+
       Group.find(
         query,
         "name description follower_count owner",
@@ -119,8 +127,32 @@ export const getAllPostsByGroups = async (req, res) => {
               allGroupNames.push(group.name);
             }
 
+            const postQuery = req.query.search
+              ? {
+                  $and: [
+                    { group: { $in: allGroupNames } },
+                    {
+                      $or: [
+                        {
+                          title: {
+                            $regex: `.*${req.query.search}.*`,
+                            $options: "i",
+                          },
+                        },
+                        {
+                          content: {
+                            $regex: `.*${req.query.search}.*`,
+                            $options: "i",
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                }
+              : { group: { $in: allGroupNames } };
+
             const { docs, totalPages } = await Post.paginate(
-              { group: { $in: allGroupNames } },
+              postQuery,
               options
             );
             res.status(200).json({ posts: docs, totalPages: totalPages });
